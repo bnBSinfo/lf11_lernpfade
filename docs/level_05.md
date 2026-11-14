@@ -17,6 +17,26 @@ Bauen Sie in `build` eine `Row` mit
 2. `Expanded(child: Text(title))`
 3. `IconButton(icon: Icon(Icons.delete), onPressed: null)` – noch inaktiv
 
+## Erklärt – was passiert hier?
+
+**Warum ist `ToDoItem` Stateless?** Ein Listeneintrag soll nur **anzeigen**, was man ihm gibt. Die Daten (der Titel) kommen von außen über den Konstruktor:
+
+```dart
+final String title;                       // wird einmal übergeben, nie geändert
+const ToDoItem(this.title, {super.key});  // ToDoItem('Einkaufen')
+```
+
+So kann man dasselbe Widget beliebig oft mit verschiedenen Titeln verwenden – wie eine Schablone. Später in der Liste entsteht aus jedem Eintrag ein `ToDoItem`.
+
+**Der Aufbau der Zeile:**
+
+- `Row` legt ihre `children` **nebeneinander** (Column: untereinander).
+- `Checkbox(value: false, onChanged: null)` – `value` ist der Haken, `onChanged: null` macht sie inaktiv (grau). Wer den Haken später ändern darf, kommt in Level 8.
+- `Expanded` sagt: „Nimm den ganzen restlichen Platz.“ Ohne `Expanded` stünde der Mülleimer direkt neben dem Text statt ganz rechts.
+- `IconButton` ist ein Button mit Symbol. `Icons.delete` ist der Mülleimer aus der Material-Symbolsammlung.
+
+**`const` oder nicht?** `const Checkbox(...)` geht, weil sich nichts darin ändert. `Text(title)` kann nicht `const` sein – `title` ist erst zur Laufzeit bekannt.
+
 ## Prüfen
 `flutter test test/level_05_test.dart`
 

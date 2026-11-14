@@ -17,6 +17,27 @@ Seine `build`-Methode gibt zurück, was angezeigt wird.
 2. Weisen Sie `home` ein `Scaffold` zu.
 3. Der `body` des Scaffold ist `Text('Das ist mein Grundgerüst')`.
 
+## Erklärt – was passiert hier?
+
+**Zeile für Zeile:**
+
+- `import 'package:flutter/material.dart';` holt alle Material-Widgets (Text, Scaffold, …) in die Datei.
+- `class MyFirstApp extends StatelessWidget` – eine eigene Klasse, die ein **Stateless Widget** ist. Sie zeigt immer dasselbe an und merkt sich nichts.
+- `const MyFirstApp({super.key});` – der Konstruktor. Er bekommt hier keine Daten.
+- `@override Widget build(BuildContext context)` – diese Methode ruft Flutter auf, wenn es Ihr Widget zeichnen will. Was sie zurückgibt, erscheint auf dem Bildschirm.
+
+**Die drei Widgets:**
+
+| Widget | Aufgabe | Eigenschaft im Code |
+|---|---|---|
+| `MaterialApp` | die App selbst: Design (Farben, Schriften), Navigation zwischen Seiten | `home:` = die Startseite |
+| `Scaffold` | das Gerüst **einer Seite** mit festen Bereichen | `appBar:`, `body:`, `floatingActionButton:`, … |
+| `Text` | zeigt eine Zeichenkette | der Text in Klammern |
+
+Probieren Sie im **Baukasten** auf der Lernpfad-Webseite aus, welche Bereiche ein Scaffold hat. Sie füllen davon nur, was Sie brauchen – in Level 1 nur `body`.
+
+**Warum steht der Text oben links unter der Statusleiste?** Ein `Text` ist nur so groß wie sein Inhalt und steht ohne weitere Anweisung oben links. Ohne `AppBar` beginnt der `body` ganz oben. Ausrichtung und Abstand sind in Flutter eigene Widgets – das lernen Sie in Level 2.
+
 ## Prüfen
 `flutter test test/level_01_test.dart` · Ansehen: `aktivesLevel = 1` in `lib/main.dart`
 

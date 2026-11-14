@@ -39,7 +39,7 @@ LEVEL = {
             k("MaterialApp", neu=True, kinder=[
                 k("Scaffold", neu=True, notiz="home:", kinder=[
                     k("Text", neu=True, notiz="body:")])])]),
-        grafik="start",
+        grafik="start", baukasten="scaffold",
     ),
     2: dict(
         titel="Widget im Widget", stich="Padding, ColoredBox, Center",
@@ -49,7 +49,7 @@ LEVEL = {
                 k("ColoredBox", neu=True, notiz="child:", kinder=[
                     k("Center", neu=True, notiz="child:", kinder=[
                         k("Text", notiz="child:")])])])])])]),
-        grafik="schachteln",
+        grafik="schachteln", baukasten="layout",
     ),
     3: dict(
         titel="Das erste Stateful Widget", stich="StatefulWidget, State, eigene Datei",
@@ -59,7 +59,7 @@ LEVEL = {
             k("MyLogin", "stateful", neu=True, notiz="body:", kinder=[
                 k("_MyLoginState", "state", neu=True, notiz="createState()", kinder=[
                     k("Center", kinder=[k("Text")])])])])])]),
-        grafik="stateful",
+        grafik="stateful", baukasten="scaffold", wissen=True,
     ),
     4: dict(
         titel="Die Login-Maske", stich="TextField, setState, aktiver Button",
@@ -73,7 +73,7 @@ LEVEL = {
                     k("TextField", neu=True, notiz="Benutzername"),
                     k("TextField", neu=True, notiz="Passwort · obscureText"),
                     k("TextButton", neu=True, notiz="aktiv, wenn _canLogin", kinder=[k("Text")])])])])])]),
-        grafik="setstate",
+        grafik="setstate", wissen=True,
     ),
     5: dict(
         titel="Ein ToDo-Element", stich="Row, Checkbox, Expanded, IconButton",
@@ -83,7 +83,7 @@ LEVEL = {
                 k("Checkbox", neu=True, notiz="value: false"),
                 k("Expanded", neu=True, kinder=[k("Text", notiz="title")]),
                 k("IconButton", neu=True, kinder=[k("Icon", notiz="Icons.delete")])])]),
-        grafik="row",
+        grafik="row", wissen=True,
     ),
     6: dict(
         titel="Die ToDo-Liste", stich="ListView.builder, FloatingActionButton, Dialog",
@@ -97,7 +97,7 @@ LEVEL = {
                 k("FloatingActionButton", neu=True, kinder=[k("Icon", notiz="Icons.add")])]),
             k("AlertDialog", neu=True, notiz="über showDialog", kinder=[
                 k("TextField", notiz="onSubmitted: addItem")])])]),
-        grafik="liste",
+        grafik="liste", wissen=True,
     ),
     7: dict(
         titel="Löschen", stich="Funktionen als Parameter (VoidCallback)",
@@ -223,8 +223,20 @@ def handy(bild, text):
       alt="{e(text)}" loading="lazy"></div><figcaption>{e(text)}</figcaption></figure>"""
 
 
+BAUKASTEN = {
+    "scaffold": "🧩 Ausprobieren: Die Bereiche des Scaffold",
+    "layout": "🧩 Ausprobieren: Widgets verschachteln",
+}
+
+
 def level_ansicht(nr: int, d: dict) -> str:
     g_titel, g_html = GRAFIK[d["grafik"]]
+    bk = d.get("baukasten")
+    baukasten = (f'<div class="card"><h3>{BAUKASTEN[bk]}</h3><p class="klein">Schalten Sie Teile ein und aus und '
+                 f'beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code '
+                 f'leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="{bk}"></div></div>') if bk else ""
+    wissen = ('<p class="wissen-link"><a class="knopf" href="#wissen">📘 Ausführlich erklärt: Aufbau von Stateless &amp; '
+              'Stateful Widgets</a></p>') if d.get("wissen") else ""
     bilder = "".join(handy(b, t) for b, t in d["bilder"])
     zurueck = f'<a class="knopf" href="#level-{nr-1}">◀ Level {nr-1}</a>' if nr > 1 else '<a class="knopf" href="#start">◀ Start</a>'
     weiter = f'<a class="knopf primaer" href="#level-{nr+1}">Level {nr+1} ▶</a>' if nr < 8 else '<a class="knopf primaer" href="#bonus">Bonus ▶</a>'
@@ -248,7 +260,8 @@ def level_ansicht(nr: int, d: dict) -> str:
       </div>
     </aside>
   </div>
-  <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}</div>
+  {baukasten}
+  <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
   <div class="card lp-fuss">
     {zurueck}
     <div class="pruefen"><code>flutter test test/level_0{nr}_test.dart</code>
@@ -392,9 +405,80 @@ details.loesung{margin-top:14px;border-color:var(--ok)}
 .uebersicht a.ok .fertig-marke{display:inline}
 .echt{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:1px solid #e6c46e;border-radius:14px;padding:12px 14px}
 .echt span{font-size:1.6rem}
+/* ---------- Wissensseite ---------- */
+.inhalt-navi{display:flex;flex-wrap:wrap;gap:6px}
+.inhalt-navi a{text-decoration:none;border:1px solid var(--line);background:var(--card2);border-radius:999px;padding:4px 12px;font-size:.88rem}
+.anatomie{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+.anatomie pre{margin:0}
+.zwei-code>div pre+.code-titel{margin-top:12px}
+.code-titel{margin:0 0 4px;font-weight:700;font-size:.85rem;display:inline-block;padding:2px 10px;border-radius:8px}
+.code-titel.stateful{background:#fde7dc}.code-titel.state{background:#fff3d6}
+.m{display:inline-block;width:1.4em;color:#fbbf24;font-weight:700}
+.marken{margin:0;padding-left:0;list-style:none;counter-reset:m}
+.marken li{counter-increment:m;position:relative;padding:6px 0 6px 34px;border-bottom:1px solid var(--line);font-size:.93rem}
+.marken li::before{content:counter(m);position:absolute;left:0;top:6px;width:24px;height:24px;border-radius:50%;
+  background:#fbbf24;color:#1a2130;font-weight:800;display:grid;place-items:center;font-size:.8rem}
+.vergleich th.stateless{background:#e3eefc}.vergleich th.stateful{background:#fde7dc}
+.vergleich-bild{margin-top:10px}
+.leben{display:flex;flex-direction:column;gap:6px;max-width:620px;margin:10px 0}
+.station{display:flex;flex-direction:column;padding:10px 14px;border-radius:12px;background:var(--card2);border:1px solid var(--line);position:relative}
+.station b{font-family:ui-monospace,monospace}
+.station span{font-size:.88rem;color:var(--ink-soft)}
+.station+.station::before{content:"↓";position:absolute;top:-17px;left:22px;color:var(--accent);font-weight:800}
+.station.schleife{background:var(--accent-soft);border-color:var(--accent)}
+.zurueck{margin-top:6px;font-size:.88rem;color:var(--accent);font-weight:700}
+.entscheidung .frage{padding:12px 14px;border-radius:12px;background:var(--warn-soft);border:1px solid #e6c46e;margin-bottom:8px}
+.antworten{display:flex;gap:10px;flex-wrap:wrap}
+.wissen-link{margin:14px 0 0}
+/* ---------- Baukästen ---------- */
+.baukasten{display:grid;grid-template-columns:200px 230px minmax(0,1fr);gap:16px;align-items:start}
+.bk-steuer{display:flex;flex-direction:column;gap:8px}
+.bk-titel{margin:0;font-weight:700}
+.bk-schalter{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:.9rem}
+.bk-schalter input{width:18px;height:18px;accent-color:var(--accent)}
+.bk-feld{display:flex;flex-direction:column;gap:3px;font-size:.85rem;color:var(--ink-soft)}
+.bk-feld input[type=text],.bk-feld select{font:inherit;color:var(--ink);padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card)}
+.bk-feld[hidden]{display:none}
+.bk-handy{background:#1a2130;border-radius:26px;padding:9px;box-shadow:var(--shadow)}
+.bk-schirm{position:relative;height:400px;border-radius:17px;overflow:hidden;background:#fef7ff;display:flex;flex-direction:column;
+  font-family:Roboto,system-ui,sans-serif;color:#1d1b20;outline:3px solid transparent;outline-offset:-3px}
+.bk-schirm.hl,.bk-schirm .hl{outline:3px solid #f59e0b!important;outline-offset:-3px;box-shadow:0 0 0 4px rgba(245,158,11,.25)}
+.bk-schirm [data-teil]{cursor:pointer}
+.m-appbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:14px 12px;font-size:1.05rem;background:#fef7ff}
+.m-menu{border:0;background:none;font-size:1.1rem;padding:0 4px;min-height:0;color:inherit}
+.m-body{flex:1;display:grid;place-items:center;padding:8px;font-size:.88rem;text-align:center}
+.m-body.leer{color:#999}
+.m-fab{position:absolute;right:14px;bottom:14px;width:46px;height:46px;min-height:0;border-radius:14px;border:0;background:#eaddff;
+  color:#21005d;font-size:1.5rem;box-shadow:0 3px 6px rgba(0,0,0,.25);padding:0}
+.m-bottom{flex:0 0 auto;display:flex;justify-content:space-around;padding:8px 0 10px;background:#f3edf7;font-size:.72rem}
+.m-bottom~.m-fab{bottom:76px}
+.m-ziel{display:flex;flex-direction:column;align-items:center;gap:2px}
+.m-ziel i{font-style:normal;font-size:1rem;padding:2px 16px;border-radius:12px}
+.m-ziel.aktiv i{background:#e8def8}
+.m-schleier{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.m-drawer{position:absolute;top:0;bottom:0;left:0;width:72%;background:#f7f2fa;padding:22px 16px;display:flex;flex-direction:column;gap:14px;
+  border-radius:0 16px 16px 0;font-size:.9rem}
+.l-body{flex:1;display:flex;flex-direction:column;min-height:0}
+.l-padding,.l-farbe,.l-center{flex:1;display:flex;flex-direction:column;min-height:0}
+.l-padding{background:repeating-linear-gradient(45deg,#fef7ff,#fef7ff 6px,#f1e6f5 6px,#f1e6f5 12px)}
+.l-center{align-items:center;justify-content:center}
+.l-text{align-self:flex-start;font-size:.85rem}
+.l-center>.l-text{align-self:center}
+.l-liste{display:flex;gap:4px}
+.l-column{flex-direction:column;flex:1;align-self:flex-start}
+.l-center>.l-column{align-self:center}
+.l-row{flex-direction:row;align-self:stretch}
+.l-kind{background:#fff;border:1px solid #79747e;border-radius:6px;padding:4px 10px;font-size:.8rem}
+.bk-rechts{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bk-code{margin:0;font-size:.8rem;line-height:1.5}
+.bk-zeile{display:inline-block;width:100%;border-radius:4px;cursor:pointer}
+.bk-zeile.hl{background:rgba(245,158,11,.35)}
+.bk-info{padding:10px 12px;border-radius:12px;background:var(--accent-soft);font-size:.9rem;min-height:3.2em}
+@media (max-width:1100px){.baukasten{grid-template-columns:200px minmax(0,1fr)}.bk-rechts{grid-column:1/-1}}
+@media (max-width:620px){.baukasten{grid-template-columns:minmax(0,1fr)}.bk-handy{width:100%;max-width:250px;margin:auto}.anatomie{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:980px){.level-raster{grid-template-columns:1fr}.lp-seite{position:static;order:-1}}
 @media (max-width:700px){.uebersicht{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:600px){.app{padding:10px}.kopf{padding:16px}}
+@media (max-width:600px){table{display:block;overflow-x:auto;max-width:100%}p code,li code,td code{overflow-wrap:anywhere}.app{padding:10px}.kopf{padding:16px}}
 """
 
 JS = r"""
@@ -404,11 +488,13 @@ document.documentElement.classList.add("js");
   try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
   var ansichten = document.querySelectorAll(".ansicht");
   function route(){
-    var id = (location.hash || "#start").slice(1);
-    if (!document.getElementById(id) || !document.getElementById(id).classList.contains("ansicht")) id = "start";
+    var ziel = document.getElementById((location.hash || "#start").slice(1));
+    var ansicht = ziel && ziel.closest(".ansicht");
+    if (!ansicht) { ansicht = document.getElementById("start"); ziel = null; }
+    var id = ansicht.id;
     ansichten.forEach(function(a){ a.hidden = a.id !== id; });
     document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
-    window.scrollTo(0, 0);
+    if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
   }
   function zeigen(){
     var n = 0;
@@ -480,6 +566,7 @@ def main() -> None:
     geheim = loesungen_verschluesseln(passwort_holen())
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
             + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
+            + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful">📘 Wissen</a>'
             + '<a class="chip" href="#bonus" data-ziel="bonus">★</a>'
             + '<a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen">🔒</a>'
             + '<span class="chip zaehler" id="zaehler">0 / 8</span>')
@@ -532,10 +619,18 @@ def main() -> None:
         <p><b>Android Studio:</b> Rechtsklick auf die Testdatei → <i>Run 'tests in …'</i><br>
         <b>VS Code:</b> Seitenleiste <i>Testing</i> (Reagenzglas) oder ▶ über <code>main()</code></p></details>
     </div>
+    <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
+      <p><a href="#wissen">📘 Wissen: Stateless &amp; Stateful</a> – Aufbau beider Widget-Arten Zeile für Zeile, Vergleich,
+      setState, Lebenszyklus und typische Fehler. In Level 1–3 finden Sie außerdem interaktive Baukästen zu Scaffold und Layout.</p></div>
     <div class="card"><h2>Ihr Weg in 8 Leveln</h2><div class="uebersicht">{uebersicht}</div>
       <p style="margin-top:14px"><a class="knopf primaer" href="#level-1">Los geht's mit Level 1 ▶</a></p></div>
   </section>
 {ansichten}
+  <section class="ansicht" id="wissen">
+{(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8")}
+    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><a class="knopf primaer" href="#level-1">Zu Level 1 ▶</a></div>
+  </section>
+
   <section class="ansicht" id="bonus">
     <div class="card level-kopf"><span class="nummer" aria-hidden="true">★</span>
       <div><h2>Bonus – Die App weiterentwickeln</h2><p class="stich">für alle, die fertig sind</p></div></div>
@@ -559,6 +654,7 @@ def main() -> None:
   <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <script>{JS}</script>
+<script>{(ROOT / "tool" / "baukasten.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
 </body>
 </html>

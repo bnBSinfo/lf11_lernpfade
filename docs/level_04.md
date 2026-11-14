@@ -19,6 +19,31 @@ Oberfläche ändert: Der Login-Button wird erst aktiv, wenn beide Felder gefüll
    - `TextField` mit `onChanged: _onChangedPassword`, `obscureText: true`, `labelText: 'Passwort'`
    - `TextButton` mit `onPressed: _canLogin ? () {} : null` und `child: Text('Login')`
 
+## Erklärt – was passiert hier?
+
+**Die drei Variablen sind der Zustand (State) der Maske:**
+
+| Variable | merkt sich | Startwert |
+|---|---|---|
+| `_username` | was im ersten Feld steht | `''` (leer) |
+| `_password` | was im zweiten Feld steht | `''` |
+| `_canLogin` | darf man auf Login drücken? | `false` |
+
+Sie stehen **im State, außerhalb von `build`** – nur so bleiben sie erhalten, wenn `build` neu läuft. Stünden sie in `build`, würden sie bei jedem Neuzeichnen wieder auf `''` gesetzt.
+
+**Was passiert beim Tippen?**
+
+1. Sie tippen ein „a“ in das erste Feld.
+2. Das `TextField` ruft seine Funktion `onChanged` auf und übergibt den ganzen Text: `_onChangedUsername('a')`.
+3. Die Methode speichert ihn: `_username = 'a'` und ruft `_checkCanLogin()` auf.
+4. `_checkCanLogin()` berechnet `_canLogin` neu – **innerhalb von `setState`**.
+5. `setState` meldet Flutter: „Daten geändert“. Flutter ruft `build` erneut auf.
+6. `build` baut den Button neu: `onPressed: _canLogin ? () {} : null`.
+
+**Der Bedingungsoperator `? :`** – `bedingung ? wennJa : wennNein`. Ist `_canLogin` wahr, bekommt der Button eine (leere) Funktion und ist **aktiv**. Ist es falsch, bekommt er `null` und ist **grau**.
+
+**Funktionen übergeben:** `onChanged: _onChangedUsername` übergibt die Methode **selbst** (ohne Klammern). Das TextField ruft sie später auf. Mit Klammern würde sie sofort beim Bauen ausgeführt.
+
 ## Prüfen
 `flutter test test/level_04_test.dart` – zwei Tests: Aufbau und Verhalten.
 

@@ -25,6 +25,33 @@ wandeln Sie die Liste in eine `Map<String, bool>` um.
    );
    ```
 
+## Erklärt – was passiert hier?
+
+**Warum eine Map?** Zu jedem ToDo gehören jetzt **zwei** Informationen: Titel und Haken. Eine `List<String>` kann pro Platz nur einen Wert speichern. Eine `Map<String, bool>` ordnet jedem **Schlüssel** (Titel) einen **Wert** (abgehakt ja/nein) zu:
+
+```dart
+Map<String, bool> todos = {
+  'Milch kaufen': true,
+  'LF11 lernen': false,
+};
+```
+
+| Aufgabe | List | Map |
+|---|---|---|
+| hinzufügen | `todos.add('Milch')` | `todos['Milch'] = false` |
+| löschen | `todos.removeAt(i)` | `todos.remove('Milch')` |
+| Anzahl | `todos.length` | `todos.length` |
+| i-tes Element | `todos[i]` | `todos.keys.elementAt(i)` (Schlüssel) und `todos.values.elementAt(i)` (Wert) |
+
+**Der Haken – wieder über eine Funktion:** Die Checkbox sitzt im Stateless `ToDoItem`, die Daten im State der Liste. Also gleiches Muster wie beim Löschen:
+
+1. Checkbox antippen → `onChanged: (value) => checkBoxDone()`.
+2. `checkBoxDone` ist `() => checkBoxDone(key)` aus der Liste.
+3. `todos.update(key, (bool done) => !done)` dreht den Wert um: `false` → `true` → `false`.
+4. `setState` → `build` → das `ToDoItem` bekommt den neuen Wert als `done` und zeigt den Haken.
+
+**Beachten Sie:** `ToDoItem` bleibt **Stateless** – es merkt sich den Haken nicht selbst, sondern bekommt ihn bei jedem Neuzeichnen von außen (`done`). Nur so passen Anzeige und Daten immer zusammen.
+
 ## Prüfen
 `flutter test test/level_08_test.dart` – und dann `dart run tool/fortschritt.dart` 🎉
 
