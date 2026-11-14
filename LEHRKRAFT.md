@@ -54,3 +54,9 @@ flutter test                    # mit Starter-Code: alle Tests rot
 - Webseite (GitHub Pages): https://bnbsinfo.github.io/flutter_lernpfad_schueler/
 
 Nach Änderungen an Anleitungen oder Starter-Code: `./tool/schueler_repo_aktualisieren.sh`
+
+## Bilder auf der Webseite
+- Zielbilder (`docs/bilder/*.png`) sind echte Screenshots der Musterlösungen.
+  Nach Änderungen an den Lösungen neu erzeugen: `./tool/bilder_erzeugen.sh`
+- Widget-Bäume und Ablaufgrafiken stehen in `tool/seite_bauen.py` (`LEVEL`, `GRAFIK`).
+- Lokal ansehen: `python3 tool/seite_bauen.py` und dann `python3 -m http.server -d docs`.
