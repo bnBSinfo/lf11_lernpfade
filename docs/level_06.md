@@ -24,10 +24,10 @@ Das Skript soll – in dieser Reihenfolge:
 | | `name` | Text bis 20 Zeichen, Pflichtfeld |
 | | `passwordLogin` | Text bis 20 Zeichen, Pflichtfeld |
 | `ToDoTB` | `id` | ganze Zahl, Primärschlüssel, zählt automatisch hoch |
-| | `titel` | Text bis 100 Zeichen, Pflichtfeld |
-| | `erledigt` | wahr/falsch, Pflichtfeld, Standardwert falsch |
+| | `name` | Text bis 100 Zeichen, Pflichtfeld |
+| | `checkbox` | wahr/falsch, Pflichtfeld, Standardwert falsch |
 
-Daten: in `flutterTB` die Benutzer `berno` und `stoll` (Passwort jeweils `Pa$$w0rd`), in `ToDoTB` *Pi einrichten* (erledigt) und *API testen* (offen).
+Daten: in `flutterTB` die Benutzer `berno` und `stoll` (Passwort jeweils `Pa$$w0rd`), in `ToDoTB` *Pi einrichten* (abgehakt) und *API testen* (offen).
 
 Speichern (Strg+O, Enter), beenden (Strg+X) und ausführen:
 ```bash
@@ -71,10 +71,10 @@ USE flutterDB;
 ```sql
 CREATE TABLE ToDoTB (
   id       … ,
-  titel    … ,
-  erledigt …
+  name     … ,
+  checkbox …
 );
-INSERT INTO ToDoTB (titel, erledigt) VALUES
+INSERT INTO ToDoTB (name, checkbox) VALUES
   ('…', TRUE),
   ('…', FALSE);
 ```

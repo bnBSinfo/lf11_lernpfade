@@ -185,12 +185,12 @@ Future<Ergebnis> level6() async {
     return r;
   }
   final td = jsonOderNull(t.body);
-  final titel = td is Map && td['records'] is List
-      ? (td['records'] as List).whereType<Map>().map((m) => m['titel']).toSet()
+  final namen = td is Map && td['records'] is List
+      ? (td['records'] as List).whereType<Map>().map((m) => m['name']).toSet()
       : <dynamic>{};
   r.pruefe(t.status == 200 && td is Map, 'Tabelle ToDoTB existiert',
       'Tabelle ToDoTB fehlt oder ist nicht lesbar (HTTP ${t.status}).');
-  r.pruefe(titel.contains('API testen'), "Beispiel-ToDo 'API testen' ist eingetragen",
+  r.pruefe(namen.contains('API testen'), "Beispiel-ToDo 'API testen' ist eingetragen",
       "In ToDoTB fehlt das Beispiel-ToDo 'API testen'.");
   final eins = await holen('$api/flutterTB/1');
   r.pruefe(eins?.status == 200, 'flutterTB hat einen Primärschlüssel (records/flutterTB/1 klappt)',

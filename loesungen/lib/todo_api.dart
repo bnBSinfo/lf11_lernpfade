@@ -3,25 +3,28 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-/// Ein Eintrag aus der Tabelle ToDoTB.
+/// Ein Eintrag aus der Tabelle ToDoTB (Spalten wie im Skript: id, name, checkbox).
+///
+/// Nur für den Dart-Client aus Level 9. Die Flutter-App nutzt im Lernpfad
+/// Flutter-Datenbankanbindung wie im Skript webRequest.dart und ToDoListObject.
 class ToDo {
-  const ToDo({required this.id, required this.titel, required this.erledigt});
+  const ToDo({required this.id, required this.name, required this.checkbox});
 
   final int id;
-  final String titel;
-  final bool erledigt;
+  final String name;
+  final bool checkbox;
 
   factory ToDo.fromJson(Map<String, dynamic> json) {
-    final e = json['erledigt'];
+    final c = json['checkbox'];
     return ToDo(
       id: json['id'] as int,
-      titel: json['titel'] as String,
-      erledigt: e == true || e == 1,
+      name: json['name'] as String,
+      checkbox: c == true || c == 1,
     );
   }
 
   @override
-  String toString() => '${erledigt ? '[x]' : '[ ]'} $id: $titel';
+  String toString() => '${checkbox ? '[x]' : '[ ]'} $id: $name';
 }
 
 /// Zugriff auf die Tabelle ToDoTB über die php-crud-api auf dem Pi.
@@ -44,16 +47,16 @@ class TodoApi {
         .toList();
   }
 
-  Future<int> anlegen(String titel) async {
+  Future<int> anlegen(String name) async {
     final antwort = await http.post(basis,
-        headers: _json, body: jsonEncode({'titel': titel, 'erledigt': false}));
+        headers: _json, body: jsonEncode({'name': name, 'checkbox': false}));
     _pruefe(antwort);
     return jsonDecode(antwort.body) as int;
   }
 
-  Future<void> abhaken(int id, bool erledigt) async {
+  Future<void> abhaken(int id, bool checkbox) async {
     final antwort = await http.put(_eintrag(id),
-        headers: _json, body: jsonEncode({'erledigt': erledigt}));
+        headers: _json, body: jsonEncode({'checkbox': checkbox}));
     _pruefe(antwort);
   }
 

@@ -3,7 +3,7 @@
   var $ = function(id){ return document.getElementById(id); };
   if (!$("bk-methode")) return;
   var vorschlag = {
-    ToDoTB: {POST: '{"titel": "Milch kaufen", "erledigt": false}', PUT: '{"erledigt": true}'},
+    ToDoTB: {POST: '{"name": "Milch kaufen", "checkbox": false}', PUT: '{"checkbox": true}'},
     flutterTB: {POST: '{"name": "neu", "passwordLogin": "geheim"}', PUT: '{"name": "umbenannt"}'}
   };
   var letzte = "";

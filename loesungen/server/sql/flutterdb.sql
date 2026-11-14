@@ -22,10 +22,10 @@ INSERT INTO flutterTB (name, passwordLogin) VALUES
 
 CREATE TABLE ToDoTB (
   id       INT AUTO_INCREMENT PRIMARY KEY,
-  titel    VARCHAR(100) NOT NULL,
-  erledigt BOOLEAN NOT NULL DEFAULT FALSE
+  name     VARCHAR(100) NOT NULL,
+  checkbox BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-INSERT INTO ToDoTB (titel, erledigt) VALUES
+INSERT INTO ToDoTB (name, checkbox) VALUES
   ('Pi einrichten', TRUE),
   ('API testen', FALSE);

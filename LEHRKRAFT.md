@@ -60,7 +60,7 @@ Vorschläge für die Überarbeitung des Skripts:
 - **`skripterstellung/flutter.sql`**: `GRANT … ON flutterDB TO` (ohne `.*`) – meint eine *Tabelle* flutterDB.
   Im .docx richtig. Außerdem fehlt im .docx `USE flutterDB;` vor `CREATE TABLE`.
 - **Tabelle `ToDoTB`** wird im README erwähnt, im Skript aber nirgends angelegt – im Lernpfad mit
-  `id, titel, erledigt` ergänzt (passt zur ToDo-Liste der Flutter-Einführung).
+  `id, name, checkbox` ergänzt – Spaltennamen wie im Flutter-Skript (`ToDoListObject`, `webRequest.dart`).
 - **„Die 4 Ubuntu-Pakete“ in synaptic** sind nicht benannt → im Lernpfad per `apt`:
   `php libapache2-mod-php php-mysql` (L4) und `php-mbstring php-zip php-gd php-curl` (L5).
 - **REST-API als Download** statt `git clone`: feste Version, kein `.git`-Ordner im Webverzeichnis.
@@ -77,7 +77,7 @@ Vorschläge für die Überarbeitung des Skripts:
 2. Lernpfad-Seite in mebis öffnen, Pi bereitlegen.
 3. Je Level: Auftrag → abtippen und umsetzen → Selbstkontrolle.
 4. Abnahme stichprobenartig mit `dart run tool/pruefen.dart` und dem Abnahmeprotokoll.
-5. Ausblick (Bonus 1): `TodoApi` in die ToDo-App der Flutter-Einführung einbauen.
+5. Ausblick (Bonus 1): Lernpfad Flutter-Datenbankanbindung (https://bnbsinfo.github.io/flutter_lernpfad_schueler/datenbank/) – die ToDo-App nutzt dieselbe Tabelle `ToDoTB`.
 
 ## Prüfen nach Änderungen
 ```

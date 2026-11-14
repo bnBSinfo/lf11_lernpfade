@@ -75,7 +75,7 @@ LEVEL = {
             ziele=[("browser", "http://10.36.13.76/benutzer.php", '[\n  {"id": 1, "name": "berno"},\n  {"id": 2, "name": "stoll"}\n]')],
             kette=[("Browser", "GET /benutzer.php"), ("PHP", "new mysqli(…)"), ("MySQL", "SELECT id, name …"), ("PHP", "json_encode → JSON")]),
     8: dict(titel="Die fertige REST-API", stich="php-crud-api, GET/POST/PUT/DELETE, curl",
-            ziele=[("browser", "…/php-crud-api/api.php/records/ToDoTB", '{"records": [\n  {"id": 1, "titel": "Pi einrichten", "erledigt": true},\n  {"id": 2, "titel": "API testen", "erledigt": false}\n]}')],
+            ziele=[("browser", "…/php-crud-api/api.php/records/ToDoTB", '{"records": [\n  {"id": 1, "name": "Pi einrichten", "checkbox": true},\n  {"id": 2, "name": "API testen", "checkbox": false}\n]}')],
             bilder=[("api_json", "Firefox zeigt die JSON-Antwort der API")],
             kette=[("HTTP-Methode", "GET · POST · PUT · DELETE"), ("Adresse", "/records/ToDoTB/3"), ("php-crud-api", "erzeugt SQL"), ("Antwort", "JSON")]),
     9: dict(titel="Die REST-API aus Dart nutzen", stich="package:http, async/await, jsonDecode",

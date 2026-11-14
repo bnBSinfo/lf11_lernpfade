@@ -1,6 +1,6 @@
 # Level 9 – Die REST-API aus Dart nutzen
 
-**Ziel:** Ein eigenes Dart-Programm liest, legt an, hakt ab und löscht ToDos auf dem Pi. Die Klasse `TodoApi` daraus bauen Sie später in Ihre Flutter-App ein.
+**Ziel:** Ein eigenes Dart-Programm liest, legt an, hakt ab und löscht ToDos auf dem Pi. Dieselben Anfragen schickt später Ihre Flutter-App (Lernpfad Flutter-Datenbankanbindung).
 
 **Sie schreiben:** ein neues Dart-Projekt `todo_client` auf dem PC
 
@@ -12,14 +12,14 @@
    dart pub add http
    ```
 2. Legen Sie die Datei `lib/todo_api.dart` an. Sie enthält:
-   - eine Klasse **`ToDo`** mit den Feldern `id` (int), `titel` (String), `erledigt` (bool) und einem Konstruktor **`ToDo.fromJson(Map<String, dynamic> json)`**. Achtung: `erledigt` kann je nach Server `true`/`false` **oder** `1`/`0` sein.
+   - eine Klasse **`ToDo`** mit den Feldern `id` (int), `name` (String), `checkbox` (bool) und einem Konstruktor **`ToDo.fromJson(Map<String, dynamic> json)`**. Achtung: `checkbox` kann je nach Server `true`/`false` **oder** `1`/`0` sein.
    - eine Klasse **`TodoApi`**, die im Konstruktor die IP bekommt und daraus die Adresse `http://<IP>/php-crud-api/api.php/records/ToDoTB` baut, mit den Methoden:
 
    | Methode | HTTP | Rückgabe |
    |---|---|---|
    | `Future<List<ToDo>> alle()` | `GET` auf die Tabelle | Liste aus `records` |
-   | `Future<int> anlegen(String titel)` | `POST` auf die Tabelle, Body `{"titel": …, "erledigt": false}` | neue id |
-   | `Future<void> abhaken(int id, bool erledigt)` | `PUT` auf `…/ToDoTB/<id>`, Body `{"erledigt": …}` | – |
+   | `Future<int> anlegen(String name)` | `POST` auf die Tabelle, Body `{"name": …, "checkbox": false}` | neue id |
+   | `Future<void> abhaken(int id, bool checkbox)` | `PUT` auf `…/ToDoTB/<id>`, Body `{"checkbox": …}` | – |
    | `Future<void> loeschen(int id)` | `DELETE` auf `…/ToDoTB/<id>` | – |
 
    Jede Methode prüft den Statuscode und wirft bei allem außer 200 eine `Exception` mit Code und Antworttext.
@@ -49,7 +49,7 @@ return (daten['records'] as List)                 // ④ Liste unter "records"
 3. **`jsonDecode`** (aus `dart:convert`) macht aus dem JSON-Text Dart-Objekte: `{}` → `Map`, `[]` → `List`.
 4. **`map(...).toList()`** wandelt jedes JSON-Objekt in ein `ToDo` um.
 
-Beim Senden ist es umgekehrt: `jsonEncode({'titel': titel, 'erledigt': false})` macht aus der Map JSON-Text. Der Header `Content-Type: application/json` sagt der API, wie sie den Body lesen soll.
+Beim Senden ist es umgekehrt: `jsonEncode({'name': name, 'checkbox': false})` macht aus der Map JSON-Text. Der Header `Content-Type: application/json` sagt der API, wie sie den Body lesen soll.
 
 **Kommandozeilen-Argumente:** `void main(List<String> args)` bekommt alles hinter dem Dateinamen als Liste: `args[0]` ist die IP, `args[1]` der Befehl, `args[2]` der Wert.
 
@@ -81,7 +81,7 @@ final antwort = await http.post(basis,
 
 <details><summary>Tipp 3 – fromJson</summary>
 
-`erledigt: e == true || e == 1` – so ist beides abgedeckt.
+`checkbox: c == true || c == 1` – so ist beides abgedeckt.
 </details>
 
 <details><summary>Tipp 4 – „Connection refused“ / Timeout</summary>

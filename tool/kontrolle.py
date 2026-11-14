@@ -99,7 +99,7 @@ KONTROLLE = {
             ("Alle Benutzer.", False, "Der Benutzer steht hinter TO."),
             ("Alle Datenbanken.", False, "Alle Datenbanken wären *.* – viel zu viele Rechte."),
         ]),
-        ("Warum steht die `id` beim `INSERT INTO ToDoTB (titel, erledigt) …` nicht dabei?", [
+        ("Warum steht die `id` beim `INSERT INTO ToDoTB (name, checkbox) …` nicht dabei?", [
             ("AUTO_INCREMENT vergibt die nächste Nummer selbst.", True, "Die Datenbank kennt die letzte Nummer am besten."),
             ("Die id darf leer (NULL) bleiben.", False, "Ein Primärschlüssel ist nie NULL."),
             ("Primärschlüssel werden beim Einfügen ignoriert.", False,
@@ -129,10 +129,10 @@ KONTROLLE = {
         "Ich habe mit curl ein ToDo angelegt (POST), abgehakt (PUT) und gelöscht (DELETE).",
     ], "fragen": [
         ("Mit welcher Anfrage haken Sie das ToDo mit der id 3 ab?", [
-            ("`PUT …/records/ToDoTB/3` mit `{\"erledigt\": true}`", True, "PUT ändert den Datensatz unter seiner Adresse."),
-            ("`POST …/records/ToDoTB/3` mit `{\"erledigt\": true}`", False,
+            ("`PUT …/records/ToDoTB/3` mit `{\"checkbox\": true}`", True, "PUT ändert den Datensatz unter seiner Adresse."),
+            ("`POST …/records/ToDoTB/3` mit `{\"checkbox\": true}`", False,
              "POST legt neue Datensätze an – und zwar an der Tabelle, ohne id."),
-            ("`GET …/records/ToDoTB/3?erledigt=1`", False, "GET liest nur, es ändert nie etwas."),
+            ("`GET …/records/ToDoTB/3?checkbox=1`", False, "GET liest nur, es ändert nie etwas."),
         ]),
         ("Was antwortet die php-crud-api auf ein erfolgreiches `POST`?", [
             ("Die id des neuen Datensatzes.", True, "Damit kann die App den Eintrag später ändern oder löschen."),

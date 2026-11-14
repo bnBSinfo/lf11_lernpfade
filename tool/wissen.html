@@ -32,7 +32,7 @@
       <tr><td>Delete</td><td><code>DELETE</code></td><td><code>/records/ToDoTB/3</code></td><td><code>DELETE … WHERE id = 3</code></td><td><code>1</code></td></tr>
     </tbody>
   </table>
-  <p>Filtern und sortieren geht über Parameter: <code>/records/ToDoTB?filter=erledigt,eq,0&amp;order=titel</code></p>
+  <p>Filtern und sortieren geht über Parameter: <code>/records/ToDoTB?filter=checkbox,eq,0&amp;order=name</code></p>
 </div>
 
 <div class="card"><h3>⬇ Download: die REST-API</h3>
@@ -51,7 +51,7 @@ wget https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php</code><
     <tbody>
       <tr><td><code>200</code></td><td>OK</td><td>alles gut</td></tr>
       <tr><td><code>404</code></td><td>Not Found</td><td>Datei nicht in /var/www/html, Tippfehler in Tabelle oder id</td></tr>
-      <tr><td><code>422</code></td><td>Unprocessable</td><td>Daten passen nicht zur Tabelle (z. B. titel fehlt)</td></tr>
+      <tr><td><code>422</code></td><td>Unprocessable</td><td>Daten passen nicht zur Tabelle (z. B. name fehlt)</td></tr>
       <tr><td><code>500</code></td><td>Server-Fehler</td><td>PHP-Fehler, Datenbank-Zugangsdaten falsch → <code>/var/log/apache2/error.log</code></td></tr>
     </tbody>
   </table>
@@ -82,7 +82,7 @@ wget https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php</code><
 <div class="card"><h3>JSON in 30 Sekunden</h3>
   <pre><code>{                              ← Objekt  → Dart: Map&lt;String, dynamic&gt;
   "records": [                 ← Liste   → Dart: List
-    {"id": 1, "titel": "Pi einrichten", "erledigt": true}
+    {"id": 1, "name": "Pi einrichten", "checkbox": true}
   ]
 }</code></pre>
   <p>Zahlen ohne Anführungszeichen, Texte in <b>doppelten</b> Anführungszeichen, <code>true</code>/<code>false</code> klein.

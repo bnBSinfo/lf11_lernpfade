@@ -10,8 +10,8 @@ final benutzer = [
   {'id': 2, 'name': 'stoll', 'passwordLogin': r'Pa$$w0rd'},
 ];
 final todos = <int, Map<String, dynamic>>{
-  1: {'id': 1, 'titel': 'Pi einrichten', 'erledigt': true},
-  2: {'id': 2, 'titel': 'API testen', 'erledigt': false},
+  1: {'id': 1, 'name': 'Pi einrichten', 'checkbox': true},
+  2: {'id': 2, 'name': 'API testen', 'checkbox': false},
 };
 var naechsteId = 3;
 
@@ -67,7 +67,7 @@ Future<void> starten(List<String> args) async {
             json({'records': todos.values.toList()});
           case ('POST', null):
             final d = jsonDecode(body) as Map<String, dynamic>;
-            todos[naechsteId] = {'id': naechsteId, 'titel': d['titel'], 'erledigt': d['erledigt'] ?? false};
+            todos[naechsteId] = {'id': naechsteId, 'name': d['name'], 'checkbox': d['checkbox'] ?? false};
             json(naechsteId++);
           case ('GET', final int i) when todos.containsKey(i):
             json(todos[i]!);
