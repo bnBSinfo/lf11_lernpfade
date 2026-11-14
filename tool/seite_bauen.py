@@ -22,6 +22,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 REPO = "bnBSinfo/flutter_lernpfad_schueler"
 ITERATIONEN = 600_000
+# Versionsnummer aus pubspec.yaml (vor dem Veröffentlichen dort erhöhen), Datum = Tag des Bauens
+VERSION = re.search(r"^version:\s*([\d.]+)", (ROOT / "pubspec.yaml").read_text(encoding="utf-8"), re.M).group(1)
+import datetime as _dt
+STAND = _dt.date.today().strftime("%d.%m.%Y")
 MARKER = "LOESUNG-OK\n"
 e = html.escape
 
@@ -668,6 +672,7 @@ def main() -> None:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flutter-Lernpfad LF11</title>
+<meta name="version" content="{VERSION}">
 <meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – mit automatischen Tests.">
 <link rel="stylesheet" href="css/stil.css">
 <style>{CSS}</style>
@@ -676,7 +681,7 @@ def main() -> None:
 <div class="app">
   <header class="card kopf">
     <div class="titel">
-      <h1>Flutter-Lernpfad <span class="version">LF11</span></h1>
+      <h1>Flutter-Lernpfad <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 8 Leveln zur ersten eigenen App – Sie programmieren echt, die Tests prüfen mit.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
@@ -738,7 +743,7 @@ def main() -> None:
       </form></div>
   </section>
 
-  <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
+  <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
   <form method="dialog"><button class="primaer">Schließen</button></form></dialog>

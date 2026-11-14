@@ -1,7 +1,7 @@
 name: flutter_lernpfad
 description: "Flutter-Lernpfad LF11 – in 8 Leveln zur ersten eigenen App."
 publish_to: 'none'
-version: 0.1.0+1
+version: 1.5.0+6
 
 environment:
   sdk: ^3.13.7

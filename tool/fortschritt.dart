@@ -15,6 +15,11 @@ const titel = {
 };
 
 Future<void> main() async {
+  final version = RegExp(r'^version:\s*([\d.]+)', multiLine: true)
+          .firstMatch(File('pubspec.yaml').readAsStringSync())
+          ?.group(1) ??
+      '?';
+  stdout.writeln('Flutter-Lernpfad LF11 · Version $version');
   stdout.writeln('Tests laufen … (dauert einige Sekunden)\n');
   final p = await Process.start('flutter', ['test', '--reporter', 'json'],
       runInShell: true);
