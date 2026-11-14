@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flutter-Lernpfad LF11</title>
+<meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – mit automatischen Tests.">
+<link rel="stylesheet" href="css/stil.css">
+<style>
+  .kopf{padding:20px 22px}
+  .level-kopf{display:flex;gap:14px;align-items:center}
+  .nummer{flex:0 0 46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    font-family:var(--titel);font-weight:800;font-size:1.3rem;background:var(--accent-soft);color:var(--accent)}
+  .level.fertig .nummer{background:var(--ok);color:#fff}
+  .level.fertig .nummer::after{content:"✓";font-size:.8rem;margin-left:2px}
+  .level-kopf h2{margin:0}
+  .stich{margin:0;color:var(--muted);font-size:.9rem}
+  .level-inhalt{max-width:78ch}
+  pre{background:#1a2130;color:#e8ebf0;border-radius:12px;padding:12px 14px;overflow-x:auto;font-size:.88rem}
+  pre code{background:none;border:0;color:inherit;padding:0}
+  blockquote{margin:.8rem 0;padding:10px 14px;border-left:4px solid var(--deko);background:var(--accent-soft);border-radius:0 12px 12px 0}
+  blockquote p{margin:0}
+  table{border-collapse:collapse;margin:.6rem 0;width:100%}
+  td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card2)}
+  summary{cursor:pointer;font-weight:700}
+  .pruefen{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .level.fertig button.erledigt{background:var(--ok);border-color:var(--ok)}
+  .raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .schritt h3{margin-top:0}
+  .kopf a.chip{text-decoration:none}
+  .kopf a.chip.ok{background:rgba(255,255,255,.95);color:var(--ok);border-color:#fff}
+  .zaehler{font-weight:700}
+  a{color:var(--accent)}
+  @media (max-width:600px){.app{padding:10px} .kopf{padding:16px}}
+</style>
+</head>
+<body data-thema="technik">
+<div class="app">
+  <header class="card kopf">
+    <div class="titel">
+      <h1>Flutter-Lernpfad <span class="version">LF11</span></h1>
+      <div class="unter">In 8 Leveln zur ersten eigenen App – Sie programmieren echt, die Tests prüfen mit.</div>
+    </div>
+    <nav class="fortschritt" aria-label="Level"><a class="chip" href="#level-1" data-chip="1">1</a><a class="chip" href="#level-2" data-chip="2">2</a><a class="chip" href="#level-3" data-chip="3">3</a><a class="chip" href="#level-4" data-chip="4">4</a><a class="chip" href="#level-5" data-chip="5">5</a><a class="chip" href="#level-6" data-chip="6">6</a><a class="chip" href="#level-7" data-chip="7">7</a><a class="chip" href="#level-8" data-chip="8">8</a>
+      <span class="chip zaehler" id="zaehler">0 / 8</span></nav>
+  </header>
+
+  <section class="card">
+    <h2>So geht's</h2>
+    <p><b>Programmiert wird nicht im Browser, sondern in Ihrer echten Entwicklungsumgebung</b>
+    (Android Studio oder VS Code) mit einem echten Flutter-Projekt, echtem Emulator und echten Tests –
+    genau wie im Betrieb. Diese Seite ist Ihr Wegweiser.</p>
+    <div class="raster">
+      <div class="schritt"><h3>1 · Projekt holen</h3>
+        <p><a href="https://github.com/bnBSinfo/flutter_lernpfad_schueler/archive/refs/heads/main.zip">ZIP herunterladen</a> und entpacken – oder:</p>
+        <pre><code>git clone https://github.com/bnBSinfo/flutter_lernpfad_schueler.git</code></pre></div>
+      <div class="schritt"><h3>2 · Öffnen</h3>
+        <p>Ordner in Android Studio oder VS Code öffnen, einmalig im Terminal:</p>
+        <pre><code>flutter pub get</code></pre></div>
+      <div class="schritt"><h3>3 · Programmieren</h3>
+        <p>Auftrag unten lesen, <code>TODO</code>s in <code>lib/level_0X/</code> lösen.
+        Ansehen: in <code>lib/main.dart</code> <code>aktivesLevel</code> setzen und App starten.</p></div>
+      <div class="schritt"><h3>4 · Prüfen</h3>
+        <p>Test starten – bei Rot steht ein <b>Hinweis</b> in der Ausgabe. Gesamtstand:</p>
+        <pre><code>dart run tool/fortschritt.dart</code></pre></div>
+    </div>
+    <details><summary>Tests in der IDE starten</summary>
+      <p><b>Android Studio:</b> Rechtsklick auf die Testdatei → <i>Run 'tests in …'</i><br>
+      <b>VS Code:</b> Seitenleiste <i>Testing</i> (Reagenzglas) oder ▶ über <code>main()</code></p>
+    </details>
+  </section>
+
+<section class="card level" id="level-1" data-level="1">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">1</span>
+    <div><h2>Level 1 – Das Grundgerüst</h2>
+    <p class="stich">MaterialApp, Scaffold</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Sie bauen mit nur zwei Widgets –
+<code>MaterialApp</code> und <code>Scaffold</code> – das Grundgerüst
+einer App im Material Design.</p>
+<p><strong>Datei:</strong> <code>lib/level_01/my_first_app.dart</code> ·
+<strong>Skript:</strong> Kapitel 3 und 4a</p>
+<h3 id="vorher-verstehen-main-und-runapp">Vorher verstehen:
+<code>main()</code> und <code>runApp()</code></h3>
+<p>Öffnen Sie <code>lib/main.dart</code>. In der Methode
+<code>main()</code> läuft die App: Das Start-Widget wird an
+<code>runApp()</code> übergeben. Hier ist das Ihre Klasse
+<code>MyFirstApp</code>.</p>
+<h3 id="auftrag">Auftrag</h3>
+<p><code>MyFirstApp</code> ist ein <strong>Stateless Widget</strong> –
+es ändert sich zur Laufzeit nicht. Seine <code>build</code>-Methode gibt
+zurück, was angezeigt wird.</p>
+<ol type="1">
+<li>Geben Sie statt <code>const Placeholder()</code> eine
+<code>MaterialApp</code> zurück.</li>
+<li>Weisen Sie <code>home</code> ein <code>Scaffold</code> zu.</li>
+<li>Der <code>body</code> des Scaffold ist
+<code>Text('Das ist mein Grundgerüst')</code>.</li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_01_test.dart</code> · Ansehen:
+<code>aktivesLevel = 1</code> in <code>lib/main.dart</code></p>
+<details><summary>Tipp 1</summary>
+
+<p>Widgets werden ineinander gesteckt: <code>MaterialApp(home: …)</code>
+– an die Stelle der Punkte kommt das nächste Widget.</p>
+</details>
+
+<details><summary>Tipp 2</summary>
+
+<pre class="dart"><code>return const MaterialApp(
+  home: Scaffold(
+    body: /* hier Ihr Text-Widget */,
+  ),
+);</code></pre>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> <code>MaterialApp</code> bringt Navigation
+und Theme mit, <code>Scaffold</code> teilt die Oberfläche in AppBar,
+Body und BottomNavigationBar.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Warum steht der Text ganz oben links –
+und sogar unter der Statusleiste?</p>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_01_test.dart</code>
+    <button class="primaer erledigt" data-level="1">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-2" data-level="2">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">2</span>
+    <div><h2>Level 2 – Widget im Widget</h2>
+    <p class="stich">Padding, ColoredBox, Center</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Sie verstehen, dass es in Flutter für jede
+Funktion ein eigenes Widget gibt – auch für Abstand, Farbe und
+Ausrichtung.</p>
+<p><strong>Datei:</strong> <code>lib/level_02/my_first_app.dart</code> ·
+<strong>Skript:</strong> Kapitel 4a</p>
+<h3 id="auftrag">Auftrag</h3>
+<p>In HTML/CSS würden Sie <code>padding</code>, <code>background</code>
+und <code>text-align</code> als Eigenschaften setzen. In Flutter
+verpacken Sie stattdessen Widgets ineinander.</p>
+<p>Bauen Sie den <code>body</code> von außen nach innen:</p>
+<ol type="1">
+<li><code>Padding</code> mit
+<code>padding: EdgeInsets.all(50)</code></li>
+<li>darin eine <code>ColoredBox</code> mit
+<code>color: Colors.grey</code></li>
+<li>darin ein <code>Center</code></li>
+<li>darin <code>Text('hier ist das zentrale Feld der App')</code></li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_02_test.dart</code></p>
+<details><summary>Tipp 1</summary>
+
+<p>Das innere Widget wird immer der Eigenschaft <code>child</code> des
+äußeren zugewiesen.</p>
+</details>
+
+<details><summary>Tipp 2</summary>
+
+<pre class="dart"><code>body: Padding(
+  padding: EdgeInsets.all(50),
+  child: ColoredBox(
+    color: Colors.grey,
+    child: /* Center mit Text */,
+  ),
+),</code></pre>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Bei der Verschachtelung wird das
+untergeordnete Widget der Eigenschaft <code>child</code> des
+übergeordneten zugewiesen. So entsteht der
+<strong>Widget-Tree</strong>.</p>
+</blockquote>
+<p><strong>Aufgabe auf Papier:</strong> Zeichnen Sie den Widget-Tree von
+<code>MyFirstApp</code> bis zum <code>Text</code>.</p>
+<p><strong>Experiment:</strong> Tauschen Sie <code>Padding</code> und
+<code>ColoredBox</code>. Was ändert sich – und warum?</p>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_02_test.dart</code>
+    <button class="primaer erledigt" data-level="2">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-3" data-level="3">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">3</span>
+    <div><h2>Level 3 – Das erste Stateful Widget</h2>
+    <p class="stich">StatefulWidget, State</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Sie legen ein Stateful Widget an, lagern es in
+eine eigene Datei aus und binden es in das Stateless Widget ein.</p>
+<p><strong>Dateien:</strong>
+<code>lib/level_03/my_first_app.dart</code>,
+<code>lib/level_03/my_login.dart</code> · <strong>Skript:</strong>
+Kapitel 4b</p>
+<h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li><code>my_first_app.dart</code>: Ergänzen Sie eine
+<code>appBar</code> mit
+<code>title: Text('Meine erste App')</code>.</li>
+<li><code>my_login.dart</code>: <code>MyLogin</code> ist noch ein
+Stateless Widget. Machen Sie daraus ein <strong>Stateful
+Widget</strong>. Es besteht aus zwei Klassen:
+<ul>
+<li><code>MyLogin extends StatefulWidget</code> mit
+<code>createState()</code></li>
+<li><code>_MyLoginState extends State&lt;MyLogin&gt;</code> mit der
+<code>build</code>-Methode Die <code>build</code>-Methode zeigt
+zentriert <code>'Willkommen im Stateful Widget'</code>.</li>
+</ul></li>
+<li><code>my_first_app.dart</code>: Setzen Sie
+<code>body: const MyLogin()</code> und löschen Sie die
+Platzhalter-Zeilen am Dateiende.</li>
+</ol>
+<p>Die Datei <code>my_login.dart</code> ist schon in
+<code>snake_case</code> benannt und wird in
+<code>my_first_app.dart</code> importiert – so lagert man Widgets
+aus.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_03_test.dart</code></p>
+<details><summary>Tipp 1</summary>
+
+<p>Tippen Sie in einer leeren Zeile <code>stful</code> und drücken Sie
+Tab/Enter – die IDE erzeugt das Grundgerüst. Danach müssen Sie nur noch
+die Namen anpassen.</p>
+</details>
+
+<details><summary>Tipp 2</summary>
+
+<pre class="dart"><code>class MyLogin extends StatefulWidget {
+  const MyLogin({super.key});
+
+  @override
+  State&lt;MyLogin&gt; createState() =&gt; _MyLoginState();
+}
+
+class _MyLoginState extends State&lt;MyLogin&gt; {
+  @override
+  Widget build(BuildContext context) {
+    return /* Center mit Text */;
+  }
+}</code></pre>
+</details>
+
+<details><summary>Tipp 3 – Fehler „const“?</summary>
+
+<p>Ein <code>AppBar(...)</code> in einem <code>const</code>-Ausdruck ist
+erlaubt, solange alles darin auch <code>const</code> sein kann. Meldet
+die IDE einen Fehler, entfernen Sie das äußere <code>const</code> vor
+<code>MaterialApp</code> und setzen <code>const</code> nur vor
+<code>Text(...)</code> und <code>MyLogin()</code>.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Das Stateful Widget selbst ist unveränderlich
+– der veränderliche Zustand liegt im <strong>State-Objekt</strong>. Der
+Unterstrich <code>_</code> macht die Klasse privat für diese Datei.</p>
+</blockquote>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_03_test.dart</code>
+    <button class="primaer erledigt" data-level="3">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-4" data-level="4">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">4</span>
+    <div><h2>Level 4 – Die Login-Maske</h2>
+    <p class="stich">TextField, setState</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Ihr State speichert Eingaben, und
+<code>setState</code> sorgt dafür, dass sich die Oberfläche ändert: Der
+Login-Button wird erst aktiv, wenn beide Felder gefüllt sind.</p>
+<p><strong>Datei:</strong> <code>lib/level_04/my_login.dart</code> ·
+<strong>Skript:</strong> Beispiel 1</p>
+<h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Variablen im State: <code>String _username = '';</code>,
+<code>String _password = '';</code>,
+<code>bool _canLogin = false;</code></li>
+<li>Methode <code>_checkCanLogin()</code>: setzt <strong>in
+<code>setState(() { … })</code></strong> <code>_canLogin</code> auf
+<code>true</code>, wenn beide Strings nicht leer sind
+(<code>isNotEmpty</code>), sonst auf <code>false</code>.</li>
+<li>Zwei Methoden <code>_onChangedUsername(String username)</code> und
+<code>_onChangedPassword(String password)</code>: Wert speichern, dann
+<code>_checkCanLogin()</code>.</li>
+<li><code>build</code>: <code>Center</code> →
+<code>SizedBox(width: 300)</code> →
+<code>Column(mainAxisSize: MainAxisSize.min)</code> mit den
+<code>children</code>:
+<ul>
+<li><code>Text('Willkommen')</code></li>
+<li><code>TextField</code> mit
+<code>onChanged: _onChangedUsername</code> und
+<code>labelText: 'Benutzername'</code></li>
+<li><code>TextField</code> mit
+<code>onChanged: _onChangedPassword</code>,
+<code>obscureText: true</code>, <code>labelText: 'Passwort'</code></li>
+<li><code>TextButton</code> mit
+<code>onPressed: _canLogin ? () {} : null</code> und
+<code>child: Text('Login')</code></li>
+</ul></li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_04_test.dart</code> – zwei Tests:
+Aufbau und Verhalten.</p>
+<details><summary>Tipp 1 – Beschriftung und Rahmen</summary>
+
+<pre class="dart"><code>decoration: const InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: &#39;Passwort&#39;,
+),</code></pre>
+</details>
+
+<details><summary>Tipp 2 – Der Button bleibt grau</summary>
+
+<p>Ändern Sie <code>_canLogin</code> wirklich <strong>innerhalb</strong>
+von <code>setState</code>? Ohne <code>setState</code> wird
+<code>build</code> nicht erneut ausgeführt – die Variable ändert sich,
+aber die Oberfläche nicht.</p>
+</details>
+
+<details><summary>Tipp 3 – Bedingung</summary>
+
+<pre class="dart"><code>_canLogin = _username.isNotEmpty &amp;&amp; _password.isNotEmpty;</code></pre>
+<p>ersetzt das ganze <code>if … else</code>.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> <code>onChanged</code> meldet jede Änderung
+sofort, <code>onSubmitted</code> erst nach Enter.
+<code>onPressed: null</code> deaktiviert einen Button.</p>
+</blockquote>
+<p><strong>Experiment:</strong> Nehmen Sie <code>setState</code> heraus
+und starten Sie die App. Was passiert?</p>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_04_test.dart</code>
+    <button class="primaer erledigt" data-level="4">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-5" data-level="5">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">5</span>
+    <div><h2>Level 5 – Ein ToDo-Element</h2>
+    <p class="stich">Row, Checkbox, IconButton</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Sie bauen ein wiederverwendbares Stateless
+Widget, das ein ToDo darstellt.</p>
+<p><strong>Datei:</strong> <code>lib/level_05/todo_item.dart</code> ·
+<strong>Skript:</strong> Beispiel 2a · Ansehen:
+<code>aktivesLevel = 5</code></p>
+<h3 id="planung-skript">Planung (Skript)</h3>
+<p>Die fertige App braucht: Liste von ToDos, Checkbox zum Abhaken,
+Löschbutton, Button zum Hinzufügen. Wir beginnen mit
+<strong>einem</strong> Listenelement.</p>
+<h3 id="auftrag">Auftrag</h3>
+<p><code>ToDoItem</code> bekommt seinen Titel über den Konstruktor:
+<code>const ToDoItem(this.title)</code>. Bauen Sie in <code>build</code>
+eine <code>Row</code> mit</p>
+<ol type="1">
+<li><code>Checkbox(value: false, onChanged: null)</code> – noch
+inaktiv</li>
+<li><code>Expanded(child: Text(title))</code></li>
+<li><code>IconButton(icon: Icon(Icons.delete), onPressed: null)</code> –
+noch inaktiv</li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_05_test.dart</code></p>
+<details><summary>Tipp 1 – Wozu Expanded?</summary>
+
+<p><code>Expanded</code> lässt den Text den restlichen Platz einnehmen –
+so wandert der Mülleimer ganz nach rechts.</p>
+</details>
+
+<details><summary>Tipp 2</summary>
+
+<pre class="dart"><code>return Row(
+  children: [
+    const Checkbox(value: false, onChanged: null),
+    Expanded(child: Text(title)),
+    /* IconButton */
+  ],
+);</code></pre>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> <code>final</code>-Felder +
+<code>const</code>-Konstruktor: Ein Stateless Widget bekommt seine Daten
+von außen und ändert sie nie selbst.</p>
+</blockquote>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_05_test.dart</code>
+    <button class="primaer erledigt" data-level="5">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-6" data-level="6">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">6</span>
+    <div><h2>Level 6 – Die ToDo-Liste</h2>
+    <p class="stich">ListView.builder, Dialog</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Ein Stateful Widget verwaltet eine Liste und
+erzeugt daraus <code>ToDoItem</code>s. Neue Einträge kommen über einen
+Dialog hinzu.</p>
+<p><strong>Datei:</strong> <code>lib/level_06/todo_list.dart</code> ·
+<strong>Skript:</strong> Beispiel 2b · Ansehen:
+<code>aktivesLevel = 6</code></p>
+<h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li><code>List&lt;String&gt; todos = [];</code></li>
+<li><code>addItem(String item)</code>: in <code>setState</code>
+<code>todos.add(item)</code>, danach
+<code>Navigator.of(context).pop();</code> (schließt den Dialog).</li>
+<li><code>newEntry()</code>: <code>showDialog</code> mit einem
+<code>AlertDialog</code>, dessen <code>content</code> ein
+<code>TextField(onSubmitted: addItem)</code> ist.</li>
+<li><code>build</code>: <code>Scaffold</code> mit
+<ul>
+<li><code>appBar: AppBar(title: Text('ToDo Liste'))</code></li>
+<li><code>body: ListView.builder(itemCount: todos.length, itemBuilder: …)</code>
+– baut für jeden Index <code>i</code> ein
+<code>ToDoItem(todos[i])</code></li>
+<li><code>floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))</code></li>
+</ul></li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_06_test.dart</code></p>
+<details><summary>Tipp 1 – showDialog</summary>
+
+<pre class="dart"><code>void newEntry() {
+  showDialog&lt;AlertDialog&gt;(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: TextField(autofocus: true, onSubmitted: addItem),
+      );
+    },
+  );
+}</code></pre>
+</details>
+
+<details><summary>Tipp 2 – ListView.builder</summary>
+
+<pre class="dart"><code>ListView.builder(
+  itemCount: todos.length,
+  itemBuilder: (context, i) {
+    return ToDoItem(todos[i]);
+  },
+),</code></pre>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> <code>onPressed: newEntry</code> übergibt die
+<strong>Methode selbst</strong> (ohne Klammern). Mit Klammern
+<code>newEntry()</code> würde sie sofort beim Bauen ausgeführt.</p>
+</blockquote>
+<p><strong>Achtung Skript:</strong> Dort heißt die Liste an einer Stelle
+<code>products</code> – verwenden Sie überall <code>todos</code>.</p>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_06_test.dart</code>
+    <button class="primaer erledigt" data-level="6">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-7" data-level="7">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">7</span>
+    <div><h2>Level 7 – Löschen</h2>
+    <p class="stich">Funktionen als Parameter</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Der Mülleimer sitzt im Stateless
+<code>ToDoItem</code>, die Liste aber im State von
+<code>ToDoList</code>. Sie übergeben deshalb eine
+<strong>Funktion</strong> an das <code>ToDoItem</code>.</p>
+<p><strong>Dateien:</strong> <code>lib/level_07/todo_list.dart</code>,
+<code>lib/level_07/todo_item.dart</code> · <strong>Skript:</strong>
+Beispiel 2c</p>
+<h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li><code>todo_list.dart</code>: <code>deleteItem(int i)</code> – in
+<code>setState</code> <code>todos.removeAt(i)</code>.</li>
+<li><code>todo_item.dart</code>: Feld
+<code>final VoidCallback remove;</code> und Konstruktor
+<code>const ToDoItem(this.title, this.remove, {super.key});</code></li>
+<li><code>todo_item.dart</code>: Der <code>IconButton</code> bekommt
+<code>onPressed: () =&gt; remove()</code> (und das <code>const</code>
+davor muss weg).</li>
+<li><code>todo_list.dart</code>: im <code>itemBuilder</code>
+<code>ToDoItem(todos[i], () =&gt; deleteItem(i))</code>.</li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_07_test.dart</code></p>
+<details><summary>Tipp 1 – Was ist VoidCallback?</summary>
+
+<p><code>VoidCallback</code> ist der Typ „Funktion ohne Parameter und
+ohne Rückgabe“. Er ist genauer als <code>Function</code> (wie im Skript)
+– die IDE kann dann Fehler früher finden.</p>
+</details>
+
+<details><summary>Tipp 2 – Rote Fehler nach Schritt 2</summary>
+
+<p>Nach der Konstruktor-Änderung meldet die IDE im
+<code>itemBuilder</code> einen Fehler: Dort fehlt das zweite Argument.
+Genau das ist Schritt 4.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Funktionen, die den State verändern, gehören
+in das Stateful Widget. Das Stateless Widget bekommt nur „einen Knopf“,
+mit dem es die Funktion auslösen kann.</p>
+</blockquote>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_07_test.dart</code>
+    <button class="primaer erledigt" data-level="7">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+<section class="card level" id="level-8" data-level="8">
+  <header class="level-kopf">
+    <span class="nummer" aria-hidden="true">8</span>
+    <div><h2>Level 8 – Abhaken</h2>
+    <p class="stich">Map statt List</p></div>
+  </header>
+  <div class="level-inhalt"><p><strong>Ziel:</strong> Zu jedem Titel gehört jetzt ein zweiter Wert
+(abgehakt ja/nein). Dafür wandeln Sie die Liste in eine
+<code>Map&lt;String, bool&gt;</code> um.</p>
+<p><strong>Dateien:</strong> <code>lib/level_08/todo_list.dart</code>,
+<code>lib/level_08/todo_item.dart</code> · <strong>Skript:</strong>
+Beispiel 2d</p>
+<h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li><code>Map&lt;String, bool&gt; todos = {};</code> statt der
+Liste.</li>
+<li><code>addItem</code>: <code>todos[item] = false;</code> ·
+<code>deleteItem(String key)</code>:
+<code>todos.remove(key);</code></li>
+<li>Neu: <code>checkBoxDone(String key)</code> – in
+<code>setState</code>
+<code>todos.update(key, (bool done) =&gt; !done);</code></li>
+<li><code>todo_item.dart</code>: Felder <code>final bool done;</code>
+und <code>final VoidCallback checkBoxDone;</code>, Konstruktor
+<code>(this.title, this.done, this.remove, this.checkBoxDone, {super.key})</code>.</li>
+<li>Die Checkbox: <code>value: done</code>,
+<code>onChanged: (value) =&gt; checkBoxDone()</code>.</li>
+<li><code>itemBuilder</code>:
+<pre class="dart"><code>var key = todos.keys.elementAt(i);
+return ToDoItem(
+  key,                         // Titel
+  todos.values.elementAt(i),   // Checkboxstatus
+  () =&gt; deleteItem(key),       // Löschfunktion
+  () =&gt; checkBoxDone(key),     // Checkboxfunktion
+);</code></pre></li>
+</ol>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>flutter test test/level_08_test.dart</code> – und dann
+<code>dart run tool/fortschritt.dart</code> 🎉</p>
+<details><summary>Tipp – Viele rote Fehler auf einmal?</summary>
+
+<p>Gehen Sie in der Reihenfolge 1 → 6 vor. Nach Schritt 1 sind alle
+Stellen rot, die noch mit der Liste arbeiten – sie zeigen Ihnen genau,
+was Sie anpassen müssen.</p>
+</details>
+
+<p><strong>Denkfrage:</strong> Was passiert, wenn Sie zweimal
+„Einkaufen“ eintragen? Warum? (→ <code>docs/bonus.md</code>)</p>
+</div>
+  <div class="pruefen">
+    <code>flutter test test/level_08_test.dart</code>
+    <button class="primaer erledigt" data-level="8">Test ist grün – Level geschafft</button>
+  </div>
+</section>
+  <section class="card" id="bonus">
+    <header class="level-kopf"><span class="nummer" aria-hidden="true">★</span>
+      <div><h2>Bonus – Die App weiterentwickeln</h2><p class="stich">für alle, die fertig sind</p></div></header>
+    <div class="level-inhalt"><p>Arbeiten Sie in <code>lib/level_08/</code> weiter (Ihre Tests sollen
+grün bleiben!).</p>
+<ol type="1">
+<li><strong>Doppelte Titel:</strong> Eine Map hat jeden Schlüssel nur
+einmal. Verhindern Sie doppelte Einträge (Hinweis im Dialog) – oder
+bauen Sie eine Klasse <code>ToDo</code> mit <code>title</code> und
+<code>done</code> und verwenden Sie <code>List&lt;ToDo&gt;</code>.</li>
+<li><strong>Leere Einträge:</strong> Ein leerer Text soll nicht
+hinzugefügt werden.</li>
+<li><strong>Durchgestrichen:</strong> Abgehakte ToDos werden
+durchgestrichen und grau
+(<code>TextStyle(decoration: TextDecoration.lineThrough)</code>).</li>
+<li><strong>Zähler:</strong> Die AppBar zeigt „ToDo Liste (2
+offen)“.</li>
+<li><strong>Login → Liste:</strong> Der Login-Button aus Level 4 öffnet
+die ToDo-Liste
+(<code>Navigator.of(context).push(MaterialPageRoute(builder: …))</code>).</li>
+<li><strong>Lebenszyklus:</strong> Überschreiben Sie in einem State
+<code>initState()</code> und <code>dispose()</code> und geben Sie mit
+<code>debugPrint</code> aus, wann sie aufgerufen werden. Wann wird
+<code>build</code> aufgerufen?</li>
+</ol>
+</div>
+  </section>
+
+  <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
+</div>
+<script>
+(function(){
+  var KEY = "flutter-lernpfad-lf11";
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  function zeigen(){
+    var n = 0;
+    document.querySelectorAll(".level").forEach(function(s){
+      var nr = s.dataset.level, ok = !!stand[nr];
+      if (ok) n++;
+      s.classList.toggle("fertig", ok);
+      var b = s.querySelector("button.erledigt");
+      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Test ist grün – Level geschafft";
+      b.setAttribute("aria-pressed", ok);
+      var c = document.querySelector('[data-chip="' + nr + '"]');
+      if (c) c.classList.toggle("ok", ok);
+    });
+    document.getElementById("zaehler").textContent = n + " / 8";
+  }
+  document.querySelectorAll("button.erledigt").forEach(function(b){
+    b.addEventListener("click", function(){
+      stand[b.dataset.level] = !stand[b.dataset.level];
+      try { localStorage.setItem(KEY, JSON.stringify(stand)); } catch (e) {}
+      zeigen();
+    });
+  });
+  zeigen();
+})();
+</script>
+</body>
+</html>

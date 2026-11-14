@@ -13,6 +13,8 @@
 | `tool/fortschritt.dart` | Fortschrittsanzeige für Schüler |
 | `tool/loesungen_pruefen.sh` | prüft, ob alle Lösungen die Tests bestehen |
 | `tool/schuelerversion_erstellen.sh` | ZIP ohne Lösungen für die Schüler |
+| `tool/schueler_repo_aktualisieren.sh` | baut die Webseite und überträgt alles ohne Lösungen ins öffentliche Schüler-Repo |
+| `tool/seite_bauen.py` | erzeugt `docs/index.html` aus den Level-Anleitungen (braucht pandoc) |
 
 Die Tests prüfen Verhalten und Aufbau, nicht den exakten Code: z. B. sind beim
 Login `onChanged` **und** `onSubmitted` erlaubt, beim Button `TextButton`,
@@ -45,3 +47,10 @@ Vorschläge für die Überarbeitung des Skripts:
 ./tool/loesungen_pruefen.sh     # muss "All tests passed!" zeigen
 flutter test                    # mit Starter-Code: alle Tests rot
 ```
+
+## Schüler-Repo und Webseite
+- Privat (dieses Repo, mit Lösungen): https://github.com/bnBSinfo/flutter_lernpfad
+- Öffentlich für Schüler (ohne Lösungen): https://github.com/bnBSinfo/flutter_lernpfad_schueler
+- Webseite (GitHub Pages): https://bnbsinfo.github.io/flutter_lernpfad_schueler/
+
+Nach Änderungen an Anleitungen oder Starter-Code: `./tool/schueler_repo_aktualisieren.sh`
