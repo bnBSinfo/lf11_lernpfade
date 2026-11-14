@@ -18,6 +18,10 @@ import secrets
 import subprocess
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import lernpfad_bausteine as bausteine  # noqa: E402
+from kontrolle import KONTROLLE  # noqa: E402
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 REPO = "bnBSinfo/flutter_lernpfad_schueler"
@@ -310,10 +314,10 @@ def level_ansicht(nr: int, d: dict) -> str:
   </div>
   {baukasten}
   <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
+  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr])}
   <div class="card lp-fuss">
     {zurueck}
-    <div class="pruefen"><code>flutter test test/level_0{nr}_test.dart</code>
-      <button class="erledigt" data-level="{nr}">Test ist grün – geschafft</button></div>
+    <div class="pruefen"><button class="erledigt" data-level="{nr}" disabled>Level geschafft</button></div>
     {weiter}
   </div>
 </section>"""
@@ -324,8 +328,14 @@ def loesungen_verschluesseln(passwort: str) -> str:
     daten = {}
     for ordner in sorted((ROOT / "loesungen" / "lib").glob("level_0*")):
         daten[ordner.name[-1]] = [
-            {"datei": f"lib/{ordner.name}/{f.name}", "code": f.read_text(encoding="utf-8")}
+            {"datei": "lib/" + ("todo_app.dart" if f.name == "app.dart" else f.name),
+             "code": f.read_text(encoding="utf-8").replace("import 'app.dart'", "import 'todo_app.dart'")}
             for f in sorted(ordner.glob("*.dart"))]
+    # main.dart im Schülerprojekt (Level 1: MyFirstApp, ab Level 5: ToDoApp)
+    main_dart = ("import 'package:flutter/material.dart';\n\nimport '{datei}';\n\n"
+                 "void main() {{\n  runApp(const {klasse}());\n}}\n")
+    daten["1"].insert(0, {"datei": "lib/main.dart", "code": main_dart.format(datei="my_first_app.dart", klasse="MyFirstApp")})
+    daten["5"].insert(0, {"datei": "lib/main.dart", "code": main_dart.format(datei="todo_app.dart", klasse="ToDoApp")})
     klartext = (MARKER + json.dumps(daten, ensure_ascii=False)).encode("utf-8")
     salt, iv = secrets.token_bytes(16), secrets.token_bytes(16)
     key = hashlib.pbkdf2_hmac("sha256", passwort.encode("utf-8"), salt, ITERATIONEN, 32)
@@ -586,7 +596,7 @@ document.documentElement.classList.add("js");
       if (ok) n++;
       s.classList.toggle("fertig", ok);
       var b = s.querySelector("button.erledigt");
-      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Test ist grün – geschafft";
+      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Level geschafft";
       b.setAttribute("aria-pressed", ok);
       document.querySelectorAll('[data-ziel="level-' + nr + '"]').forEach(function(c){ c.classList.toggle("ok", ok); });
     });
@@ -627,6 +637,7 @@ document.documentElement.classList.add("js");
 
 JS_LOESUNG = r"""
 (function(){
+  if (typeof GEHEIM === "undefined" || !GEHEIM) return;
   var b = function(s){ return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); };
   var status = document.getElementById("pw-status");
   async function entschluesseln(pw){
@@ -667,7 +678,8 @@ JS_LOESUNG = r"""
 
 
 def main() -> None:
-    geheim = loesungen_verschluesseln(passwort_holen())
+    ohne = "--ohne-loesungen" in sys.argv
+    geheim = "null" if ohne else loesungen_verschluesseln(passwort_holen())
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
             + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
             + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful">📘 Wissen</a>'
@@ -686,16 +698,16 @@ def main() -> None:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flutter-Einführung LF11</title>
 <meta name="version" content="{VERSION}">
-<meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – mit automatischen Tests.">
+<meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – alles selbst getippt, mit Selbstkontrolle.">
 <link rel="stylesheet" href="css/stil.css">
-<style>{CSS}</style>
+<style>{CSS}{bausteine.CSS}</style>
 </head>
 <body data-thema="technik">
 <div class="app">
   <header class="card kopf">
     <div class="titel">
       <h1>Flutter-Einführung <span class="version">LF11 · Version {VERSION}</span></h1>
-      <div class="unter">In 8 Leveln zur ersten eigenen App – Sie programmieren echt, die Tests prüfen mit.</div>
+      <div class="unter">In 8 Leveln zur ersten eigenen App – jede Zeile selbst getippt.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
   </header>
@@ -703,26 +715,23 @@ def main() -> None:
   <section class="ansicht" id="start">
     <div class="card echt"><span aria-hidden="true">💻</span><div>
       <b>Programmiert wird nicht im Browser, sondern in Ihrer echten Entwicklungsumgebung</b>
-      (Android Studio oder VS Code) – mit echtem Flutter-Projekt, Emulator und automatischen Tests, genau wie im Betrieb.
-      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Widget-Baum und Hilfen.</div></div>
+      (Android Studio oder VS Code) – mit eigenem Flutter-Projekt und Emulator, genau wie im Betrieb.
+      Es gibt <b>keine Vorlagen zum Herunterladen</b>: Sie legen das Projekt selbst an und tippen jede Zeile.
+      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Widget-Baum, Hilfen und Selbstkontrolle.</div></div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
-        <div><h3>1 · Projekt holen</h3>
-          <p><a href="https://github.com/{REPO}/archive/refs/heads/main.zip">ZIP herunterladen</a> und entpacken – oder:</p>
-          <pre><code>git clone https://github.com/{REPO}.git</code></pre></div>
-        <div><h3>2 · Öffnen</h3>
-          <p>Ordner in Android Studio oder VS Code öffnen, einmalig im Terminal:</p>
-          <pre><code>flutter pub get</code></pre></div>
-        <div><h3>3 · Programmieren</h3>
-          <p>Auftrag lesen, <code>TODO</code>s in <code>lib/level_0X/</code> lösen. Ansehen: in <code>lib/main.dart</code>
-          <code>aktivesLevel</code> setzen, App starten, nach Änderungen Hot Reload.</p></div>
-        <div><h3>4 · Prüfen</h3>
-          <p>Test starten – bei Rot steht ein <b>Hinweis</b> in der Ausgabe. Gesamtstand:</p>
-          <pre><code>dart run tool/fortschritt.dart</code></pre></div>
+        <div><h3>1 · Projekt anlegen</h3>
+          <p>In Level 1 legen Sie mit <code>flutter create meine_app</code> Ihr eigenes Projekt an.
+          Diese eine App bauen Sie in allen Leveln weiter aus.</p></div>
+        <div><h3>2 · Auftrag lesen</h3>
+          <p>Der rote Kasten sagt, was zu tun ist. <i>Erklärt</i> sagt, warum. Zielbild und Widget-Baum zeigen, wo Sie hinwollen.</p></div>
+        <div><h3>3 · Abtippen</h3>
+          <p>Code wird <b>abgetippt</b> – Kopieren ist auf dieser Seite gesperrt. Wer tippt, liest jede Zeile und lernt die
+          Fehlermeldungen der IDE kennen. Nach Änderungen: <b>Hot Reload</b>.</p></div>
+        <div><h3>4 · Selbstkontrolle</h3>
+          <p>Unter jedem Level: Haken setzen, was in Ihrer App wirklich funktioniert, Kontrollfragen beantworten –
+          dann ist das Level geschafft.</p></div>
       </div>
-      <details><summary>Tests in der IDE starten</summary>
-        <p><b>Android Studio:</b> Rechtsklick auf die Testdatei → <i>Run 'tests in …'</i><br>
-        <b>VS Code:</b> Seitenleiste <i>Testing</i> (Reagenzglas) oder ▶ über <code>main()</code></p></details>
     </div>
     <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
       <p><a href="#wissen">📘 Wissen: Stateless &amp; Stateful</a> – Aufbau beider Widget-Arten Zeile für Zeile, Vergleich,
@@ -746,7 +755,7 @@ def main() -> None:
   <section class="ansicht" id="loesungen">
     <div class="card"><h2>🔒 Musterlösungen</h2>
       <p>Die Lösungen sind verschlüsselt. Mit dem Passwort Ihrer Lehrkraft erscheinen sie in jedem Level
-      unten im Auftrag unter <i>Musterlösung</i>. Erst selbst probieren – die Tests verraten Ihnen mehr als jede Lösung!</p>
+      unten im Auftrag unter <i>Musterlösung</i>. Erst selbst probieren – Fehlermeldungen lesen und die Tipps nutzen bringt mehr als jede Lösung!</p>
       <form id="entsperren" class="pruefen">
         <label for="pw" class="sr">Passwort</label>
         <input id="pw" type="password" autocomplete="off" placeholder="Passwort"
@@ -760,13 +769,14 @@ def main() -> None:
 </div>
 <dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
   <form method="dialog"><button class="primaer">Schließen</button></form></dialog>
-<script>{JS}</script>
+<script>var LP_KEY = "flutter-lernpfad-lf11";{JS}</script>
+<script>{bausteine.JS}</script>
 <script>{(ROOT / "tool" / "baukasten.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
 </body>
 </html>
 """
-    (DOCS / "index.html").write_text(seite, encoding="utf-8")
+    (DOCS / "index.html").write_text(bausteine.einbetten(seite, DOCS), encoding="utf-8")
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     print("Erstellt:", DOCS / "index.html")
 

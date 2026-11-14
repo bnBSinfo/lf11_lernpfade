@@ -17,17 +17,11 @@
       '<div class="bk-handy"><div class="bk-schirm"></div></div>' +
       '<div class="bk-rechts"><div class="bk-codeleiste">' +
       '<label class="bk-schalter"><input type="checkbox" data-voll> Ganzen Quellcode zeigen</label>' +
-      '<button type="button" class="bk-kopieren">📋 Kopieren</button></div>' +
+      '</div>' +
       '<pre class="bk-code"><code></code></pre>' +
-      '<p class="bk-spielwiese klein">Selbst ausprobieren: Ganzen Quellcode kopieren, in <code>lib/spielwiese.dart</code> einfügen und starten – ' +
+      '<p class="bk-spielwiese klein">Selbst ausprobieren: Ganzen Quellcode in eine neue Datei <code>lib/spielwiese.dart</code> abtippen und starten – ' +
       'Android Studio: Rechtsklick auf die Datei → <i>Run</i>, VS Code/Terminal: <code>flutter run -t lib/spielwiese.dart</code></p>' +
       '<div class="bk-info" role="status"><b>Tipp:</b> Fahren Sie mit der Maus über einen Teil im Handy oder im Code – oder tippen Sie darauf.</div></div>';
-    var kopf = root.querySelector(".bk-kopieren");
-    kopf.addEventListener("click", function () {
-      var text = root.querySelector(".bk-code").textContent;
-      var fertig = function () { kopf.textContent = "✓ Kopiert"; setTimeout(function () { kopf.textContent = "📋 Kopieren"; }, 1800); };
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(fertig, function () { kopf.textContent = "Bitte markieren + Strg/Cmd+C"; });
-    });
     return {
       voll: root.querySelector("[data-voll]"),
       schirm: root.querySelector(".bk-schirm"),

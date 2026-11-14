@@ -3,19 +3,28 @@
 **Ziel:** Sie bauen mit nur zwei Widgets – `MaterialApp` und `Scaffold` – das
 Grundgerüst einer App im Material Design.
 
-**Datei:** `lib/level_01/my_first_app.dart` · **Skript:** Kapitel 3 und 4a
+**Sie schreiben:** ein neues Projekt `meine_app` – `lib/main.dart`, `lib/my_first_app.dart` · **Skript:** Kapitel 3 und 4a
 
 ## Vorher verstehen: `main()` und `runApp()`
-Öffnen Sie `lib/main.dart`. In der Methode `main()` läuft die App: Das Start-Widget
-wird an `runApp()` übergeben. Hier ist das Ihre Klasse `MyFirstApp`.
+In der Methode `main()` startet jedes Dart-Programm. Eine Flutter-App übergibt dort ihr Start-Widget an
+`runApp()` – bei Ihnen die Klasse `MyFirstApp`. Diese App bauen Sie in allen 8 Leveln Schritt für Schritt aus.
 
 ## Auftrag
-`MyFirstApp` ist ein **Stateless Widget** – es ändert sich zur Laufzeit nicht.
-Seine `build`-Methode gibt zurück, was angezeigt wird.
+1. Legen Sie ein neues Flutter-Projekt an – in Android Studio (*New Flutter Project*, Name `meine_app`) oder im Terminal:
+   ```bash
+   flutter create meine_app
+   ```
+2. Löschen Sie den **gesamten** Inhalt von `lib/main.dart` und die Datei `test/widget_test.dart` (sie passt nicht mehr zu Ihrer App).
+3. Legen Sie die Datei `lib/my_first_app.dart` an (Rechtsklick auf `lib` → *New → Dart File*). Schreiben Sie darin:
+   - `import 'package:flutter/material.dart';`
+   - die Klasse `MyFirstApp` als **Stateless Widget** mit Konstruktor `const MyFirstApp({super.key});`
+   - eine `build`-Methode, die eine `MaterialApp` zurückgibt. Deren `home` ist ein `Scaffold`, dessen `body` ist
+     `Text('Das ist mein Grundgerüst')`.
+4. Schreiben Sie in `lib/main.dart` die beiden Imports (`material.dart` und `my_first_app.dart`) und
+   `void main() { runApp(const MyFirstApp()); }`
+5. Starten Sie die App (Emulator oder Chrome). Nach jeder Änderung genügt **Hot Reload** (Blitz-Symbol bzw. `r`).
 
-1. Geben Sie statt `const Placeholder()` eine `MaterialApp` zurück.
-2. Weisen Sie `home` ein `Scaffold` zu.
-3. Der `body` des Scaffold ist `Text('Das ist mein Grundgerüst')`.
+Tipp: Tippen Sie `stless` und drücken Sie Tab – die IDE erzeugt das Grundgerüst eines Stateless Widgets.
 
 ## Erklärt – was passiert hier?
 
@@ -34,12 +43,9 @@ Seine `build`-Methode gibt zurück, was angezeigt wird.
 | `Scaffold` | das Gerüst **einer Seite** mit festen Bereichen | `appBar:`, `body:`, `floatingActionButton:`, … |
 | `Text` | zeigt eine Zeichenkette | der Text in Klammern |
 
-Probieren Sie im **Baukasten** auf der Webseite zur Flutter-Einführung aus, welche Bereiche ein Scaffold hat. Sie füllen davon nur, was Sie brauchen – in Level 1 nur `body`.
+Probieren Sie im **Baukasten** unten aus, welche Bereiche ein Scaffold hat. Sie füllen davon nur, was Sie brauchen – in Level 1 nur `body`.
 
 **Warum steht der Text oben links unter der Statusleiste?** Ein `Text` ist nur so groß wie sein Inhalt und steht ohne weitere Anweisung oben links. Ohne `AppBar` beginnt der `body` ganz oben. Ausrichtung und Abstand sind in Flutter eigene Widgets – das lernen Sie in Level 2.
-
-## Prüfen
-`flutter test test/level_01_test.dart` · Ansehen: `aktivesLevel = 1` in `lib/main.dart`
 
 <details><summary>Tipp 1</summary>
 

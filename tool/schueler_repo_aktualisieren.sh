@@ -1,17 +1,25 @@
 #!/bin/bash
-# Für die Lehrkraft: überträgt den aktuellen Stand OHNE Lösungen in das
-# öffentliche Schüler-Repo (mit GitHub-Pages-Seite aus docs/).
+# Für die Lehrkraft: baut die eigenständige Lernpfad-Seite (fragt nach dem Lösungs-Passwort) und
+# überträgt NUR die Seite ins öffentliche Repo – GitHub Pages zeigt sie an.
+# Mit --ohne-loesungen: Seite ohne Musterlösungen.
 set -e
 cd "$(dirname "$0")/.."
 REPO=bnBSinfo/flutter_lernpfad_schueler
-python3 tool/seite_bauen.py
+python3 tool/seite_bauen.py "$@"
 TMP=$(mktemp -d)
 git clone -q "https://github.com/$REPO.git" "$TMP/repo" 2>/dev/null || true
 [ -d "$TMP/repo/.git" ] || { mkdir -p "$TMP/repo"; git -C "$TMP/repo" init -q -b main; }
-rsync -a --delete --exclude .git --exclude build --exclude .dart_tool --exclude .idea \
-  --exclude loesungen --exclude LEHRKRAFT.md --exclude 'tool/*.sh' --exclude tool/seite_bauen.py \
-  --exclude ephemeral --exclude flutter_export_environment.sh --exclude Generated.xcconfig \
-  --exclude local.properties ./ "$TMP/repo/"
+find "$TMP/repo" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+mkdir -p "$TMP/repo/docs"
+rsync -a docs/index.html docs/.nojekyll "$TMP/repo/docs/"
+cat > "$TMP/repo/README.md" <<'TXT'
+# Flutter-Einführung LF11
+
+Die Lernpfad-Seite: https://bnbsinfo.github.io/flutter_lernpfad_schueler/
+
+Alles wird selbst getippt – es gibt bewusst kein Projekt zum Herunterladen.
+In Level 1 legen Sie mit `flutter create meine_app` Ihr eigenes Projekt an.
+TXT
 cd "$TMP/repo"
 git add -A
 git commit -q -m "Flutter-Einführung aktualisiert" || echo "Keine Änderungen."

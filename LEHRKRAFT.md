@@ -1,24 +1,41 @@
 # Hinweise für die Lehrkraft
 
-**Nicht an die Schüler weitergeben** – zusammen mit `loesungen/` und
-`tool/*.sh`. Die Schülerversion erzeugt `tool/schuelerversion_erstellen.sh`.
+Dieses Repo ist **privat** (Musterlösungen, Tests, Werkzeuge). Die Schüler bekommen nur die Lernpfad-Seite –
+über mebis oder https://bnbsinfo.github.io/flutter_lernpfad_schueler/.
 
-## Aufbau
+## Grundsatz: alles wird getippt
+- **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
+  Projekt an und bauen diese eine App bis Level 8 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,
+  `lib/my_login.dart` (L3/4), `lib/todo_item.dart`, `lib/todo_app.dart` (L5), `lib/todo_list.dart` (L6–8).
+  Ab Level 5 startet `main.dart` die `ToDoApp` – die Login-App bleibt im Projekt (→ Bonus 5).
+- Der Auftrag beschreibt, **was** gebaut wird; Code steht in *Erklärt*, in den Tipps und im Baukasten.
+- Auf der Seite ist Kopieren von Code gesperrt (nicht markierbar, Kopieren/Rechtsklick abgefangen, Hinweis
+  „Bitte abtippen“, kein Kopier-Knopf mehr im Baukasten). Ganz verhindern lässt sich das in keinem Browser.
+
+## Selbstkontrolle statt automatischer Tests
+Je Level unter dem Auftrag: Checkliste „Das muss jetzt funktionieren“ (beobachtbar in der eigenen App) und
+2 Kontrollfragen mit Feedback; die Falschantworten sind typische Fehler. Erst wenn alles abgehakt und richtig
+beantwortet ist, lässt sich „Level geschafft“ setzen. Der Stand wird nur im Browser gespeichert (localStorage).
+Inhalte: `tool/kontrolle.py`; Baustein (identisch im REST-Lernpfad): `tool/lernpfad_bausteine.py`.
+
+## Für mebis
+`python3 tool/seite_bauen.py` (fragt das Lösungs-Passwort) erzeugt `docs/index.html`: **eine einzige Datei**,
+Stylesheet, Schriften und Bilder sind eingebettet (ca. 0,9 MB). In mebis als *Datei* hochladen oder auf die
+GitHub-Pages-Adresse verlinken. Vorschau ohne Lösungen: `python3 tool/seite_bauen.py --ohne-loesungen`.
+
+## Aufbau des Repos
 | Ordner | Inhalt |
 |---|---|
-| `lib/level_0X/` | Starter-Code mit `TODO`s (Stand = Lösung des Vorlevels) |
-| `test/level_0X_test.dart` | Widget-Tests mit deutschen `Hinweis:`-Meldungen |
-| `docs/level_0X.md` | Auftrag, gestufte Tipps, Merke, Denkfrage |
-| `loesungen/lib/` | Musterlösungen, gleiche Struktur wie `lib/` |
-| `tool/fortschritt.dart` | Fortschrittsanzeige für Schüler |
-| `tool/loesungen_pruefen.sh` | prüft, ob alle Lösungen die Tests bestehen |
-| `tool/schuelerversion_erstellen.sh` | ZIP ohne Lösungen für die Schüler |
-| `tool/schueler_repo_aktualisieren.sh` | baut die Webseite und überträgt alles ohne Lösungen ins öffentliche Schüler-Repo |
-| `tool/seite_bauen.py` | erzeugt `docs/index.html` aus den Level-Anleitungen (braucht pandoc) |
+| `docs/level_0X.md`, `docs/bonus.md` | Auftrag, Erklärung, Tipps, Merke, Denkfrage |
+| `tool/kontrolle.py` | Checklisten und Kontrollfragen je Level |
+| `tool/seite_bauen.py`, `tool/baukasten.js`, `tool/wissen.html` | Seite, Baukasten, Wissen-Seite (braucht pandoc) |
+| `loesungen/lib/level_0X/` | Musterlösungen (auf der Seite verschlüsselt, mit Dateinamen wie im Schülerprojekt) |
+| `lib/level_0X/`, `test/level_0X_test.dart` | nur noch für Sie: frühere Starter-Fassung und Widget-Tests, mit denen `tool/loesungen_pruefen.sh` die Musterlösungen prüft |
+| `tool/bilder_erzeugen.sh` | Zielbilder = Screenshots der Musterlösungen |
+| `tool/schueler_repo_aktualisieren.sh` | baut die Seite und überträgt nur `docs/` ins öffentliche Repo |
 
-Die Tests prüfen Verhalten und Aufbau, nicht den exakten Code: z. B. sind beim
-Login `onChanged` **und** `onSubmitted` erlaubt, beim Button `TextButton`,
-`ElevatedButton` oder `FilledButton`, beim Mülleimer mehrere Delete-Icons.
+Die Widget-Tests eignen sich auch zur **Abnahme**: Schülerdateien nach `lib/level_0X/` kopieren
+(Dateinamen anpassen) und `flutter test test/level_0X_test.dart` ausführen.
 
 ## Änderungen gegenüber dem Skript (03_AP_LF11_BN_STO_Flutter)
 Der Code wurde auf aktuelles Flutter (3.x, Null-Safety, `flutter_lints`) gebracht.
@@ -38,22 +55,21 @@ Vorschläge für die Überarbeitung des Skripts:
 
 ## Ablauf-Vorschlag
 1. Installation nach `02_AP_LF11_BN_STO_Installationsanleitung`.
-2. Schüler erhalten das ZIP (oder klonen das Repo ohne Lösungen).
-3. Je Level: Skript-Kapitel lesen → Auftrag → Test grün.
-4. Stundenende: `dart run tool/fortschritt.dart` – Ausgabe als Nachweis/Screenshot.
+2. Lernpfad-Seite in mebis öffnen, Level 1: eigenes Projekt anlegen.
+3. Je Level: Skript-Kapitel lesen → Auftrag abtippen → Selbstkontrolle.
+4. Stundenende: Screenshot der Startseite (Fortschritt) oder kurze Vorführung der App als Nachweis.
 
 ## Prüfen nach Änderungen
 ```
 ./tool/loesungen_pruefen.sh     # muss "All tests passed!" zeigen
-flutter test                    # mit Starter-Code: alle Tests rot
 ```
 
 ## Schüler-Repo und Webseite
 - Privat (dieses Repo, mit Lösungen): https://github.com/bnBSinfo/flutter_lernpfad
-- Öffentlich für Schüler (ohne Lösungen): https://github.com/bnBSinfo/flutter_lernpfad_schueler
+- Öffentlich (nur die Seite `docs/`): https://github.com/bnBSinfo/flutter_lernpfad_schueler
 - Webseite (GitHub Pages): https://bnbsinfo.github.io/flutter_lernpfad_schueler/
 
-Nach Änderungen an Anleitungen oder Starter-Code: `./tool/schueler_repo_aktualisieren.sh`
+Nach Änderungen: `./tool/schueler_repo_aktualisieren.sh` (fragt das Lösungs-Passwort; `--ohne-loesungen` für eine Seite ohne Lösungen)
 
 ## Bilder auf der Webseite
 - Zielbilder (`docs/bilder/*.png`) sind echte Screenshots der Musterlösungen.
@@ -63,6 +79,6 @@ Nach Änderungen an Anleitungen oder Starter-Code: `./tool/schueler_repo_aktuali
 
 ## Versionsnummer
 Steht in `pubspec.yaml` (z. B. `version: 1.6.0+7`) und erscheint auf der Webseite (Kopf und Fußzeile, mit Datum)
-und in `dart run tool/fortschritt.dart`. Vor dem Veröffentlichen erhöhen:
+Vor dem Veröffentlichen erhöhen:
 kleine Korrektur → `1.5.1`, neue Inhalte → `1.6.0`; die Zahl nach `+` jeweils um 1.
 So sehen Sie und die Schüler sofort, ob der neueste Stand geladen ist.

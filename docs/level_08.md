@@ -3,7 +3,7 @@
 **Ziel:** Zu jedem Titel gehört jetzt ein zweiter Wert (abgehakt ja/nein). Dafür
 wandeln Sie die Liste in eine `Map<String, bool>` um.
 
-**Dateien:** `lib/level_08/todo_list.dart`, `lib/level_08/todo_item.dart` ·
+**Sie ändern:** `lib/todo_list.dart`, `lib/todo_item.dart` ·
 **Skript:** Beispiel 2d
 
 ## Auftrag
@@ -51,9 +51,6 @@ Map<String, bool> todos = {
 4. `setState` → `build` → das `ToDoItem` bekommt den neuen Wert als `done` und zeigt den Haken.
 
 **Beachten Sie:** `ToDoItem` bleibt **Stateless** – es merkt sich den Haken nicht selbst, sondern bekommt ihn bei jedem Neuzeichnen von außen (`done`). Nur so passen Anzeige und Daten immer zusammen.
-
-## Prüfen
-`flutter test test/level_08_test.dart` – und dann `dart run tool/fortschritt.dart` 🎉
 
 <details><summary>Tipp – Viele rote Fehler auf einmal?</summary>
 

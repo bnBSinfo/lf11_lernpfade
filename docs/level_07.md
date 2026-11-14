@@ -3,7 +3,7 @@
 **Ziel:** Der Mülleimer sitzt im Stateless `ToDoItem`, die Liste aber im State von
 `ToDoList`. Sie übergeben deshalb eine **Funktion** an das `ToDoItem`.
 
-**Dateien:** `lib/level_07/todo_list.dart`, `lib/level_07/todo_item.dart` ·
+**Sie ändern:** `lib/todo_list.dart`, `lib/todo_item.dart` ·
 **Skript:** Beispiel 2c
 
 ## Auftrag
@@ -47,9 +47,6 @@ IconButton(onPressed: () => remove(), icon: const Icon(Icons.delete))
 **`VoidCallback`** ist der Typ „Funktion ohne Parameter, ohne Rückgabe“ – genauer als `Function`.
 
 > Dieses Muster heißt **„State nach oben heben“**: Daten liegen im gemeinsamen Eltern-Widget, Kinder melden Ereignisse über Funktionen nach oben.
-
-## Prüfen
-`flutter test test/level_07_test.dart`
 
 <details><summary>Tipp 1 – Was ist VoidCallback?</summary>
 

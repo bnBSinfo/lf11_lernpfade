@@ -3,7 +3,7 @@
 **Ziel:** Sie verstehen, dass es in Flutter für jede Funktion ein eigenes Widget gibt –
 auch für Abstand, Farbe und Ausrichtung.
 
-**Datei:** `lib/level_02/my_first_app.dart` · **Skript:** Kapitel 4a
+**Sie ändern:** `lib/my_first_app.dart` · **Skript:** Kapitel 4a
 
 ## Auftrag
 In HTML/CSS würden Sie `padding`, `background` und `text-align` als Eigenschaften
@@ -34,9 +34,6 @@ In HTML/CSS hängen Sie Eigenschaften an ein Element (`padding`, `background`, `
 **`EdgeInsets`** beschreibt Abstände: `.all(50)` rundherum, `.symmetric(horizontal: 20)` nur links und rechts, `.only(top: 10)` nur oben.
 
 Im **Baukasten** unten können Sie Padding, Farbe, Center und sogar Column und Row live ausprobieren – der passende Code entsteht daneben.
-
-## Prüfen
-`flutter test test/level_02_test.dart`
 
 <details><summary>Tipp 1</summary>
 

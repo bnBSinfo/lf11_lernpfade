@@ -3,7 +3,7 @@
 **Ziel:** Ihr State speichert Eingaben, und `setState` sorgt dafür, dass sich die
 Oberfläche ändert: Der Login-Button wird erst aktiv, wenn beide Felder gefüllt sind.
 
-**Datei:** `lib/level_04/my_login.dart` · **Skript:** Beispiel 1
+**Sie ändern:** `lib/my_login.dart` · **Skript:** Beispiel 1
 
 ## Auftrag
 1. Variablen im State: `String _username = '';`, `String _password = '';`,
@@ -43,9 +43,6 @@ Sie stehen **im State, außerhalb von `build`** – nur so bleiben sie erhalten,
 **Der Bedingungsoperator `? :`** – `bedingung ? wennJa : wennNein`. Ist `_canLogin` wahr, bekommt der Button eine (leere) Funktion und ist **aktiv**. Ist es falsch, bekommt er `null` und ist **grau**.
 
 **Funktionen übergeben:** `onChanged: _onChangedUsername` übergibt die Methode **selbst** (ohne Klammern). Das TextField ruft sie später auf. Mit Klammern würde sie sofort beim Bauen ausgeführt.
-
-## Prüfen
-`flutter test test/level_04_test.dart` – zwei Tests: Aufbau und Verhalten.
 
 <details><summary>Tipp 1 – Beschriftung und Rahmen</summary>
 

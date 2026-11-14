@@ -1,6 +1,6 @@
 # Bonus – Die App weiterentwickeln
 
-Arbeiten Sie in `lib/level_08/` weiter (Ihre Tests sollen grün bleiben!).
+Arbeiten Sie in Ihrem Projekt `meine_app` weiter – alles aus Level 1–8 soll danach weiter funktionieren.
 
 1. **Doppelte Titel:** Eine Map hat jeden Schlüssel nur einmal. Verhindern Sie
    doppelte Einträge (Hinweis im Dialog) – oder bauen Sie eine Klasse `ToDo` mit

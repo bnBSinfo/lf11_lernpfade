@@ -3,9 +3,11 @@
 **Ziel:** Ein Stateful Widget verwaltet eine Liste und erzeugt daraus `ToDoItem`s.
 Neue Einträge kommen über einen Dialog hinzu.
 
-**Datei:** `lib/level_06/todo_list.dart` · **Skript:** Beispiel 2b · Ansehen: `aktivesLevel = 6`
+**Sie schreiben:** `lib/todo_list.dart` neu, `lib/todo_app.dart` ändern · **Skript:** Beispiel 2b
 
 ## Auftrag
+Legen Sie `lib/todo_list.dart` an mit dem **Stateful Widget** `ToDoList` (Kürzel `stful`). Im State:
+
 1. `List<String> todos = [];`
 2. `addItem(String item)`: in `setState` `todos.add(item)`, danach
    `Navigator.of(context).pop();` (schließt den Dialog).
@@ -16,6 +18,7 @@ Neue Einträge kommen über einen Dialog hinzu.
    - `body: ListView.builder(itemCount: todos.length, itemBuilder: …)` – baut für
      jeden Index `i` ein `ToDoItem(todos[i])`
    - `floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))`
+5. `lib/todo_app.dart`: Die `MaterialApp` startet jetzt mit `home: const ToDoList()` – die Vorschau aus Level 5 hat ausgedient.
 
 ## Erklärt – was passiert hier?
 
@@ -43,9 +46,6 @@ Sie schreiben **nicht** jedes `ToDoItem` von Hand. Sie sagen nur, **wie viele** 
 5. `Navigator.of(context).pop()` schließt den Dialog wieder. Ein Dialog ist für Flutter wie eine kleine neue Seite – `pop` nimmt die oberste Seite weg.
 
 **Hier arbeiten Stateful und Stateless zusammen:** `ToDoList` (Stateful) besitzt die Daten, `ToDoItem` (Stateless) zeigt einen Eintrag davon an.
-
-## Prüfen
-`flutter test test/level_06_test.dart`
 
 <details><summary>Tipp 1 – showDialog</summary>
 

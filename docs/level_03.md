@@ -3,21 +3,21 @@
 **Ziel:** Sie legen ein Stateful Widget an, lagern es in eine eigene Datei aus und
 binden es in das Stateless Widget ein.
 
-**Dateien:** `lib/level_03/my_first_app.dart`, `lib/level_03/my_login.dart` ·
+**Sie schreiben:** `lib/my_first_app.dart` ändern, `lib/my_login.dart` neu ·
 **Skript:** Kapitel 4b
 
 ## Auftrag
 1. `my_first_app.dart`: Ergänzen Sie eine `appBar` mit `title: Text('Meine erste App')`.
-2. `my_login.dart`: `MyLogin` ist noch ein Stateless Widget. Machen Sie daraus ein
-   **Stateful Widget**. Es besteht aus zwei Klassen:
+2. Legen Sie die Datei `lib/my_login.dart` an. Schreiben Sie darin das
+   **Stateful Widget** `MyLogin`. Es besteht aus zwei Klassen:
    - `MyLogin extends StatefulWidget` mit `createState()`
    - `_MyLoginState extends State<MyLogin>` mit der `build`-Methode
    Die `build`-Methode zeigt zentriert `'Willkommen im Stateful Widget'`.
-3. `my_first_app.dart`: Setzen Sie `body: const MyLogin()` und löschen Sie die
-   Platzhalter-Zeilen am Dateiende.
+3. `my_first_app.dart`: Binden Sie die neue Datei mit `import 'my_login.dart';` ein und setzen Sie
+   `body: const MyLogin()`.
 
-Die Datei `my_login.dart` ist schon in `snake_case` benannt und wird in
-`my_first_app.dart` importiert – so lagert man Widgets aus.
+Dateinamen schreibt man in `snake_case` (`my_login.dart`), Klassennamen in `UpperCamelCase` (`MyLogin`) –
+so lagert man Widgets aus.
 
 ## Erklärt – was passiert hier?
 
@@ -48,10 +48,7 @@ Noch hat der State keine Daten – das kommt in Level 4. Ausführlich mit Vergle
 
 **Warum eine eigene Datei?** Je größer die App, desto unübersichtlicher wird eine einzige `main.dart`. Jedes größere Widget bekommt deshalb eine eigene Datei in `snake_case` (`my_login.dart`) und wird mit `import 'my_login.dart';` eingebunden.
 
-**AppBar:** Mit `appBar:` füllen Sie einen weiteren Bereich des Scaffold. Der `body` beginnt jetzt **unter** der AppBar. Probieren Sie es im Baukasten auf der Webseite zur Flutter-Einführung aus.
-
-## Prüfen
-`flutter test test/level_03_test.dart`
+**AppBar:** Mit `appBar:` füllen Sie einen weiteren Bereich des Scaffold. Der `body` beginnt jetzt **unter** der AppBar. Probieren Sie es im Baukasten in Level 1 aus.
 
 <details><summary>Tipp 1</summary>
 
