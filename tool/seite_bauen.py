@@ -4,10 +4,54 @@
 Aufruf im Projektordner:  python3 tool/seite_bauen.py   (braucht pandoc)
 Stil: css/stil.css aus den Lernpaketen (Lernpaket-Kompass), Welt "technik".
 """
+import base64
+import getpass
+import hashlib
 import html
+import json
+import os
 import pathlib
 import re
+import secrets
 import subprocess
+import sys
+
+ITERATIONEN = 600_000
+MARKER = "LOESUNG-OK\n"
+
+
+def loesungen_verschluesseln(passwort: str) -> str:
+    """Musterlösungen als JSON, AES-256-CBC, Schlüssel per PBKDF2-SHA256 aus dem Passwort.
+    Ergebnis: JSON mit salt, iv, daten (Base64) – entschlüsselt wird im Browser (WebCrypto)."""
+    daten = {}
+    for ordner in sorted((ROOT / "loesungen" / "lib").glob("level_0*")):
+        nr = ordner.name[-1]
+        daten[nr] = [
+            {"datei": f"lib/{ordner.name}/{f.name}", "code": f.read_text(encoding="utf-8")}
+            for f in sorted(ordner.glob("*.dart"))
+        ]
+    klartext = (MARKER + json.dumps(daten, ensure_ascii=False)).encode("utf-8")
+    salt, iv = secrets.token_bytes(16), secrets.token_bytes(16)
+    key = hashlib.pbkdf2_hmac("sha256", passwort.encode("utf-8"), salt, ITERATIONEN, 32)
+    geheim = subprocess.run(
+        ["openssl", "enc", "-aes-256-cbc", "-K", key.hex(), "-iv", iv.hex()],
+        input=klartext, capture_output=True, check=True,
+    ).stdout
+    b64 = lambda b: base64.b64encode(b).decode()
+    return json.dumps({"salt": b64(salt), "iv": b64(iv), "iter": ITERATIONEN, "daten": b64(geheim)})
+
+
+def passwort_holen() -> str:
+    pw = os.environ.get("LOESUNG_PASSWORT", "")
+    if not pw and sys.stdin.isatty():
+        pw = getpass.getpass("Passwort für die Lösungen: ")
+        if pw and pw != getpass.getpass("Passwort wiederholen: "):
+            sys.exit("Die Passwörter stimmen nicht überein – abgebrochen.")
+    if not pw:
+        sys.exit("Kein Passwort angegeben (Eingabe oder LOESUNG_PASSWORT) – abgebrochen.")
+    if len(pw) < 10:
+        sys.exit("Bitte mindestens 10 Zeichen – die Seite ist öffentlich und kann durchprobiert werden.")
+    return pw
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
@@ -49,6 +93,7 @@ def level_karte(nr: int, titel: str, stichworte: str) -> str:
     <code>flutter test test/level_0{nr}_test.dart</code>
     <button class="primaer erledigt" data-level="{nr}">Test ist grün – Level geschafft</button>
   </div>
+  <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
 </section>"""
 
 
@@ -57,6 +102,7 @@ def main() -> None:
         f'<a class="chip" href="#level-{n}" data-chip="{n}">{n}</a>' for n, *_ in LEVEL
     )
     karten = "".join(level_karte(*l) for l in LEVEL)
+    geheim = loesungen_verschluesseln(passwort_holen())
     bonus = md_zu_html(DOCS / "bonus.md")
     seite = f"""<!doctype html>
 <html lang="de">
@@ -93,6 +139,8 @@ def main() -> None:
   .kopf a.chip.ok{{background:rgba(255,255,255,.95);color:var(--ok);border-color:#fff}}
   .zaehler{{font-weight:700}}
   a{{color:var(--accent)}}
+  .sr{{position:absolute;left:-9999px}}
+  details.loesung{{margin-top:12px}}
   @media (max-width:600px){{.app{{padding:10px}} .kopf{{padding:16px}}}}
 </style>
 </head>
@@ -138,6 +186,19 @@ def main() -> None:
     <div class="level-inhalt">{bonus}</div>
   </section>
 
+  <section class="card" id="loesungen">
+    <h2>Musterlösungen</h2>
+    <p>Die Lösungen sind verschlüsselt. Mit dem Passwort Ihrer Lehrkraft erscheinen sie in jedem Level
+    unter <i>Musterlösung</i>. Erst selbst probieren – die Tests verraten Ihnen mehr als jede Lösung!</p>
+    <form id="entsperren" class="pruefen" style="border:0;justify-content:flex-start">
+      <label for="pw" class="sr">Passwort</label>
+      <input id="pw" type="password" autocomplete="off" placeholder="Passwort"
+        style="font:inherit;padding:8px 12px;border-radius:12px;border:1px solid var(--line);min-height:42px">
+      <button class="primaer" type="submit">Lösungen anzeigen</button>
+      <span id="pw-status" role="status"></span>
+    </form>
+  </section>
+
   <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <script>
@@ -167,6 +228,48 @@ def main() -> None:
     }});
   }});
   zeigen();
+}})();
+
+(function(){{
+  var GEHEIM = {geheim};
+  var MARKER = {json.dumps(MARKER)};
+  var b = function(s){{ return Uint8Array.from(atob(s), function(c){{ return c.charCodeAt(0); }}); }};
+  var status = document.getElementById("pw-status");
+  async function entschluesseln(pw){{
+    var basis = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+    var key = await crypto.subtle.deriveKey(
+      {{name: "PBKDF2", salt: b(GEHEIM.salt), iterations: GEHEIM.iter, hash: "SHA-256"}},
+      basis, {{name: "AES-CBC", length: 256}}, false, ["decrypt"]);
+    var klar = await crypto.subtle.decrypt({{name: "AES-CBC", iv: b(GEHEIM.iv)}}, key, b(GEHEIM.daten));
+    var text = new TextDecoder().decode(klar);
+    if (text.indexOf(MARKER) !== 0) throw new Error("falsch");
+    return JSON.parse(text.slice(MARKER.length));
+  }}
+  function einfuegen(daten){{
+    Object.keys(daten).forEach(function(nr){{
+      var box = document.querySelector('[data-loesung="' + nr + '"]');
+      if (!box) return;
+      box.querySelectorAll("div").forEach(function(d){{ d.remove(); }});
+      daten[nr].forEach(function(f){{
+        var div = document.createElement("div");
+        var h = document.createElement("h3"); h.textContent = f.datei;
+        var pre = document.createElement("pre"), code = document.createElement("code");
+        code.textContent = f.code; pre.appendChild(code);
+        div.appendChild(h); div.appendChild(pre); box.appendChild(div);
+      }});
+      box.hidden = false;
+    }});
+  }}
+  document.getElementById("entsperren").addEventListener("submit", async function(e){{
+    e.preventDefault();
+    status.textContent = "Prüfe …";
+    try {{
+      einfuegen(await entschluesseln(document.getElementById("pw").value));
+      status.textContent = "✓ Lösungen sind in den Leveln freigeschaltet.";
+    }} catch (err) {{
+      status.textContent = "✗ Passwort falsch.";
+    }}
+  }});
 }})();
 </script>
 </body>
