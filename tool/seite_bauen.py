@@ -421,7 +421,7 @@ a{color:var(--accent)}
   padding:4px 16px 8px;margin:12px 0}
 .auftrags-kasten h3{color:#b42318;margin-top:.6rem}
 .auftrags-kasten h3::before{content:"✏️ "}
-.auftrags-kasten code{background:#fff}
+.auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
 .ausschnitt{margin-top:8px;text-align:left}
 .ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
 .ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
