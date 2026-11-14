@@ -26,9 +26,6 @@
 
 **Dateien kopieren** geht mit demselben Zugang: `scp datei administrator@IP:/tmp/` – das brauchen Sie in Level 7.
 
-## Prüfen
-`dart run tool/pruefen.dart 2`
-
 <details><summary>Tipp 1 – „Connection refused“</summary>
 
 Der SSH-Dienst läuft nicht. Auf dem Pi: `systemctl status ssh` – steht dort nicht *active*, `systemctl enable --now ssh` wiederholen.

@@ -27,9 +27,6 @@ Ein **Webserver** wartet auf Port **80** auf HTTP-Anfragen und schickt Dateien z
 
 `/var/www/html` ist das **Wurzelverzeichnis** (*DocumentRoot*) – alles darin ist aus dem Netz erreichbar. Merken Sie sich das, es wird in Level 4, 7 und 8 wichtig.
 
-## Prüfen
-`dart run tool/pruefen.dart 3`
-
 <details><summary>Tipp – Seite lädt nicht</summary>
 
 `systemctl status apache2` zeigt, ob Apache läuft. Achten Sie im Browser auf `http://` – nicht `https://`, dafür ist noch kein Zertifikat eingerichtet.

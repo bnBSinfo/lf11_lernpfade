@@ -35,9 +35,6 @@ Sieht der Browser `<?php phpinfo(); ?>` im Klartext, fehlt das Paket `libapache2
 
 Das Skript installiert diese Pakete über *synaptic* („die 4 Ubuntu-Pakete“). Mit `apt` geht es schneller und nachvollziehbar.
 
-## Prüfen
-`dart run tool/pruefen.dart 4`
-
 <details><summary>Tipp 1 – 404 Not Found</summary>
 
 Die Datei heißt `info.php` (nicht `php.info`) und liegt in `/var/www/html`. Kontrolle: `ls /var/www/html`

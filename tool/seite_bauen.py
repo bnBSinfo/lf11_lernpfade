@@ -21,10 +21,13 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from datenfluss import CSS as DATENFLUSS_CSS, datenfluss_svg  # noqa: E402
+import lernpfad_bausteine as bausteine  # noqa: E402
+from kontrolle import KONTROLLE  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 REPO = "bnBSinfo/rest_lernpfad_schueler"
+PAGES = "https://bnbsinfo.github.io/rest_lernpfad_schueler/"  # Downloads (api.php) liegen dort
 ITERATIONEN = 600_000
 VERSION = re.search(r"^version:\s*([\d.]+)", (ROOT / "pubspec.yaml").read_text(encoding="utf-8"), re.M).group(1)
 STAND = _dt.date.today().strftime("%d.%m.%Y")
@@ -50,7 +53,7 @@ STACK = [
 LEVEL = {
     1: dict(titel="Den Pi in Betrieb nehmen", stich="SD-Karte, Benutzer, Updates, IP-Adresse",
             ziele=[("terminal", "administrator@pi: ~", "root@pi:~# hostname -I\n10.36.13.76\nroot@pi:~# apt upgrade -y\n0 aktualisiert, 0 neu installiert …")],
-            kette=[("PC", "kennt die IP aus pi.txt"), ("Netz", "LAN im pädagogischen Netz"), ("Pi", "antwortet unter 10.36.13.76")]),
+            kette=[("PC", "kennt die IP des Pi"), ("Netz", "LAN im pädagogischen Netz"), ("Pi", "antwortet unter 10.36.13.76")]),
     2: dict(titel="Fernzugriff mit SSH", stich="openssh-server, ssh, scp",
             ziele=[("terminal", "PC – Terminal", "C:\\> ssh administrator@10.36.13.76\nadministrator@10.36.13.76's password:\nWelcome to Ubuntu 24.04 LTS\nadministrator@pi:~$ hostname\npi")],
             bilder=[("moba_ssh", "MobaXterm: Session → SSH, IP und Benutzer eintragen")],
@@ -76,7 +79,7 @@ LEVEL = {
             bilder=[("api_json", "Firefox zeigt die JSON-Antwort der API")],
             kette=[("HTTP-Methode", "GET · POST · PUT · DELETE"), ("Adresse", "/records/ToDoTB/3"), ("php-crud-api", "erzeugt SQL"), ("Antwort", "JSON")]),
     9: dict(titel="Die REST-API aus Dart nutzen", stich="package:http, async/await, jsonDecode",
-            ziele=[("terminal", "PC – dart run tool/todo_konsole.dart", "http://10.36.13.76:80/php-crud-api/api.php/records/ToDoTB\n\n[x] 1: Pi einrichten\n[ ] 2: API testen")],
+            ziele=[("terminal", "PC – todo_client", "> dart run bin/todo_client.dart 10.36.13.76 neu \"Milch kaufen\"\nNeu angelegt mit id 3\n[x] 1: Pi einrichten\n[ ] 2: API testen\n[ ] 3: Milch kaufen")],
             kette=[("TodoApi.alle()", "Dart auf dem PC/Handy"), ("http.get", "GET …/records/ToDoTB"), ("jsonDecode", "Text → Map"), ("List<ToDo>", "fertig für die App")]),
 }
 ANZAHL = len(LEVEL)
@@ -143,14 +146,14 @@ def level_ansicht(nr: int, d: dict) -> str:
         <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
     </aside>
   </div>
+  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr])}
   <div class="card grafik"><h3>Wo sind wir im Datenfluss?</h3>{datenfluss_svg(nr)}
     <p class="legende"><span class="knoten neu"><b>neu / im Einsatz in diesem Level</b></span><span class="knoten da"><b>schon da</b></span>
     <span class="knoten spaeter"><b>kommt noch</b></span></p>
     <h3>Schritt für Schritt</h3>{kette(d['kette'])}</div>
   <div class="card lp-fuss">
     {zurueck}
-    <div class="pruefen"><code>dart run tool/pruefen.dart {nr}</code>
-      <button class="erledigt" data-level="{nr}">Prüfung ist grün – geschafft</button></div>
+    <div class="pruefen"><button class="erledigt" data-level="{nr}" disabled>Level geschafft</button></div>
     {weiter}
   </div>
 </section>"""
@@ -158,7 +161,8 @@ def level_ansicht(nr: int, d: dict) -> str:
 
 def loesungen_verschluesseln(passwort: str) -> str:
     """Musterlösungen als JSON, AES-256-CBC, Schlüssel per PBKDF2-SHA256 aus dem Passwort."""
-    zuordnung = {"6": ["server/sql/flutterdb.sql"], "7": ["server/php/benutzer.php"], "9": ["lib/todo_api.dart"]}
+    zuordnung = {"6": ["server/sql/flutterdb.sql"], "7": ["server/php/benutzer.php"],
+                 "9": ["lib/todo_api.dart", "bin/todo_client.dart"]}
     daten = {nr: [{"datei": p, "code": (ROOT / "loesungen" / p).read_text(encoding="utf-8")} for p in pfade]
              for nr, pfade in zuordnung.items()}
     klartext = (MARKER + json.dumps(daten, ensure_ascii=False)).encode("utf-8")
@@ -231,7 +235,7 @@ document.documentElement.classList.add("js");
       if (ok) n++;
       s.classList.toggle("fertig", ok);
       var b = s.querySelector("button.erledigt");
-      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Prüfung ist grün – geschafft";
+      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Level geschafft";
       b.setAttribute("aria-pressed", ok);
       document.querySelectorAll('[data-ziel="level-' + nr + '"]').forEach(function(c){ c.classList.toggle("ok", ok); });
     });
@@ -294,7 +298,7 @@ JS_LOESUNG = r"""
 def main() -> None:
     ohne = "--ohne-loesungen" in sys.argv
     geheim = "null" if ohne else loesungen_verschluesseln(passwort_holen())
-    css = (ROOT / "tool" / "seite.css").read_text(encoding="utf-8") + CSS_EXTRA + DATENFLUSS_CSS
+    css = (ROOT / "tool" / "seite.css").read_text(encoding="utf-8") + CSS_EXTRA + DATENFLUSS_CSS + bausteine.CSS
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
             + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
             + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: REST">📘 Wissen</a>'
@@ -312,7 +316,7 @@ def main() -> None:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(NAME)} LF11</title>
 <meta name="version" content="{VERSION}">
-<meta name="description" content="In 9 Leveln vom Raspberry Pi zum Datenbankserver mit REST-API – mit automatischer Prüfung.">
+<meta name="description" content="In 9 Leveln vom Raspberry Pi zum Datenbankserver mit REST-API – alles selbst getippt, mit Selbstkontrolle.">
 <link rel="stylesheet" href="css/stil.css">
 <style>{css}</style>
 </head>
@@ -328,23 +332,20 @@ def main() -> None:
 
   <section class="ansicht" id="start">
     <div class="card echt"><span aria-hidden="true">🍓</span><div>
-      <b>Gearbeitet wird am echten Raspberry Pi</b> – mit Terminal, SSH, Webserver und Datenbank, genau wie im Betrieb.
-      Ein Prüf-Tool auf Ihrem PC fragt den Pi über das Netz ab und sagt Ihnen, was noch fehlt.
-      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Server-Stack und Hilfen.</div></div>
+      <b>Gearbeitet wird am echten Raspberry Pi und in Ihrer eigenen Entwicklungsumgebung</b> – Terminal, SSH, Webserver,
+      Datenbank und Dart, genau wie im Betrieb. Es gibt <b>keine Vorlagen zum Herunterladen</b>: Jede Zeile tippen Sie selbst.
+      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Datenfluss, Hilfen und Selbstkontrolle.</div></div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
-        <div><h3>1 · Projekt holen</h3>
-          <p><a href="https://github.com/{REPO}/archive/refs/heads/main.zip">ZIP herunterladen</a> und entpacken – oder:</p>
-          <pre><code>git clone https://github.com/{REPO}.git</code></pre></div>
-        <div><h3>2 · Öffnen</h3>
-          <p>Ordner in VS Code oder Android Studio öffnen, einmalig im Terminal:</p>
-          <pre><code>dart pub get</code></pre></div>
-        <div><h3>3 · Am Pi arbeiten</h3>
-          <p>Auftrag lesen und auf dem Pi umsetzen. Ab Level 6 schreiben Sie SQL, PHP und Dart auf dem PC
-          (<code>server/</code>, <code>lib/</code>) und bringen es auf den Pi.</p></div>
-        <div><h3>4 · Prüfen</h3>
-          <p>IP in <code>pi.txt</code> eintragen. Bei Rot steht ein <b>Hinweis</b> in der Ausgabe. Gesamtstand:</p>
-          <pre><code>dart run tool/pruefen.dart</code></pre></div>
+        <div><h3>1 · Bereitlegen</h3>
+          <p>Raspberry Pi mit SD-Karte, Netzteil und LAN-Kabel, dazu Ihr PC mit Terminal (ab Level 9 mit Dart).</p></div>
+        <div><h3>2 · Auftrag lesen</h3>
+          <p>Der rote Kasten sagt, was zu tun ist. <i>Erklärt</i> sagt, warum. Die Tipps öffnen Sie nur, wenn Sie nicht weiterkommen.</p></div>
+        <div><h3>3 · Abtippen</h3>
+          <p>Befehle und Code werden <b>abgetippt</b> – Kopieren ist auf dieser Seite gesperrt. Wer tippt, liest jede Zeile
+          und versteht die Fehlermeldungen.</p></div>
+        <div><h3>4 · Selbstkontrolle</h3>
+          <p>Unter jedem Level: Haken setzen, was wirklich funktioniert, Kontrollfragen beantworten – dann ist das Level geschafft.</p></div>
       </div>
     </div>
     <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
@@ -369,7 +370,7 @@ def main() -> None:
   <section class="ansicht" id="loesungen">
     <div class="card"><h2>🔒 Musterlösungen</h2>
       <p>Die Lösungen zu Level 6, 7 und 9 sind verschlüsselt. Mit dem Passwort Ihrer Lehrkraft erscheinen sie im
-      jeweiligen Level unten im Auftrag. Erst selbst probieren – die Hinweise des Prüf-Tools verraten Ihnen mehr als jede Lösung!</p>
+      jeweiligen Level unten im Auftrag. Erst selbst probieren – Fehlermeldungen lesen und die Tipps nutzen bringt mehr als jede Lösung!</p>
       <form id="entsperren" class="pruefen">
         <label for="pw" class="sr">Passwort</label>
         <input id="pw" type="password" autocomplete="off" placeholder="Passwort"
@@ -381,13 +382,15 @@ def main() -> None:
 
   <footer class="druckfuss"><small>{e(NAME)} LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
-<script>{JS}</script>
+<script>var LP_KEY = "rest-lernpfad-lf11";{JS}</script>
+<script>{bausteine.JS}</script>
 <script>{(ROOT / "tool" / "rest_baukasten.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
 </body>
 </html>
 """
-    (DOCS / "index.html").write_text(seite, encoding="utf-8")
+    seite = seite.replace('href="downloads/', f'href="{PAGES}downloads/')
+    (DOCS / "index.html").write_text(bausteine.einbetten(seite, DOCS), encoding="utf-8")
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     print("Erstellt:", DOCS / "index.html", "(ohne Lösungen)" if ohne else "")
 

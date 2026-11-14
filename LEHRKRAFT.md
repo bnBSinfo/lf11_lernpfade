@@ -1,81 +1,91 @@
 # Hinweise für die Lehrkraft
 
-**Nicht an die Schüler weitergeben** – zusammen mit `loesungen/`, `test/` und `tool/*.sh`.
-Die Schülerversion erzeugt `tool/schuelerversion_erstellen.sh` bzw. `tool/schueler_repo_aktualisieren.sh`.
+Dieses Repo ist **privat** (Musterlösungen, Abnahme-Werkzeug, Probe-Server). Die Schüler bekommen nur die
+Lernpfad-Seite – über mebis oder https://bnbsinfo.github.io/rest_lernpfad_schueler/.
 
-Aufgebaut nach dem Muster der **Flutter-Einführung** (`flutter_lernpfad`): Level mit Auftrag, gestuften Tipps,
-Merke und Denkfrage, Starter-Dateien mit `TODO`s, automatische Prüfung mit deutschen Hinweisen, Webseite mit
-verschlüsselten Musterlösungen. Grundlage: `04__AP_LF11_BN_STO_RASP_DB_REST.docx`.
+Aufgebaut nach dem Muster der **Flutter-Einführung**: Level mit Auftrag, Erklärung, gestuften Tipps, Merke und
+Denkfrage, Zielbild, Server-Stack, Datenfluss, Selbstkontrolle, verschlüsselte Musterlösungen.
+Grundlage: `04__AP_LF11_BN_STO_RASP_DB_REST.docx`.
 
-## Aufbau
+## Grundsatz: alles wird getippt
+- Es gibt **keine Starter-Dateien und kein Projekt zum Importieren**. SQL (Level 6) und PHP (Level 7) schreiben die
+  Schüler mit `nano` auf dem Pi, in Level 9 legen sie mit `dart create todo_client` ein eigenes Projekt an.
+- Der Auftrag beschreibt, **was** das Programm tun soll; Code-Gerüste stehen nur in den Tipps.
+- Auf der Seite ist Kopieren von Code gesperrt (nicht markierbar, Kopieren/Rechtsklick abgefangen, Hinweis
+  „Bitte abtippen“). Ganz verhindern lässt sich das in keinem Browser – es soll vor allem bewusst machen.
+- Einziger Download: die REST-API `api.php` (Level 8) – sie ist Werkzeug, kein Lerncode.
+
+## Selbstkontrolle statt automatischer Tests
+Je Level unter dem Auftrag: Checkliste „Das muss jetzt funktionieren“ (3–4 beobachtbare Ergebnisse) und
+2 Kontrollfragen mit Feedback; die Falschantworten sind typische Fehler. Erst wenn alles abgehakt und richtig
+beantwortet ist, lässt sich „Level geschafft“ setzen. Der Stand wird nur im Browser gespeichert (localStorage).
+Inhalte: `tool/kontrolle.py`. Für einen späteren mebis-Test/H5P lassen sich die Fragen von dort übernehmen.
+
+## Für mebis
+`python3 tool/seite_bauen.py` (fragt das Lösungs-Passwort, mind. 10 Zeichen) erzeugt `docs/index.html`:
+**eine einzige Datei**, Stylesheet, Schriften und Bilder sind eingebettet (ca. 0,8 MB). In mebis als *Datei*
+hochladen (Anzeige: „Öffnen“/„Im neuen Fenster“) – oder auf die GitHub-Pages-Adresse verlinken.
+Der Link zu `api.php` zeigt auf GitHub Pages; ist GitHub im Schulnetz gesperrt, `api.php` zusätzlich als
+Datei in den mebis-Kurs legen.
+
+## Aufbau des Repos
 | Ordner / Datei | Inhalt |
 |---|---|
 | `docs/level_0X.md`, `docs/bonus.md` | Auftrag, Erklärung, Tipps, Merke, Denkfrage |
-| `pi.txt` | IP (und ggf. Ports) des Schüler-Pi |
-| `server/sql/flutterdb.sql` | Level 6: Starter mit TODOs |
-| `server/php/benutzer.php` | Level 7: Starter mit TODOs |
-| `lib/todo_api.dart` | Level 9: Starter mit TODOs (später in der Flutter-App verwendbar) |
-| `loesungen/` | Musterlösungen, gleiche Struktur |
-| `tool/pruefen.dart` | Prüfung aller Level über das Netz (+ `level9_lauf.dart`, `pi_konfig.dart`) |
-| `tool/todo_konsole.dart` | Spielwiese für Level 9 |
-| `test/probe_server.dart` | simuliert einen fertigen Pi (HTTP + SSH-Banner) – **nicht für Schüler** |
-| `tool/loesungen_pruefen.sh` | Lösungen 9/9 grün, Starter-Code Level 6/7/9 rot – gegen den Probe-Server |
-| `tool/seite_bauen.py` | erzeugt `docs/index.html` (braucht pandoc, openssl) |
+| `docs/downloads/api.php` | php-crud-api v2.16.7 (MIT, Lizenz daneben) |
+| `tool/seite_bauen.py` | baut die Seite (braucht pandoc und openssl) |
+| `tool/kontrolle.py` | Checklisten und Kontrollfragen je Level |
+| `tool/lernpfad_bausteine.py` | Selbstkontrolle, Kopiersperre, Einbetten – identisch in der Flutter-Einführung |
+| `tool/datenfluss.py`, `tool/wissen.html`, `tool/rest_baukasten.js` | Grafik, Wissen-Seite, REST-Baukasten |
+| `loesungen/` | Musterlösungen: `server/sql/flutterdb.sql`, `server/php/benutzer.php`, `lib/todo_api.dart`, `bin/todo_client.dart` |
+| `tool/pruefen.dart` + `pi.txt` | **Abnahme-Werkzeug** für Sie: prüft einen Schüler-Pi über das Netz |
+| `test/probe_server.dart` | simuliert einen fertigen Pi (für Tests ohne Hardware) |
+| `tool/loesungen_pruefen.sh` | Abnahme-Werkzeug und Musterlösung gegen den Probe-Server |
+| `tool/schueler_repo_aktualisieren.sh` | baut die Seite und überträgt nur `docs/` ins öffentliche Repo |
 
-## Was die Prüfung kann – und was nicht
-Das Tool fragt den Pi **von außen** ab, wie ein Test:
-- L1 Pi antwortet unter der IP (auch „Connection refused“ zählt als erreichbar) · L2 SSH-Banner auf Port 22
-- L3 Apache auf Port 80 · L4 `info.php` wird ausgeführt, `mysqli` geladen · L5 `/phpmyadmin/` liefert die Anmeldeseite
-- L6 **nur statisch**: Inhalt von `flutterdb.sql` (Benutzer, `GRANT … flutterDB.*`, Primärschlüssel, ToDoTB, Beispieldaten)
-- L7 Datei statisch (kein `SELECT *`, kein Passwort) **und** live: `/benutzer.php` liefert JSON mit berno/stoll ohne `passwordLogin`
-- L8 php-crud-api: `records/flutterTB`, `records/flutterTB/1` (braucht PK), `records/ToDoTB`
-- L9 die Schüler-Klasse `TodoApi` legt am Pi ein Prüf-ToDo an, hakt es ab und löscht es
-
-Nicht prüfbar: SD-Karte, Benutzername, Updates. Wer die IP eines Nachbarn einträgt, ist bei L1–5 und L8 grün –
-deshalb zur Abnahme `hostname` und `hostname -I` per SSH zeigen lassen (passt zum Abnahmeprotokoll).
+## Abnahme mit dem Werkzeug
+IP des Schüler-Pi in `pi.txt` eintragen, dann `dart run tool/pruefen.dart` (Übersicht) oder `… 7` (ein Level).
+- L1 Pi antwortet · L2 SSH-Banner · L3 Apache · L4 `info.php` mit mysqli · L5 phpMyAdmin
+- L6 über die API (erst nach Level 8 möglich): ToDoTB mit Beispieldaten, Primärschlüssel in flutterTB
+- L7 `/benutzer.php` liefert JSON mit berno/stoll ohne `passwordLogin`
+- L8 php-crud-api: `records/flutterTB`, `records/flutterTB/1`, `records/ToDoTB`
+- L9 legt mit der Musterlösung ein Prüf-ToDo an, hakt es ab und löscht es (prüft den Server, nicht den Schüler-Code –
+  den lassen Sie sich mit `dart run bin/todo_client.dart <IP>` vorführen)
+Zur Abnahme außerdem `hostname -I` per SSH zeigen lassen (sonst könnte die IP eines Nachbarn eingetragen sein).
 
 ## Änderungen gegenüber dem Skript (04__AP_LF11_BN_STO_RASP_DB_REST)
 Vorschläge für die Überarbeitung des Skripts:
 - **`flutterTB` ohne Primärschlüssel:** `id INT` ohne `PRIMARY KEY` – die php-crud-api findet dann `records/flutterTB/1`
   nicht. Im Lernpfad `id INT AUTO_INCREMENT PRIMARY KEY`.
 - **`skripterstellung/flutter.sql`**: `GRANT … ON flutterDB TO` (ohne `.*`) – meint eine *Tabelle* flutterDB.
-  Im .docx richtig. Außerdem fehlt dort `USE flutterDB;` vor `CREATE TABLE` im .docx.
+  Im .docx richtig. Außerdem fehlt im .docx `USE flutterDB;` vor `CREATE TABLE`.
 - **Tabelle `ToDoTB`** wird im README erwähnt, im Skript aber nirgends angelegt – im Lernpfad mit
   `id, titel, erledigt` ergänzt (passt zur ToDo-Liste der Flutter-Einführung).
 - **„Die 4 Ubuntu-Pakete“ in synaptic** sind nicht benannt → im Lernpfad per `apt`:
   `php libapache2-mod-php php-mysql` (L4) und `php-mbstring php-zip php-gd php-curl` (L5).
+- **REST-API als Download** statt `git clone`: feste Version, kein `.git`-Ordner im Webverzeichnis.
+  Aktualisieren: `gh release download <tag> -R mevdschee/php-crud-api -p api.php -D docs/downloads --clobber`.
 - `ifconfig`/`net-tools` ist veraltet → `hostname -I` (ifconfig als Alternative erwähnt).
 - `systemctl enable --now ssh` fehlt – sonst startet SSH nicht überall automatisch.
-- **REST-API als Download:** `docs/downloads/api.php` = Release v2.16.7 der php-crud-api (MIT, Lizenz liegt daneben),
-  über GitHub Pages per `wget` abrufbar. Statt `git clone` – kein `.git`-Ordner im Webverzeichnis, feste Version.
-  Aktualisieren: `gh release download <tag> -R mevdschee/php-crud-api -p api.php -D docs/downloads --clobber`.
 - `gedit api.php` braucht einen Desktop, per SSH geht das nicht → `nano`.
-- „php.info-Datei“ → die Datei heißt `info.php`. `nano`: Speichern ist Strg+O, Strg+X beendet (Skript: „strg x, Y“ – geht auch).
-- Sicherheit (→ Bonus): Klartext-Passwörter, die API gibt `passwordLogin` aus, `info.php` bleibt liegen,
-  `.git`-Ordner der php-crud-api ist im Web erreichbar.
+- „php.info-Datei“ → die Datei heißt `info.php`. `nano`: Speichern ist Strg+O, Strg+X beendet.
+- Sicherheit (→ Bonus): Klartext-Passwörter, die API gibt `passwordLogin` aus, `info.php` bleibt liegen.
 - Tippfehler: Rasberry, SHH, RasB/Rasb, Datenabank, angeldegt, „Die Terminal“.
 
 ## Ablauf-Vorschlag
 1. Flutter-Einführung abgeschlossen (Dart/Flutter installiert nach `02_AP_LF11_BN_STO_Installationsanleitung`).
-2. Schüler erhalten das ZIP oder klonen das Schüler-Repo, `dart pub get`.
-3. Je Level: Auftrag → am Pi umsetzen → `dart run tool/pruefen.dart <Level>` grün.
-4. Stundenende: `dart run tool/pruefen.dart` – Ausgabe als Nachweis/Screenshot.
+2. Lernpfad-Seite in mebis öffnen, Pi bereitlegen.
+3. Je Level: Auftrag → abtippen und umsetzen → Selbstkontrolle.
+4. Abnahme stichprobenartig mit `dart run tool/pruefen.dart` und dem Abnahmeprotokoll.
 5. Ausblick (Bonus 1): `TodoApi` in die ToDo-App der Flutter-Einführung einbauen.
 
 ## Prüfen nach Änderungen
 ```
-./tool/loesungen_pruefen.sh     # Lösung 9/9, Starter: 6, 7, 9 rot
+./tool/loesungen_pruefen.sh     # 9/9 grün und ToDo-Liste vom Musterlösungs-Client
 dart analyze
+python3 tool/seite_bauen.py --ohne-loesungen && python3 -m http.server -d docs
 ```
 
-## Schüler-Repo und Webseite
-- Privat (dieses Repo, mit Lösungen): https://github.com/bnBSinfo/rest_lernpfad
-- Öffentlich für Schüler (noch anzulegen): `gh repo create bnBSinfo/rest_lernpfad_schueler --public`,
-  dann `./tool/schueler_repo_aktualisieren.sh` und in den Repo-Einstellungen GitHub Pages auf `main` / `docs` stellen.
-- Lokal ansehen ohne Lösungen: `python3 tool/seite_bauen.py --ohne-loesungen` und `python3 -m http.server -d docs`.
-- Die eingecheckte `docs/index.html` ist eine Vorschau **ohne** Lösungen; mit Passwort baut sie erst
-  `schueler_repo_aktualisieren.sh`.
-
 ## Versionsnummer
-Steht in `pubspec.yaml` (`version: 1.0.0+1`), erscheint auf der Webseite und in `dart run tool/pruefen.dart`.
-Kleine Korrektur → `1.0.1`, neue Inhalte → `1.1.0`; die Zahl nach `+` jeweils um 1.
+Steht in `pubspec.yaml`, erscheint auf der Seite. Kleine Korrektur → `x.y.1`, neue Inhalte → `x.1.0`;
+die Zahl nach `+` jeweils um 1.

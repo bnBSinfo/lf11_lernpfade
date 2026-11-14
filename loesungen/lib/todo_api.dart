@@ -26,8 +26,8 @@ class ToDo {
 
 /// Zugriff auf die Tabelle ToDoTB über die php-crud-api auf dem Pi.
 class TodoApi {
-  TodoApi(String ip, {int port = 80})
-      : basis = Uri.parse('http://$ip:$port/php-crud-api/api.php/records/ToDoTB');
+  /// ip darf auch einen Port enthalten, z. B. '127.0.0.1:8088' (Probe-Server der Lehrkraft).
+  TodoApi(String ip) : basis = Uri.parse('http://$ip/php-crud-api/api.php/records/ToDoTB');
 
   final Uri basis;
 

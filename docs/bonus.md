@@ -1,8 +1,8 @@
 # Bonus – Server absichern und App anbinden
 
-Für alle, die fertig sind. Ihre Prüfung (`dart run tool/pruefen.dart`) soll grün bleiben.
+Für alle, die fertig sind. Alles aus Level 1–9 soll danach weiter funktionieren.
 
-1. **Flutter-App anbinden:** Kopieren Sie `lib/todo_api.dart` in Ihr Projekt aus der Flutter-Einführung (`flutter pub add http`). Laden Sie die ToDos in `initState()` mit `TodoApi.alle()` und rufen Sie beim Hinzufügen, Abhaken und Löschen die passenden Methoden auf. Android: In `AndroidManifest.xml` sind unverschlüsselte HTTP-Verbindungen nur mit `android:usesCleartextTraffic="true"` erlaubt.
+1. **Flutter-App anbinden:** Legen Sie in Ihrer ToDo-App aus der Flutter-Einführung eine Datei `lib/todo_api.dart` an und tippen Sie Ihre Klasse aus Level 9 dort erneut ein (`flutter pub add http`). Laden Sie die ToDos in `initState()` mit `TodoApi.alle()` und rufen Sie beim Hinzufügen, Abhaken und Löschen die passenden Methoden auf. Android: In `AndroidManifest.xml` sind unverschlüsselte HTTP-Verbindungen nur mit `android:usesCleartextTraffic="true"` erlaubt.
 2. **Aufräumen:** Löschen Sie `info.php` – sie verrät Angreifern Versionen und Pfade.
 3. **Passwort verstecken:** Die API zeigt `passwordLogin` an. Sorgen Sie dafür, dass die Spalte nicht mehr ausgegeben wird – z. B. mit der Middleware `authorization` und `authorization.columnHandler` in `$config` (Doku der php-crud-api).
 4. **Passwörter hashen:** Speichern Sie statt des Klartextes einen Hash (`password_hash()` in PHP). Schreiben Sie eine `login.php`, die Name und Passwort per POST prüft (`password_verify()`) und nur `{"ok": true}` oder `{"ok": false}` antwortet.

@@ -1,9 +1,11 @@
-// Prüft Ihren Raspberry Pi über das Netz – wie ein automatischer Test.
+// LEHRKRAFT-WERKZEUG zur Abnahme: prüft einen Schüler-Pi über das Netz.
+// (Die Schüler kontrollieren sich selbst über die Selbstkontrolle auf der Webseite.)
 //
 //   dart run tool/pruefen.dart       Übersicht über alle Level
 //   dart run tool/pruefen.dart 4     Level 4 ausführlich mit Hinweisen
 //
-// Die IP-Adresse steht in pi.txt.
+// IP des Schüler-Pi in pi.txt eintragen. Level 6 ist erst ab Level 8 von außen prüfbar,
+// Level 9 testet mit der Musterlösung, ob Anlegen/Ändern/Löschen über die API klappt.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -32,6 +34,8 @@ class Ergebnis {
 }
 
 late PiKonfig pi;
+const api = '/php-crud-api/api.php/records';
+const apiDownload = 'https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php';
 const zeitlimit = Duration(seconds: 4);
 
 // ---------------------------------------------------------------- Netzwerk-Helfer
@@ -171,92 +175,38 @@ Future<Ergebnis> level5() async {
   return r;
 }
 
-/// SQL ohne Kommentare, klein geschrieben, in Anweisungen zerlegt.
-List<String> sqlAnweisungen(String text) {
-  final ohne = text
-      .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), ' ')
-      .replaceAll(RegExp(r'--[^\n]*'), ' ')
-      .replaceAll(RegExp(r'#[^\n]*'), ' ')
-      .toLowerCase()
-      .replaceAll(RegExp(r'[`"]'), "'")
-      .replaceAll(RegExp(r'\s+'), ' ');
-  return ohne.split(';').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
-}
-
+/// Level 6 lässt sich von außen erst prüfen, wenn die REST-API (Level 8) läuft.
 Future<Ergebnis> level6() async {
   final r = Ergebnis();
-  final datei = File('server/sql/flutterdb.sql');
-  if (!datei.existsSync()) {
-    r.hinweise.add('Die Datei server/sql/flutterdb.sql fehlt.');
+  final t = await holen('$api/ToDoTB');
+  if (t == null || (t.status == 404 && t.typ != 'application/json')) {
+    r.hinweise.add('Von außen erst prüfbar, wenn die REST-API läuft (Level 8). '
+        'Bis dahin auf dem Pi:  mysql -e "USE flutterDB; SHOW TABLES; SELECT * FROM ToDoTB;"');
     return r;
   }
-  final s = sqlAnweisungen(datei.readAsStringSync());
-  String? finde(Pattern p) => s.cast<String?>().firstWhere((a) => a!.contains(p), orElse: () => null);
-
-  r.pruefe(finde(RegExp(r"create user (if not exists )?'?flutteruser'?@'?localhost'? identified by")) != null,
-      'TODO 1: Benutzer flutterUser@localhost mit Passwort',
-      "TODO 1: Es fehlt CREATE USER 'flutterUser'@'localhost' IDENTIFIED BY '…';");
-  final grant = finde('grant ');
-  r.pruefe(grant != null && RegExp(r"on flutterdb\.\* to '?flutteruser'?@'?localhost").hasMatch(grant),
-      'TODO 2: Rechte auf flutterDB.*',
-      grant != null && grant.contains('on flutterdb to')
-          ? 'TODO 2: ON flutterDB gibt Rechte auf eine TABELLE namens flutterDB – richtig ist ON flutterDB.*'
-          : "TODO 2: Es fehlt GRANT ALL PRIVILEGES ON flutterDB.* TO 'flutterUser'@'localhost';");
-
-  bool idOk(String? t) =>
-      t != null && RegExp(r'\bid int\b[^,]*auto_increment').hasMatch(t) && t.contains('primary key');
-  final flutterTB = finde(RegExp(r'create table (if not exists )?flutter_?tb\b'));
-  r.pruefe(idOk(flutterTB), 'TODO 3: flutterTB.id ist Primärschlüssel mit AUTO_INCREMENT',
-      'TODO 3: In flutterTB fehlt die Spalte  id INT AUTO_INCREMENT PRIMARY KEY  '
-          '(ohne Primärschlüssel findet die REST-API in Level 8 keine einzelnen Datensätze).');
-
-  final todo = finde(RegExp(r'create table (if not exists )?todotb\b'));
-  r.pruefe(todo != null, 'TODO 4: Tabelle ToDoTB wird angelegt', 'TODO 4: CREATE TABLE ToDoTB fehlt.');
-  if (todo != null) {
-    r.pruefe(idOk(todo), 'ToDoTB.id ist Primärschlüssel mit AUTO_INCREMENT',
-        'TODO 4: ToDoTB braucht  id INT AUTO_INCREMENT PRIMARY KEY');
-    r.pruefe(RegExp(r'titel varchar\(100\) not null').hasMatch(todo), 'Spalte titel VARCHAR(100) NOT NULL',
-        'TODO 4: Spalte  titel VARCHAR(100) NOT NULL  fehlt oder ist anders geschrieben.');
-    r.pruefe(RegExp(r'erledigt (boolean|bool|tinyint\(1\)) not null default (false|0)').hasMatch(todo),
-        'Spalte erledigt BOOLEAN NOT NULL DEFAULT FALSE',
-        'TODO 4: Spalte  erledigt BOOLEAN NOT NULL DEFAULT FALSE  fehlt oder ist anders geschrieben.');
-  }
-  final insert = s.where((a) => RegExp(r'^insert (into )?todotb\b').hasMatch(a)).join(' ');
-  r.pruefe(insert.contains("'pi einrichten'") && insert.contains("'api testen'"),
-      "TODO 5: Beispiel-ToDos 'Pi einrichten' und 'API testen'",
-      "TODO 5: INSERT INTO ToDoTB mit 'Pi einrichten' und 'API testen' fehlt.");
-  if (r.gruen) {
-    r.ok.add('Jetzt auf dem Pi ausführen:  mysql < flutterdb.sql  – ob es geklappt hat, zeigt Level 7.');
-  }
+  final td = jsonOderNull(t.body);
+  final titel = td is Map && td['records'] is List
+      ? (td['records'] as List).whereType<Map>().map((m) => m['titel']).toSet()
+      : <dynamic>{};
+  r.pruefe(t.status == 200 && td is Map, 'Tabelle ToDoTB existiert',
+      'Tabelle ToDoTB fehlt oder ist nicht lesbar (HTTP ${t.status}).');
+  r.pruefe(titel.contains('API testen'), "Beispiel-ToDo 'API testen' ist eingetragen",
+      "In ToDoTB fehlt das Beispiel-ToDo 'API testen'.");
+  final eins = await holen('$api/flutterTB/1');
+  r.pruefe(eins?.status == 200, 'flutterTB hat einen Primärschlüssel (records/flutterTB/1 klappt)',
+      'records/flutterTB/1 klappt nicht – fehlt in flutterTB  id INT AUTO_INCREMENT PRIMARY KEY ?');
   return r;
 }
 
 Future<Ergebnis> level7() async {
   final r = Ergebnis();
-  final datei = File('server/php/benutzer.php');
-  final php = datei.existsSync() ? datei.readAsStringSync() : '';
-  final code = php.replaceAll(RegExp(r'//[^\n]*'), '');
-  r.pruefe(RegExp(r'header\s*\(\s*.Content-Type:\s*application/json', caseSensitive: false).hasMatch(code),
-      'TODO 1: Content-Type application/json',
-      "TODO 1: In benutzer.php fehlt  header('Content-Type: application/json; charset=utf-8');");
-  r.pruefe(code.contains('new mysqli('), 'TODO 2: Verbindung mit new mysqli(…)',
-      "TODO 2: Verbindung fehlt:  \$db = new mysqli('localhost', 'flutterUser', '…', 'flutterDB');");
-  final select = RegExp(r'select\s+(.*?)\s+from\s+flutter_?tb', caseSensitive: false).firstMatch(code);
-  r.pruefe(select != null && !select.group(1)!.contains('*') && !select.group(1)!.contains('password'),
-      'TODO 3: SELECT nur mit id und name',
-      'TODO 3: Die Abfrage soll nur id und name lesen – nie SELECT * und nie das Passwort!');
-  r.pruefe(code.contains('fetch_all'), 'TODO 4: Zeilen mit fetch_all(MYSQLI_ASSOC) holen',
-      'TODO 4: Zeilen holen mit  \$ergebnis->fetch_all(MYSQLI_ASSOC)');
-  if (!r.gruen) return r;
-
   final a = await holen('/benutzer.php');
   if (a == null) {
     r.hinweise.add('Der Webserver antwortet nicht – erst Level 3 lösen.');
     return r;
   }
   r.pruefe(a.status != 404, 'benutzer.php liegt auf dem Pi',
-      'Ihre Datei liegt noch nicht auf dem Pi. Vom PC aus:  scp server/php/benutzer.php '
-          'administrator@${pi.ip}:/tmp/  und auf dem Pi:  cp /tmp/benutzer.php /var/www/html/');
+      '/var/www/html/benutzer.php fehlt auf dem Pi.');
   if (a.status == 404) return r;
   r.pruefe(!phpNichtAusgefuehrt(a), 'PHP läuft', 'PHP läuft nicht – siehe Level 4.');
   r.pruefe(a.status == 200, 'Antwort ohne Fehler (HTTP 200)',
@@ -280,8 +230,6 @@ Future<Ergebnis> level7() async {
   return r;
 }
 
-const api = '/php-crud-api/api.php/records';
-const apiDownload = 'https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php';
 
 Future<Ergebnis> level8() async {
   final r = Ergebnis();
@@ -331,7 +279,7 @@ Future<Ergebnis> level9() async {
         .where((z) => z.contains('Error') || z.contains('error'))
         .take(3)
         .join('\n    ');
-    r.hinweise.add('lib/todo_api.dart lässt sich nicht übersetzen:\n    $fehler');
+    r.hinweise.add('Prüfprogramm lässt sich nicht starten:\n    $fehler');
   }
   return r;
 }
@@ -369,7 +317,7 @@ Future<void> main(List<String> args) async {
   final l1 = await level1();
   var geschafft = 0;
   for (final n in level.keys) {
-    final offline = !l1.gruen && n != 1 && n != 6;
+    final offline = !l1.gruen && n != 1;
     final r = n == 1 ? l1 : (offline ? null : await level[n]!());
     if (r?.gruen ?? false) geschafft++;
     final zeichen = r == null ? '⏸️ ' : (r.gruen ? '✅' : '❌');

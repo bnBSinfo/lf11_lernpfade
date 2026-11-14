@@ -38,10 +38,7 @@
 
 ![JSON-Antwort im Browser](bilder/api_json.png)
 
-Die API liest beim Start die Tabellen aus der Datenbank und erzeugt diese Adressen **automatisch** – für jede Tabelle, ohne eine Zeile eigenes PHP. Einzelne Datensätze findet sie über den **Primärschlüssel** – deshalb war TODO 3 in Level 6 so wichtig.
-
-## Prüfen
-`dart run tool/pruefen.dart 8`
+Die API liest beim Start die Tabellen aus der Datenbank und erzeugt diese Adressen **automatisch** – für jede Tabelle, ohne eine Zeile eigenes PHP. Einzelne Datensätze findet sie über den **Primärschlüssel** – deshalb war `PRIMARY KEY` in Level 6 so wichtig.
 
 <details><summary>Tipp 1 – {"code":1000,…} oder Access denied</summary>
 

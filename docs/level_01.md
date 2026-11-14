@@ -2,7 +2,7 @@
 
 **Ziel:** Ihr Raspberry Pi läuft mit Ubuntu, ist aktuell und im Netz erreichbar. Sie kennen seine IP-Adresse.
 
-**Dateien:** `pi.txt` · **Skript:** Ubuntu – SD-Karte erstellen, Einrichten des Raspberry Pi
+**Skript:** Ubuntu – SD-Karte erstellen, Einrichten des Raspberry Pi
 
 ## Auftrag
 1. Erstellen Sie mit dem **Raspberry Pi Imager** eine SD-Karte mit *Ubuntu Desktop (64-bit, LTS)*.
@@ -15,7 +15,7 @@
    apt upgrade -y
    apt autoremove -y
    ```
-5. Lesen Sie die IP-Adresse aus und tragen Sie sie auf Ihrem **PC** in `pi.txt` ein (`ip=…`):
+5. Lesen Sie die IP-Adresse aus und notieren Sie sie – Sie brauchen sie in jedem weiteren Level:
    ```bash
    hostname -I
    ```
@@ -34,9 +34,6 @@
 | `apt autoremove` | entfernt nicht mehr benötigte Pakete |
 
 **IP-Adresse:** Jedes Gerät im Netz hat eine Adresse, z. B. `10.36.13.76`. Ihr PC braucht sie, um den Pi zu erreichen – per SSH, Browser und später aus der App. Das Skript nennt `ifconfig` (Paket `net-tools`); moderner und ohne Installation geht `hostname -I` oder `ip -4 a`.
-
-## Prüfen
-`dart run tool/pruefen.dart 1` – das Tool klopft am Pi an. Antwortet er, ist er im Netz.
 
 <details><summary>Tipp 1 – Pi nicht erreichbar?</summary>
 

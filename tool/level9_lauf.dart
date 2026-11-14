@@ -1,8 +1,9 @@
-// Hilfsprogramm für  dart run tool/pruefen.dart 9  – testet lib/todo_api.dart am echten Pi.
+// Hilfsprogramm für  dart run tool/pruefen.dart 9  – testet mit der Musterlösung TodoApi,
+// ob auf dem Schüler-Pi Lesen, Anlegen, Ändern und Löschen über die API funktionieren.
 // Gibt Zeilen "OK: …" und "HINWEIS: …" aus.
 import 'dart:io';
 
-import '../lib/todo_api.dart';
+import '../loesungen/lib/todo_api.dart';
 import 'pi_konfig.dart';
 
 void ok(String t) => stdout.writeln('OK: $t');
@@ -17,7 +18,7 @@ String grund(Object e) {
 
 Future<void> main() async {
   final pi = PiKonfig.lesen();
-  final api = TodoApi(pi.ip, port: pi.http);
+  final api = TodoApi(pi.http == 80 ? pi.ip : '${pi.ip}:${pi.http}');
 
   // TODO 1 + 2: lesen
   try {

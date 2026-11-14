@@ -1,24 +1,36 @@
 # Level 9 – Die REST-API aus Dart nutzen
 
-**Ziel:** Eine Dart-Klasse `TodoApi` liest, legt an, hakt ab und löscht ToDos auf dem Pi. Genau diese Klasse bindet Ihre Flutter-App später ein.
+**Ziel:** Ein eigenes Dart-Programm liest, legt an, hakt ab und löscht ToDos auf dem Pi. Die Klasse `TodoApi` daraus bauen Sie später in Ihre Flutter-App ein.
 
-**Dateien:** `lib/todo_api.dart` · **Ausprobieren:** `dart run tool/todo_konsole.dart`
+**Sie schreiben:** ein neues Dart-Projekt `todo_client` auf dem PC
 
 ## Auftrag
-Ergänzen Sie in `lib/todo_api.dart` die **TODOs 1–5**:
-1. `ToDo.fromJson` – baut aus einem JSON-Objekt ein `ToDo`. `erledigt` kann `true`/`false` **oder** `1`/`0` sein.
-2. `alle()` – `GET`, Antwort mit `jsonDecode` lesen, die Liste unter `records` in ToDos umwandeln.
-3. `anlegen(titel)` – `POST` mit JSON-Body, gibt die neue id zurück.
-4. `abhaken(id, erledigt)` – `PUT` auf den einzelnen Datensatz.
-5. `loeschen(id)` – `DELETE` auf den einzelnen Datensatz.
+1. Legen Sie auf dem PC ein neues Projekt an und fügen Sie das Paket `http` hinzu:
+   ```bash
+   dart create todo_client
+   cd todo_client
+   dart pub add http
+   ```
+2. Legen Sie die Datei `lib/todo_api.dart` an. Sie enthält:
+   - eine Klasse **`ToDo`** mit den Feldern `id` (int), `titel` (String), `erledigt` (bool) und einem Konstruktor **`ToDo.fromJson(Map<String, dynamic> json)`**. Achtung: `erledigt` kann je nach Server `true`/`false` **oder** `1`/`0` sein.
+   - eine Klasse **`TodoApi`**, die im Konstruktor die IP bekommt und daraus die Adresse `http://<IP>/php-crud-api/api.php/records/ToDoTB` baut, mit den Methoden:
 
-Nach jedem TODO können Sie es ausprobieren:
-```bash
-dart run tool/todo_konsole.dart
-dart run tool/todo_konsole.dart neu "Milch kaufen"
-dart run tool/todo_konsole.dart ab 3
-dart run tool/todo_konsole.dart weg 3
-```
+   | Methode | HTTP | Rückgabe |
+   |---|---|---|
+   | `Future<List<ToDo>> alle()` | `GET` auf die Tabelle | Liste aus `records` |
+   | `Future<int> anlegen(String titel)` | `POST` auf die Tabelle, Body `{"titel": …, "erledigt": false}` | neue id |
+   | `Future<void> abhaken(int id, bool erledigt)` | `PUT` auf `…/ToDoTB/<id>`, Body `{"erledigt": …}` | – |
+   | `Future<void> loeschen(int id)` | `DELETE` auf `…/ToDoTB/<id>` | – |
+
+   Jede Methode prüft den Statuscode und wirft bei allem außer 200 eine `Exception` mit Code und Antworttext.
+3. Ersetzen Sie den Inhalt von `bin/todo_client.dart` durch ein Hauptprogramm, das so aufgerufen wird:
+   ```bash
+   dart run bin/todo_client.dart 10.36.13.76                      # alle ToDos anzeigen
+   dart run bin/todo_client.dart 10.36.13.76 neu "Milch kaufen"
+   dart run bin/todo_client.dart 10.36.13.76 ab 3                 # ToDo 3 abhaken
+   dart run bin/todo_client.dart 10.36.13.76 weg 3                # ToDo 3 löschen
+   ```
+   Nach jedem Befehl zeigt es die Liste an, z. B. `[x] 1: Pi einrichten`. Fehler (z. B. Pi aus) fängt es mit `try`/`catch` ab und gibt eine kurze Meldung aus.
 
 ## Erklärt – was passiert hier?
 
@@ -33,36 +45,48 @@ return (daten['records'] as List)                 // ④ Liste unter "records"
 ```
 
 1. **`await`** – die Antwort kommt über das Netz, das dauert. Deshalb sind alle Methoden `async` und geben ein `Future` zurück.
-2. **Statuscode** – `200` heißt OK. Bei `404` oder `500` wirft `_pruefe` eine Exception mit der Meldung des Servers.
-3. **`jsonDecode`** macht aus dem JSON-Text Dart-Objekte: `{}` → `Map`, `[]` → `List`.
+2. **Statuscode** – `200` heißt OK. Bei `404` oder `500` soll Ihr Programm eine Exception mit der Meldung des Servers werfen.
+3. **`jsonDecode`** (aus `dart:convert`) macht aus dem JSON-Text Dart-Objekte: `{}` → `Map`, `[]` → `List`.
 4. **`map(...).toList()`** wandelt jedes JSON-Objekt in ein `ToDo` um.
 
 Beim Senden ist es umgekehrt: `jsonEncode({'titel': titel, 'erledigt': false})` macht aus der Map JSON-Text. Der Header `Content-Type: application/json` sagt der API, wie sie den Body lesen soll.
 
-## Prüfen
-`dart run tool/pruefen.dart 9` – legt ein Prüf-ToDo an, hakt es ab und löscht es wieder.
+**Kommandozeilen-Argumente:** `void main(List<String> args)` bekommt alles hinter dem Dateinamen als Liste: `args[0]` ist die IP, `args[1]` der Befehl, `args[2]` der Wert.
 
-<details><summary>Tipp 1 – fromJson</summary>
+<details><summary>Tipp 1 – Imports und Adresse</summary>
 
 ```dart
-final e = json['erledigt'];
-return ToDo(id: json['id'] as int, titel: json['titel'] as String, erledigt: e == true || e == 1);
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class TodoApi {
+  TodoApi(String ip) : basis = Uri.parse('http://$ip/php-crud-api/api.php/records/ToDoTB');
+  final Uri basis;
+  Uri _eintrag(int id) => Uri.parse('$basis/$id');
+  …
+}
 ```
+Im Hauptprogramm: `import 'package:todo_client/todo_api.dart';`
 </details>
 
 <details><summary>Tipp 2 – POST und PUT</summary>
 
 ```dart
-final antwort = await http.post(basis, headers: _json, body: jsonEncode({…}));
-_pruefe(antwort);
-return jsonDecode(antwort.body) as int;
+final antwort = await http.post(basis,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({…}));
 ```
-`http.put(_eintrag(id), headers: _json, body: …)` funktioniert genauso.
+`http.put(_eintrag(id), headers: …, body: …)` funktioniert genauso. Die Antwort auf POST ist nur eine Zahl: `jsonDecode(antwort.body) as int`.
 </details>
 
-<details><summary>Tipp 3 – „Connection refused“ / Timeout</summary>
+<details><summary>Tipp 3 – fromJson</summary>
 
-Die IP kommt aus `pi.txt`. Läuft Ihr Pi? `dart run tool/pruefen.dart` zeigt, ab welchem Level es hakt.
+`erledigt: e == true || e == 1` – so ist beides abgedeckt.
+</details>
+
+<details><summary>Tipp 4 – „Connection refused“ / Timeout</summary>
+
+Stimmt die IP? Läuft der Pi? Öffnen Sie dieselbe Adresse im Browser – klappt es dort nicht, liegt es nicht an Ihrem Dart-Code.
 </details>
 
 > **Merke:** HTTP-Anfragen sind asynchron (`async`/`await`). JSON wird mit `jsonDecode` gelesen und mit `jsonEncode` geschrieben. Erst den Statuscode prüfen, dann die Daten verwenden.

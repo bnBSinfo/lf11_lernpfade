@@ -33,9 +33,6 @@ Der häufigste Fehler: Enter statt Leertaste – dann ist **kein** Webserver aus
 | **phpMyAdmin** | PHP-Programm zur Verwaltung im Browser |
 | **mysql** (Kommandozeile) | SQL direkt im Terminal ausführen |
 
-## Prüfen
-`dart run tool/pruefen.dart 5`
-
 <details><summary>Tipp 1 – 404 bei /phpmyadmin</summary>
 
 `dpkg-reconfigure phpmyadmin` startet den Assistenten erneut – diesmal apache2 mit der Leertaste markieren.

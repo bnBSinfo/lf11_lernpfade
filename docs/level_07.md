@@ -2,16 +2,22 @@
 
 **Ziel:** Ein kleines PHP-Programm liest die Benutzer aus der Datenbank und gibt sie als **JSON** aus – ohne Passwörter.
 
-**Dateien:** `server/php/benutzer.php` · **Skript:** Schnittstelle zur Datenbank erstellen
+**Sie schreiben:** `/var/www/html/benutzer.php` auf dem Pi · **Skript:** Schnittstelle zur Datenbank erstellen
 
 ## Auftrag
-1. Ergänzen Sie in `server/php/benutzer.php` die **TODOs 1–4**.
-2. Kopieren Sie die Datei auf den Pi:
-   ```bash
-   scp server/php/benutzer.php administrator@<IP>:/tmp/     # auf dem PC
-   cp /tmp/benutzer.php /var/www/html/                      # auf dem Pi
-   ```
-3. Öffnen Sie `http://<IP>/benutzer.php` im Browser – Firefox zeigt das JSON übersichtlich an.
+Legen Sie auf dem Pi die Datei an:
+```bash
+nano /var/www/html/benutzer.php
+```
+Das Programm soll – in dieser Reihenfolge:
+
+1. dem Empfänger mitteilen, dass JSON kommt: Header `Content-Type: application/json; charset=utf-8`,
+2. eine Verbindung zu MySQL öffnen – Rechner `localhost`, Benutzer, Passwort und Datenbank aus Level 6,
+3. bei einem Verbindungsfehler den Statuscode 500 und `{"fehler": "Keine Verbindung zur Datenbank"}` ausgeben und aufhören,
+4. aus `flutterTB` **nur** `id` und `name` lesen, sortiert nach `id`,
+5. alle Zeilen als Liste holen und als JSON ausgeben.
+
+Öffnen Sie dann `http://<IP>/benutzer.php` im Browser – Firefox zeigt das JSON übersichtlich an.
 
 ## Erklärt – was passiert hier?
 
@@ -20,33 +26,42 @@ Browser ──GET /benutzer.php──▶ Apache ──▶ PHP ──SQL──▶
         ◀── [{"id":1,"name":"berno"}, …] ── json_encode ◀── Zeilen
 ```
 
-| Zeile | Bedeutung |
+| Baustein | Bedeutung |
 |---|---|
-| `header('Content-Type: application/json; …')` | sagt dem Empfänger: hier kommt JSON, kein HTML |
-| `new mysqli(host, user, pw, db)` | öffnet die Verbindung mit den Zugangsdaten aus Level 6 |
-| `$db->query('SELECT …')` | schickt SQL an MySQL |
-| `fetch_all(MYSQLI_ASSOC)` | holt alle Zeilen als Liste von Arrays `['id' => 1, 'name' => 'berno']` |
-| `json_encode(...)` | macht daraus Text im JSON-Format |
+| `header('Content-Type: …');` | sagt dem Empfänger: hier kommt JSON, kein HTML |
+| `$db = new mysqli(host, user, pw, db);` | öffnet die Verbindung |
+| `$db->connect_errno` | ist ungleich 0, wenn die Verbindung fehlschlug |
+| `http_response_code(500);` | setzt den Statuscode |
+| `$ergebnis = $db->query('SELECT …');` | schickt SQL an MySQL |
+| `$ergebnis->fetch_all(MYSQLI_ASSOC)` | holt alle Zeilen als Liste von Arrays `['id' => 1, 'name' => 'berno']` |
+| `echo json_encode($liste);` | macht daraus JSON-Text und gibt ihn aus |
 
-**JSON** ist das Austauschformat zwischen Server und App: `[ ]` = Liste, `{ }` = Objekt mit `"schlüssel": wert`. Ihre Flutter-App kann es mit `jsonDecode` direkt in Dart-Listen und -Maps verwandeln.
+**JSON** ist das Austauschformat zwischen Server und App: `[ ]` = Liste, `{ }` = Objekt mit `"schlüssel": wert`. Ihre Flutter-App verwandelt es mit `jsonDecode` direkt in Dart-Listen und -Maps.
 
 **Nur id und name:** Was die Schnittstelle ausgibt, kann jeder im Netz lesen. Deshalb nie `SELECT *` – und nie Passwörter.
 
-## Prüfen
-`dart run tool/pruefen.dart 7` – erst die Datei auf Ihrem PC, dann die Antwort vom Pi.
+**PHP-Regeln:** Jede Datei beginnt mit `<?php`, jede Anweisung endet mit `;`, Variablen beginnen mit `$`. Im Passwort in **einfachen** Anführungszeichen ist `$$` deshalb harmlos – in doppelten würde PHP es als Variable lesen.
 
-<details><summary>Tipp 1 – TODO 2 und 3</summary>
+<details><summary>Tipp 1 – Gerüst</summary>
 
 ```php
-$db = new mysqli('localhost', 'flutterUser', 'Pa$$w0rd', 'flutterDB');
-$ergebnis = $db->query('SELECT id, name FROM flutterTB ORDER BY id');
+<?php
+header(…);
+
+$db = new mysqli(…, …, …, …);
+if ($db->connect_errno) {
+    …
+    exit;
+}
+
+$ergebnis = $db->query(…);
+echo json_encode(…);
 ```
-In PHP stehen Variablen mit `$` – im Passwort in **einfachen** Anführungszeichen ist `$$` deshalb harmlos.
 </details>
 
 <details><summary>Tipp 2 – HTTP 500 / weiße Seite</summary>
 
-Die Fehlermeldung steht im Log des Webservers: `tail /var/log/apache2/error.log`. „Access denied“ = Zugangsdaten falsch, „Table doesn't exist“ = Level 6 nicht ausgeführt.
+Die Fehlermeldung steht im Log des Webservers: `tail /var/log/apache2/error.log`. „Access denied“ = Zugangsdaten falsch, „Table doesn't exist“ = Level 6 nicht ausgeführt, „syntax error“ = Tippfehler, oft ein fehlendes `;`.
 </details>
 
 > **Merke:** Eine Schnittstelle (API) gibt Daten in einem festen Format (JSON) heraus – und nur die Daten, die der Empfänger wirklich braucht.
