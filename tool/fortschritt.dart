@@ -19,7 +19,7 @@ Future<void> main() async {
           .firstMatch(File('pubspec.yaml').readAsStringSync())
           ?.group(1) ??
       '?';
-  stdout.writeln('Flutter-Lernpfad LF11 · Version $version');
+  stdout.writeln('Flutter-Einführung LF11 · Version $version');
   stdout.writeln('Tests laufen … (dauert einige Sekunden)\n');
   final p = await Process.start('flutter', ['test', '--reporter', 'json'],
       runInShell: true);

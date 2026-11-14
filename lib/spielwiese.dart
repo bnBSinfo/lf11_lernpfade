@@ -1,6 +1,6 @@
 // SPIELWIESE – hier dürfen Sie alles ausprobieren!
 //
-// 1. Auf der Lernpfad-Webseite im Baukasten "Ganzen Quellcode zeigen" einschalten
+// 1. Auf der Webseite zur Flutter-Einführung im Baukasten "Ganzen Quellcode zeigen" einschalten
 //    und auf "Kopieren" klicken.
 // 2. Den GESAMTEN Inhalt dieser Datei markieren und durch den kopierten Code ersetzen.
 // 3. Starten:

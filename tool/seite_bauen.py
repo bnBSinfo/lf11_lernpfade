@@ -676,7 +676,7 @@ def main() -> None:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flutter-Lernpfad LF11</title>
+<title>Flutter-Einführung LF11</title>
 <meta name="version" content="{VERSION}">
 <meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – mit automatischen Tests.">
 <link rel="stylesheet" href="css/stil.css">
@@ -686,7 +686,7 @@ def main() -> None:
 <div class="app">
   <header class="card kopf">
     <div class="titel">
-      <h1>Flutter-Lernpfad <span class="version">LF11 · Version {VERSION}</span></h1>
+      <h1>Flutter-Einführung <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 8 Leveln zur ersten eigenen App – Sie programmieren echt, die Tests prüfen mit.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
@@ -748,7 +748,7 @@ def main() -> None:
       </form></div>
   </section>
 
-  <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
+  <footer class="druckfuss"><small>Flutter-Einführung LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
   <form method="dialog"><button class="primaer">Schließen</button></form></dialog>

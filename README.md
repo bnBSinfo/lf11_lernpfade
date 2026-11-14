@@ -1,4 +1,4 @@
-# Flutter-Lernpfad LF11 – Ihre erste eigene App
+# Flutter-Einführung LF11 – Ihre erste eigene App
 
 Sie programmieren in **8 Leveln** echte Flutter-Apps: vom Grundgerüst über eine
 Login-Maske bis zur fertigen ToDo-Liste. Jedes Level hat

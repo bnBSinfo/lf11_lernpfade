@@ -48,7 +48,7 @@ Noch hat der State keine Daten – das kommt in Level 4. Ausführlich mit Vergle
 
 **Warum eine eigene Datei?** Je größer die App, desto unübersichtlicher wird eine einzige `main.dart`. Jedes größere Widget bekommt deshalb eine eigene Datei in `snake_case` (`my_login.dart`) und wird mit `import 'my_login.dart';` eingebunden.
 
-**AppBar:** Mit `appBar:` füllen Sie einen weiteren Bereich des Scaffold. Der `body` beginnt jetzt **unter** der AppBar. Probieren Sie es im Baukasten auf der Lernpfad-Webseite aus.
+**AppBar:** Mit `appBar:` füllen Sie einen weiteren Bereich des Scaffold. Der `body` beginnt jetzt **unter** der AppBar. Probieren Sie es im Baukasten auf der Webseite zur Flutter-Einführung aus.
 
 ## Prüfen
 `flutter test test/level_03_test.dart`

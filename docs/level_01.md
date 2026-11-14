@@ -34,7 +34,7 @@ Seine `build`-Methode gibt zurück, was angezeigt wird.
 | `Scaffold` | das Gerüst **einer Seite** mit festen Bereichen | `appBar:`, `body:`, `floatingActionButton:`, … |
 | `Text` | zeigt eine Zeichenkette | der Text in Klammern |
 
-Probieren Sie im **Baukasten** auf der Lernpfad-Webseite aus, welche Bereiche ein Scaffold hat. Sie füllen davon nur, was Sie brauchen – in Level 1 nur `body`.
+Probieren Sie im **Baukasten** auf der Webseite zur Flutter-Einführung aus, welche Bereiche ein Scaffold hat. Sie füllen davon nur, was Sie brauchen – in Level 1 nur `body`.
 
 **Warum steht der Text oben links unter der Statusleiste?** Ein `Text` ist nur so groß wie sein Inhalt und steht ohne weitere Anweisung oben links. Ohne `AppBar` beginnt der `body` ganz oben. Ausrichtung und Abstand sind in Flutter eigene Widgets – das lernen Sie in Level 2.
 

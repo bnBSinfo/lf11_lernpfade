@@ -1,4 +1,4 @@
-/* Interaktive Baukästen für den Flutter-Lernpfad.
+/* Interaktive Baukästen für den Flutter-Einführung.
    <div class="baukasten" data-baukasten="scaffold"></div>  oder  data-baukasten="layout"
    Vorschau ist eine Nachbildung im Material-3-Stil (kein echtes Flutter) – der Code daneben ist echtes Dart. */
 (function () {

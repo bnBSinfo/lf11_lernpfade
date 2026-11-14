@@ -14,7 +14,7 @@ rsync -a --delete --exclude .git --exclude build --exclude .dart_tool --exclude 
   --exclude local.properties ./ "$TMP/repo/"
 cd "$TMP/repo"
 git add -A
-git commit -q -m "Lernpfad aktualisiert" || echo "Keine Änderungen."
+git commit -q -m "Flutter-Einführung aktualisiert" || echo "Keine Änderungen."
 git remote get-url origin >/dev/null 2>&1 || git remote add origin "https://github.com/$REPO.git"
 git push -q -u origin main
 echo "Übertragen nach https://github.com/$REPO"
