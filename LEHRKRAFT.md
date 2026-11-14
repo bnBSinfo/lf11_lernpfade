@@ -62,7 +62,7 @@ Nach Änderungen an Anleitungen oder Starter-Code: `./tool/schueler_repo_aktuali
 - Lokal ansehen: `python3 tool/seite_bauen.py` und dann `python3 -m http.server -d docs`.
 
 ## Versionsnummer
-Steht in `pubspec.yaml` (`version: 1.5.0+6`) und erscheint auf der Webseite (Kopf und Fußzeile, mit Datum)
+Steht in `pubspec.yaml` (z. B. `version: 1.6.0+7`) und erscheint auf der Webseite (Kopf und Fußzeile, mit Datum)
 und in `dart run tool/fortschritt.dart`. Vor dem Veröffentlichen erhöhen:
 kleine Korrektur → `1.5.1`, neue Inhalte → `1.6.0`; die Zahl nach `+` jeweils um 1.
 So sehen Sie und die Schüler sofort, ob der neueste Stand geladen ist.

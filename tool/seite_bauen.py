@@ -540,6 +540,11 @@ details.loesung{margin-top:14px;border-color:var(--ok)}
 .l-row{flex-direction:row;align-self:stretch}
 .l-kind{background:#fff;border:1px solid #79747e;border-radius:6px;padding:4px 10px;font-size:.8rem}
 .bk-rechts{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bk-codeleiste{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.bk-kopieren{min-height:34px;padding:4px 12px;font-size:.85rem}
+.bk-zeile.rahmen-zeile{color:#9aa4b8}
+.bk-zeile.rahmen-zeile.hl{color:#fff}
+.bk-spielwiese{margin:0}
 .bk-code{margin:0;font-size:.8rem;line-height:1.5}
 .bk-zeile{display:inline-block;width:100%;border-radius:4px;cursor:pointer}
 .bk-zeile.hl{background:rgba(245,158,11,.35)}

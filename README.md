@@ -29,6 +29,11 @@ Wenn Sie in einem Level festhängen, verlieren Sie also nicht den Anschluss.
 | Android Studio | Rechtsklick auf die Testdatei → *Run 'tests in level_01_test'* |
 | VS Code | Seitenleiste *Testing* (Reagenzglas) → Test starten, oder ▶ über `main()` |
 
+### Spielwiese
+
+`lib/spielwiese.dart` ist Ihre Datei zum freien Ausprobieren – z. B. mit Code aus den Baukästen der Webseite.
+Starten: Rechtsklick → *Run 'spielwiese.dart'* oder `flutter run -t lib/spielwiese.dart`.
+
 ### Wo stehe ich?
 
 ```

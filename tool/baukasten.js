@@ -15,9 +15,21 @@
     root.innerHTML =
       '<div class="bk-steuer">' + steuerHtml + "</div>" +
       '<div class="bk-handy"><div class="bk-schirm"></div></div>' +
-      '<div class="bk-rechts"><pre class="bk-code"><code></code></pre>' +
+      '<div class="bk-rechts"><div class="bk-codeleiste">' +
+      '<label class="bk-schalter"><input type="checkbox" data-voll> Ganzen Quellcode zeigen</label>' +
+      '<button type="button" class="bk-kopieren">📋 Kopieren</button></div>' +
+      '<pre class="bk-code"><code></code></pre>' +
+      '<p class="bk-spielwiese klein">Selbst ausprobieren: Ganzen Quellcode kopieren, in <code>lib/spielwiese.dart</code> einfügen und starten – ' +
+      'Android Studio: Rechtsklick auf die Datei → <i>Run</i>, VS Code/Terminal: <code>flutter run -t lib/spielwiese.dart</code></p>' +
       '<div class="bk-info" role="status"><b>Tipp:</b> Fahren Sie mit der Maus über einen Teil im Handy oder im Code – oder tippen Sie darauf.</div></div>';
+    var kopf = root.querySelector(".bk-kopieren");
+    kopf.addEventListener("click", function () {
+      var text = root.querySelector(".bk-code").textContent;
+      var fertig = function () { kopf.textContent = "✓ Kopiert"; setTimeout(function () { kopf.textContent = "📋 Kopieren"; }, 1800); };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(fertig, function () { kopf.textContent = "Bitte markieren + Strg/Cmd+C"; });
+    });
     return {
+      voll: root.querySelector("[data-voll]"),
       schirm: root.querySelector(".bk-schirm"),
       code: root.querySelector(".bk-code code"),
       info: root.querySelector(".bk-info"),
@@ -53,11 +65,41 @@
     });
   }
 
+  // Erklärungen für die ergänzten Zeilen des ganzen Quellcodes
+  var RAHMEN_INFO = {
+    "r-import": "<b>import</b> holt die Material-Widgets (Text, Scaffold, AppBar …) in die Datei. Ohne diese Zeile kennt Dart sie nicht.",
+    "r-main": "<b>main()</b> ist der Startpunkt jedes Dart-Programms. <code>runApp()</code> bekommt das erste Widget – die Wurzel des Widget-Baums.",
+    "r-klasse": "<b>class MyFirstApp extends StatelessWidget</b> – Ihr eigenes Widget. Es hat keinen Zustand und gibt in <code>build</code> den Widget-Baum zurück.",
+    "r-build": "<b>build(BuildContext context)</b> ruft Flutter auf, wenn das Widget gezeichnet wird. Was hier mit <code>return</code> zurückkommt, erscheint auf dem Bildschirm.",
+    "r-app": "<b>MaterialApp</b> ist die App selbst (Design, Navigation). <code>home:</code> ist die Startseite – hier unser Scaffold.",
+  };
+
+  function einruecken(zeilen, n) {
+    var pad = new Array(n + 1).join(" ");
+    return zeilen.map(function (z) { return [z[0] ? pad + z[0] : z[0], z[1]]; });
+  }
+
+  /** Bettet Zeilen, die mit "Scaffold(" beginnen und mit ")" enden, in eine lauffähige main.dart ein. */
+  function ganzeDatei(scaffoldZeilen) {
+    var sc = scaffoldZeilen.map(function (z) { return [z[0], z[1]]; });
+    sc[0][0] = "home: " + sc[0][0];
+    sc[sc.length - 1][0] += ",";
+    return [
+      ["import 'package:flutter/material.dart';", "r-import"], ["", null],
+      ["void main() {", "r-main"], ["  runApp(const MyFirstApp());", "r-main"], ["}", "r-main"], ["", null],
+      ["class MyFirstApp extends StatelessWidget {", "r-klasse"], ["  const MyFirstApp({super.key});", "r-klasse"], ["", null],
+      ["  @override", "r-build"], ["  Widget build(BuildContext context) {", "r-build"],
+      ["    return MaterialApp(", "r-app"],
+    ].concat(einruecken(sc, 6)).concat([
+      ["    );", "r-app"], ["  }", "r-build"], ["}", "r-klasse"],
+    ]);
+  }
+
   function codeZeilen(zeilen) {
     // zeilen: [[text, teil|null], ...]
     return zeilen.map(function (z) {
       return z[1]
-        ? '<span class="bk-zeile" data-teil="' + z[1] + '" tabindex="0">' + esc(z[0]) + "</span>"
+        ? '<span class="bk-zeile' + (z[1].indexOf("r-") === 0 ? " rahmen-zeile" : "") + '" data-teil="' + z[1] + '" tabindex="0">' + esc(z[0]) + "</span>"
         : '<span class="bk-zeile">' + esc(z[0]) + "</span>";
     }).join("\n");
   }
@@ -108,7 +150,9 @@
 
       var z = [["Scaffold(", "scaffold"]];
       if (st.appBar) z.push(["  appBar: AppBar(", "appBar"], ["    title: Text(" + dartStr(st.titel) + "),", "titel"], ["  ),", "appBar"]);
-      if (st.drawer) z.push(["  drawer: Drawer(", "drawer"], ["    child: ListView(children: [ … ]),", "drawer"], ["  ),", "drawer"]);
+      if (st.drawer) z.push(["  drawer: Drawer(", "drawer"], ["    child: ListView(", "drawer"], ["      children: const [", "drawer"],
+        ["        ListTile(title: Text('Start')),", "drawer"], ["        ListTile(title: Text('Einstellungen')),", "drawer"],
+        ["      ],", "drawer"], ["    ),", "drawer"], ["  ),", "drawer"]);
       if (st.body) z.push(["  body: Center(", "body"], ["    child: Text(" + dartStr(st.text) + "),", "body"], ["  ),", "body"]);
       if (st.fab) z.push(["  floatingActionButton: FloatingActionButton(", "fab"], ["    onPressed: () {},", "fab"], ["    child: Icon(Icons.add),", "fab"], ["  ),", "fab"]);
       if (st.bottom) z.push(["  bottomNavigationBar: NavigationBar(", "bottom"], ["    destinations: [", "bottom"],
@@ -116,9 +160,10 @@
         ["      NavigationDestination(icon: Icon(Icons.settings), label: 'Einstellungen'),", "bottom"],
         ["    ],", "bottom"], ["  ),", "bottom"]);
       z.push([")", "scaffold"]);
-      t.code.innerHTML = codeZeilen(z);
+      t.code.innerHTML = codeZeilen(t.voll.checked ? ganzeDatei(z) : z);
     }
 
+    t.voll.addEventListener("change", zeichne);
     root.querySelector(".bk-steuer").addEventListener("input", function (ev) {
       var el = ev.target;
       if (el.dataset.st) { st[el.dataset.st] = el.checked; if (!st.drawer) drawerOffen = false; }
@@ -129,7 +174,7 @@
       if (ev.target.closest(".m-menu")) { drawerOffen = true; zeichne(); }
       else if (ev.target.closest(".m-schleier")) { drawerOffen = false; zeichne(); }
     });
-    verknuepfen(root, t, infos);
+    verknuepfen(root, t, Object.assign({}, RAHMEN_INFO, infos));
     zeichne();
   }
 
@@ -199,7 +244,11 @@
       if (st.padding) huelle("Padding", "padding", "padding: const EdgeInsets.all(" + st.padding + ")");
       var z = [["body: " + block[0][0], block[0][1]]].concat(block.slice(1)).map(function (zz) { return [zz[0], zz[1]]; });
       z[z.length - 1][0] += ",";
-      t.code.innerHTML = codeZeilen(z);
+      if (t.voll.checked) {
+        var sc = [["Scaffold(", "body"], ["  appBar: AppBar(title: const Text('Layout')),", "r-app"]]
+          .concat(einruecken(z, 2)).concat([[")", "body"]]);
+        t.code.innerHTML = codeZeilen(ganzeDatei(sc));
+      } else t.code.innerHTML = codeZeilen(z);
     }
 
     root.querySelector(".bk-steuer").addEventListener("input", function (ev) {
@@ -208,7 +257,8 @@
       st[k] = el.type === "checkbox" ? el.checked : el.type === "range" ? Number(el.value) : el.value;
       zeichne();
     });
-    verknuepfen(root, t, infos);
+    t.voll.addEventListener("change", zeichne);
+    verknuepfen(root, t, Object.assign({}, RAHMEN_INFO, infos));
     window.addEventListener("resize", zeichne);
     window.addEventListener("hashchange", function () { setTimeout(zeichne, 0); });
     zeichne();
