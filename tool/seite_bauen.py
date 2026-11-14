@@ -209,7 +209,10 @@ def md_zu_html(pfad: pathlib.Path) -> str:
     text = re.sub(r"^# .*\n", "", pfad.read_text(encoding="utf-8"), count=1)
     out = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", "--no-highlight"],
                          input=text, capture_output=True, text=True, check=True).stdout
-    return out.replace("<h2", "<h3").replace("</h2>", "</h3>")
+    out = out.replace("<h2", "<h3").replace("</h2>", "</h3>")
+    # Arbeitsauftrag (Abschnitt "Auftrag" bis zur nächsten Überschrift) in einen hellroten Kasten
+    return re.sub(r'(<h3 id="auftrag">.*?)(?=<h3 |\Z)',
+                  r'<div class="auftrags-kasten">\1</div>', out, count=1, flags=re.S)
 
 
 def baum_html(knoten) -> str:
@@ -384,6 +387,11 @@ a{color:var(--accent)}
 .marke-nr.marke-hl{transform:translate(-2px,-2px) scale(1.25)}
 .lupe{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.9);border-radius:50%;width:28px;height:28px;
   display:grid;place-items:center;font-size:14px}
+.auftrags-kasten{background:#fdecec;border:2px solid #f3b4b4;border-left:6px solid #d9534f;border-radius:14px;
+  padding:4px 16px 8px;margin:12px 0}
+.auftrags-kasten h3{color:#b42318;margin-top:.6rem}
+.auftrags-kasten h3::before{content:"✏️ "}
+.auftrags-kasten code{background:#fff}
 .ausschnitt{margin-top:8px;text-align:left}
 .ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
 .ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
