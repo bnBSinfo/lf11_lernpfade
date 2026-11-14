@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pi-Server &amp; REST-API LF11</title>
+<meta name="version" content="1.0.0">
+<meta name="description" content="In 9 Leveln vom Raspberry Pi zum Datenbankserver mit REST-API – mit automatischer Prüfung.">
+<link rel="stylesheet" href="css/stil.css">
+<style>
+.app{max-width:1280px}
+.kopf{padding:20px 22px}
+.kopf a.chip{text-decoration:none}
+.kopf a.chip.ok{background:rgba(255,255,255,.95);color:var(--ok);border-color:#fff}
+.kopf a.chip.aktiv{outline:2px solid #fff;outline-offset:1px;font-weight:700}
+.zaehler{font-weight:700}
+a{color:var(--accent)}
+.sr{position:absolute;left:-9999px}
+.klein{font-size:.9rem;color:var(--ink-soft)}
+.knopf{display:inline-flex;align-items:center;gap:6px;border-radius:12px;border:1px solid var(--line);background:var(--card2);
+  color:var(--ink);padding:8px 14px;min-height:42px;text-decoration:none;font-weight:700}
+.knopf.primaer{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ansicht{display:flex;flex-direction:column;gap:12px}
+.js .ansicht[hidden]{display:none}
+.level-kopf{display:flex;gap:14px;align-items:center}
+.level-kopf h2{margin:0}
+.nummer{flex:0 0 52px;height:52px;border-radius:14px;display:grid;place-items:center;font-family:var(--titel);
+  font-weight:800;font-size:1.5rem;background:var(--accent);color:#fff}
+.level.fertig .nummer{background:var(--ok)}
+.stich{margin:0;color:var(--muted)}
+.level-raster{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:12px;align-items:start}
+.lp-seite{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
+.lp-seite h3,.grafik h3{margin-top:0}
+.lp-auftrag{min-width:0}
+.handys{display:flex;gap:10px;justify-content:center}
+.handy{margin:0;flex:1;max-width:220px;min-width:0;text-align:center}
+.handy .rahmen{display:block;width:100%;position:relative;background:#1a2130;border:0;border-radius:22px;padding:8px;
+  box-shadow:var(--shadow);cursor:zoom-in;min-height:0}
+.handy .rahmen:hover{background:#1a2130;outline:3px solid var(--accent)}
+.bild{display:block;position:relative;border-radius:14px;overflow:hidden;background:#fff}
+.bild img{display:block;width:100%;height:auto}
+.marke{position:absolute;border:2px solid #f59e0b;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.8);pointer-events:auto}
+.marke-nr{position:absolute;transform:translate(-2px,-2px);min-width:18px;height:18px;border-radius:9px;background:#f59e0b;color:#1a2130;
+  font-size:12px;font-weight:800;line-height:18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.marke.marke-hl{border-width:3px;background:rgba(245,158,11,.22)}
+.marke-nr.marke-hl{transform:translate(-2px,-2px) scale(1.25)}
+.lupe{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.9);border-radius:50%;width:28px;height:28px;
+  display:grid;place-items:center;font-size:14px}
+.auftrags-kasten{background:#fdecec;border:2px solid #f3b4b4;border-left:6px solid #d9534f;border-radius:14px;
+  padding:4px 16px 8px;margin:12px 0}
+.auftrags-kasten h3{color:#b42318;margin-top:.6rem}
+.auftrags-kasten h3::before{content:"✏️ "}
+.auftrags-kasten code{background:#fff}
+.ausschnitt{margin-top:8px;text-align:left}
+.ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
+.ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
+.marken-legende{list-style:none;margin:6px 0 0;padding:0;text-align:left;font-size:.8rem;line-height:1.3}
+.marken-legende li{display:flex;gap:6px;padding:3px 4px;border-radius:6px;cursor:default}
+.marken-legende li span{color:#b45309;font-weight:800}
+.marken-legende li.marke-hl{background:rgba(245,158,11,.2)}
+#gross{border:0;border-radius:18px;padding:16px;max-width:min(860px,94vw);box-shadow:var(--shadow)}
+#gross::backdrop{background:rgba(15,20,35,.6)}
+.gross-inhalt{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:18px;align-items:start}
+.gross-inhalt .bild{border:8px solid #1a2130;border-radius:22px}
+.gross-inhalt .marken-legende{font-size:.95rem}
+.gross-inhalt h3{margin-top:0}
+#gross form{text-align:right;margin-top:10px}
+@media (max-width:600px){.gross-inhalt{grid-template-columns:1fr}}
+.handy figcaption{font-size:.82rem;color:var(--ink-soft);margin-top:6px;line-height:1.3}
+/* Widget-Baum */
+.baum,.baum ul{list-style:none;margin:0;padding:0}
+.baum ul{margin-left:14px;padding-left:12px;border-left:2px solid var(--line)}
+.baum li{position:relative;padding:3px 0}
+.baum ul>li::before{content:"";position:absolute;left:-12px;top:16px;width:10px;border-top:2px solid var(--line)}
+.knoten{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:6px;padding:3px 9px;border-radius:9px;
+  border:1px solid var(--line);background:var(--card2);font-size:.86rem}
+.knoten small{color:var(--muted);font-size:.78rem}
+.knoten.stateless{background:#e3eefc;border-color:#9fc0ef}
+.knoten.stateful{background:#fde7dc;border-color:#f0a98a}
+.knoten.state{background:#fff3d6;border-color:#e6c46e}
+.knoten.neu{box-shadow:0 0 0 2px var(--accent)}
+.neu-marke{font-style:normal;font-size:.68rem;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:0 5px}
+.legende{display:flex;gap:6px;flex-wrap:wrap;margin:.8rem 0 0}
+/* Grafiken */
+.kette{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.schritt-box{flex:1 1 120px;display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;
+  background:var(--accent-soft);border:1px solid var(--line)}
+.schritt-box b{font-family:ui-monospace,Consolas,monospace;font-size:.92rem}
+.schritt-box span{font-size:.84rem;color:var(--ink-soft)}
+.pfeil{align-self:center;font-size:1.4rem;color:var(--accent);font-weight:800}
+.pfeil.kreis{font-size:.95rem}
+.schachtel{border-radius:12px;padding:30px 14px 14px;position:relative;border:2px dashed var(--ink-soft)}
+.schachtel .etikett{position:absolute;top:6px;left:10px;font-size:.8rem;font-weight:700;font-family:ui-monospace,monospace}
+.s1{background:#fff;max-width:520px}.s2{background:#bdbdbd;border-style:solid}.s3{background:#d6d6d6}
+.s4{background:#fff;border:2px solid var(--ink);padding:8px;text-align:center;font-weight:700;max-width:140px;margin:auto}
+.zwei{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kasten{flex:1 1 220px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--card2)}
+.kasten b{display:block;font-family:ui-monospace,monospace}
+.kasten small{color:var(--ink-soft)}
+.kasten ul{margin:.4rem 0 0;padding-left:1.1rem;font-size:.9rem}
+.kasten.stateful{background:#fde7dc;border-color:#f0a98a}
+.kasten.state{background:#fff3d6;border-color:#e6c46e}
+.kasten.stateless{background:#e3eefc;border-color:#9fc0ef}
+.kasten table{margin-top:6px;font-size:.88rem}
+.verbindung{display:flex;flex-direction:column;align-items:center;font-size:1.6rem;color:var(--accent);font-weight:800}
+.verbindung code{font-size:.8rem}
+.ebenen{display:flex;flex-direction:column;gap:8px;max-width:640px}
+.ebenen .kasten{flex:none}
+.runter{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.88rem;padding:4px 18px}
+.runter span{color:var(--accent);font-weight:700}
+.runter .hoch{color:var(--ok)}
+.reihe-demo{display:flex;gap:6px;max-width:560px;border:2px dashed var(--ink-soft);border-radius:12px;padding:8px}
+.zelle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 10px;
+  border-radius:10px;background:var(--card2);border:1px solid var(--line);font-size:1.1rem}
+.zelle.breit{flex:1;align-items:flex-start;background:var(--accent-soft)}
+.zelle small{font-size:.74rem;color:var(--ink-soft)}
+.cb{width:18px;height:18px;border:2px solid var(--ink);border-radius:3px}
+.liste-demo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px}
+.idx{border:1px solid var(--line);background:var(--card2);border-radius:8px;padding:4px 8px;font-family:ui-monospace,monospace;font-size:.86rem}
+.idx i{color:var(--muted);font-style:normal;margin-right:4px}
+.kl{background:#e3eefc;border:1px solid #9fc0ef;border-radius:8px;padding:4px 8px;font-size:.86rem}
+.lp-fuss{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pruefen{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.level.fertig button.erledigt{background:var(--ok);border-color:var(--ok);color:#fff}
+pre{background:#1a2130;color:#e8ebf0;border-radius:12px;padding:12px 14px;overflow-x:auto;font-size:.86rem}
+pre code{background:none;border:0;color:inherit;padding:0}
+blockquote{margin:.8rem 0;padding:10px 14px;border-left:4px solid var(--deko);background:var(--accent-soft);border-radius:0 12px 12px 0}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%}
+td,th{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+th{background:var(--card2)}
+summary{cursor:pointer;font-weight:700}
+details.loesung{margin-top:14px;border-color:var(--ok)}
+.start-raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.start-raster h3{margin-top:0}
+.uebersicht{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.uebersicht a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);background:var(--card);
+  border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+.uebersicht img{width:100%;height:150px;object-fit:cover;object-position:top;border-radius:10px;border:1px solid var(--line)}
+.uebersicht b{font-family:var(--titel)}
+.uebersicht .fertig-marke{display:none;color:var(--ok);font-weight:700;font-size:.85rem}
+.uebersicht a.ok .fertig-marke{display:inline}
+.echt{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:1px solid #e6c46e;border-radius:14px;padding:12px 14px}
+.echt span{font-size:1.6rem}
+/* ---------- Wissensseite ---------- */
+.inhalt-navi{display:flex;flex-wrap:wrap;gap:6px}
+.inhalt-navi a{text-decoration:none;border:1px solid var(--line);background:var(--card2);border-radius:999px;padding:4px 12px;font-size:.88rem}
+.anatomie{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+.anatomie pre{margin:0}
+.zwei-code>div pre+.code-titel{margin-top:12px}
+.code-titel{margin:0 0 4px;font-weight:700;font-size:.85rem;display:inline-block;padding:2px 10px;border-radius:8px}
+.code-titel.stateful{background:#fde7dc}.code-titel.state{background:#fff3d6}
+.m{display:inline-block;width:1.4em;color:#fbbf24;font-weight:700}
+.marken{margin:0;padding-left:0;list-style:none;counter-reset:m}
+.marken li{counter-increment:m;position:relative;padding:6px 0 6px 34px;border-bottom:1px solid var(--line);font-size:.93rem}
+.marken li::before{content:counter(m);position:absolute;left:0;top:6px;width:24px;height:24px;border-radius:50%;
+  background:#fbbf24;color:#1a2130;font-weight:800;display:grid;place-items:center;font-size:.8rem}
+.vergleich th.stateless{background:#e3eefc}.vergleich th.stateful{background:#fde7dc}
+.vergleich-bild{margin-top:10px}
+.leben{display:flex;flex-direction:column;gap:6px;max-width:620px;margin:10px 0}
+.station{display:flex;flex-direction:column;padding:10px 14px;border-radius:12px;background:var(--card2);border:1px solid var(--line);position:relative}
+.station b{font-family:ui-monospace,monospace}
+.station span{font-size:.88rem;color:var(--ink-soft)}
+.station+.station::before{content:"↓";position:absolute;top:-17px;left:22px;color:var(--accent);font-weight:800}
+.station.schleife{background:var(--accent-soft);border-color:var(--accent)}
+.zurueck{margin-top:6px;font-size:.88rem;color:var(--accent);font-weight:700}
+.entscheidung .frage{padding:12px 14px;border-radius:12px;background:var(--warn-soft);border:1px solid #e6c46e;margin-bottom:8px}
+.antworten{display:flex;gap:10px;flex-wrap:wrap}
+.wissen-link{margin:14px 0 0}
+/* ---------- Baukästen ---------- */
+.baukasten{display:grid;grid-template-columns:200px 230px minmax(0,1fr);gap:16px;align-items:start}
+.bk-steuer{display:flex;flex-direction:column;gap:8px}
+.bk-titel{margin:0;font-weight:700}
+.bk-schalter{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:.9rem}
+.bk-schalter input{width:18px;height:18px;accent-color:var(--accent)}
+.bk-feld{display:flex;flex-direction:column;gap:3px;font-size:.85rem;color:var(--ink-soft)}
+.bk-feld input[type=text],.bk-feld select{font:inherit;color:var(--ink);padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card)}
+.bk-feld[hidden]{display:none}
+.bk-handy{background:#1a2130;border-radius:26px;padding:9px;box-shadow:var(--shadow)}
+.bk-schirm{position:relative;height:400px;border-radius:17px;overflow:hidden;background:#fef7ff;display:flex;flex-direction:column;
+  font-family:Roboto,system-ui,sans-serif;color:#1d1b20;outline:3px solid transparent;outline-offset:-3px}
+.bk-schirm.hl,.bk-schirm .hl{outline:3px solid #f59e0b!important;outline-offset:-3px;box-shadow:0 0 0 4px rgba(245,158,11,.25)}
+.bk-schirm [data-teil]{cursor:pointer}
+.m-appbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:14px 12px;font-size:1.05rem;background:#fef7ff}
+.m-menu{border:0;background:none;font-size:1.1rem;padding:0 4px;min-height:0;color:inherit}
+.m-body{flex:1;display:grid;place-items:center;padding:8px;font-size:.88rem;text-align:center}
+.m-body.leer{color:#999}
+.m-fab{position:absolute;right:14px;bottom:14px;width:46px;height:46px;min-height:0;border-radius:14px;border:0;background:#eaddff;
+  color:#21005d;font-size:1.5rem;box-shadow:0 3px 6px rgba(0,0,0,.25);padding:0}
+.m-bottom{flex:0 0 auto;display:flex;justify-content:space-around;padding:8px 0 10px;background:#f3edf7;font-size:.72rem}
+.m-bottom~.m-fab{bottom:76px}
+.m-ziel{display:flex;flex-direction:column;align-items:center;gap:2px}
+.m-ziel i{font-style:normal;font-size:1rem;padding:2px 16px;border-radius:12px}
+.m-ziel.aktiv i{background:#e8def8}
+.m-schleier{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.m-drawer{position:absolute;top:0;bottom:0;left:0;width:72%;background:#f7f2fa;padding:22px 16px;display:flex;flex-direction:column;gap:14px;
+  border-radius:0 16px 16px 0;font-size:.9rem}
+.l-body{flex:1;display:flex;flex-direction:column;min-height:0}
+.l-padding,.l-farbe,.l-center{flex:1;display:flex;flex-direction:column;min-height:0}
+.l-padding{background:repeating-linear-gradient(45deg,#fef7ff,#fef7ff 6px,#f1e6f5 6px,#f1e6f5 12px)}
+.l-center{align-items:center;justify-content:center}
+.l-text{align-self:flex-start;font-size:.85rem}
+.l-center>.l-text{align-self:center}
+.l-liste{display:flex;gap:4px}
+.l-column{flex-direction:column;flex:1;align-self:flex-start}
+.l-center>.l-column{align-self:center}
+.l-row{flex-direction:row;align-self:stretch}
+.l-kind{background:#fff;border:1px solid #79747e;border-radius:6px;padding:4px 10px;font-size:.8rem}
+.bk-rechts{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bk-codeleiste{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.bk-kopieren{min-height:34px;padding:4px 12px;font-size:.85rem}
+.bk-zeile.rahmen-zeile{color:#9aa4b8}
+.bk-zeile.rahmen-zeile.hl{color:#fff}
+.bk-spielwiese{margin:0}
+.bk-code{margin:0;font-size:.8rem;line-height:1.5}
+.bk-zeile{display:inline-block;width:100%;border-radius:4px;cursor:pointer}
+.bk-zeile.hl{background:rgba(245,158,11,.35)}
+.bk-info{padding:10px 12px;border-radius:12px;background:var(--accent-soft);font-size:.9rem;min-height:3.2em}
+@media (max-width:1100px){.baukasten{grid-template-columns:200px minmax(0,1fr)}.bk-rechts{grid-column:1/-1}}
+@media (max-width:620px){.baukasten{grid-template-columns:minmax(0,1fr)}.bk-handy{width:100%;max-width:250px;margin:auto}.anatomie{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:980px){.level-raster{grid-template-columns:1fr}.lp-seite{position:static;order:-1}}
+@media (max-width:700px){.uebersicht{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){table{display:block;overflow-x:auto;max-width:100%}p code,li code,td code{overflow-wrap:anywhere}.app{padding:10px}.kopf{padding:16px}}
+
+.auftrags-kasten pre code{background:transparent}
+.term,.browser{margin:0 0 10px;border-radius:12px;overflow:hidden;border:1px solid var(--line);font-size:.8rem}
+.term figcaption{background:#2d3442;color:#cfd6e4;padding:5px 10px;font-family:ui-monospace,Consolas,monospace}
+.term pre{margin:0;background:#141922;color:#d6f5d6;padding:10px 12px;white-space:pre-wrap;border-radius:0}
+.browser .leiste{display:flex;gap:5px;align-items:center;background:#e9edf3;padding:6px 8px}
+.browser .leiste span{width:9px;height:9px;border-radius:50%;background:#c4ccd8}
+.browser .leiste code{flex:1;margin-left:6px;background:#fff;border-radius:8px;padding:2px 8px;font-size:.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.browser pre{margin:0;background:#fff;color:#1d2533;padding:10px 12px;white-space:pre-wrap;border-radius:0}
+.foto{margin:0 0 8px}.foto img{width:100%;border-radius:10px;border:1px solid var(--line)}
+.foto figcaption{font-size:.8rem;color:var(--ink-soft)}
+.lp-auftrag img{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+.stack{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.stack li{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;padding:5px 10px;border-radius:9px;border:1px solid var(--line)}
+.stack small{color:var(--muted);font-size:.78rem}
+.stack li.da,.knoten.da{background:#e3eefc;border-color:#9fc0ef}
+.stack li.neu{background:#fde7dc;border-color:#f0a98a;box-shadow:0 0 0 2px var(--accent)}
+.stack li.spaeter,.knoten.spaeter{opacity:.45;border-style:dashed}
+.rest-bk{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+.rest-bk label{display:block;font-weight:600;margin:.6rem 0 .2rem}
+.rest-bk select,.rest-bk input,.rest-bk textarea{font:inherit;width:100%;padding:6px 10px;border-radius:10px;border:1px solid var(--line);box-sizing:border-box}
+.rest-bk .ausgabe h4{margin:.8rem 0 .3rem}.rest-bk .ausgabe h4:first-child{margin-top:0}
+.rest-bk pre{white-space:pre-wrap;word-break:break-all}
+@media (max-width:760px){.rest-bk{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-thema="technik">
+<div class="app">
+  <header class="card kopf">
+    <div class="titel">
+      <h1>Pi-Server &amp; REST-API <span class="version">LF11 · Version 1.0.0</span></h1>
+      <div class="unter">In 9 Leveln vom Raspberry Pi zum Datenbankserver, den Ihre App über REST anspricht.</div>
+    </div>
+    <nav class="fortschritt" aria-label="Level"><a class="chip" href="#start" data-ziel="start">Start</a><a class="chip" href="#level-1" data-ziel="level-1">1</a><a class="chip" href="#level-2" data-ziel="level-2">2</a><a class="chip" href="#level-3" data-ziel="level-3">3</a><a class="chip" href="#level-4" data-ziel="level-4">4</a><a class="chip" href="#level-5" data-ziel="level-5">5</a><a class="chip" href="#level-6" data-ziel="level-6">6</a><a class="chip" href="#level-7" data-ziel="level-7">7</a><a class="chip" href="#level-8" data-ziel="level-8">8</a><a class="chip" href="#level-9" data-ziel="level-9">9</a><a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: REST">📘 Wissen</a><a class="chip" href="#bonus" data-ziel="bonus">★</a><a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen">🔒</a><span class="chip zaehler" id="zaehler">0 / 9</span></nav>
+  </header>
+
+  <section class="ansicht" id="start">
+    <div class="card echt"><span aria-hidden="true">🍓</span><div>
+      <b>Gearbeitet wird am echten Raspberry Pi</b> – mit Terminal, SSH, Webserver und Datenbank, genau wie im Betrieb.
+      Ein Prüf-Tool auf Ihrem PC fragt den Pi über das Netz ab und sagt Ihnen, was noch fehlt.
+      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Server-Stack und Hilfen.</div></div>
+    <div class="card"><h2>So geht's</h2>
+      <div class="start-raster">
+        <div><h3>1 · Projekt holen</h3>
+          <p><a href="https://github.com/bnBSinfo/rest_lernpfad_schueler/archive/refs/heads/main.zip">ZIP herunterladen</a> und entpacken – oder:</p>
+          <pre><code>git clone https://github.com/bnBSinfo/rest_lernpfad_schueler.git</code></pre></div>
+        <div><h3>2 · Öffnen</h3>
+          <p>Ordner in VS Code oder Android Studio öffnen, einmalig im Terminal:</p>
+          <pre><code>dart pub get</code></pre></div>
+        <div><h3>3 · Am Pi arbeiten</h3>
+          <p>Auftrag lesen und auf dem Pi umsetzen. Ab Level 6 schreiben Sie SQL, PHP und Dart auf dem PC
+          (<code>server/</code>, <code>lib/</code>) und bringen es auf den Pi.</p></div>
+        <div><h3>4 · Prüfen</h3>
+          <p>IP in <code>pi.txt</code> eintragen. Bei Rot steht ein <b>Hinweis</b> in der Ausgabe. Gesamtstand:</p>
+          <pre><code>dart run tool/pruefen.dart</code></pre></div>
+      </div>
+    </div>
+    <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
+      <p><a href="#wissen">📘 Wissen: REST</a> – HTTP-Methoden, Statuscodes, JSON und ein Baukasten, der Ihnen zu jeder
+      Anfrage die Adresse, den curl-Befehl, den Dart-Code und das SQL dahinter zeigt.</p></div>
+    <div class="card"><h2>Ihr Weg in 9 Leveln</h2><div class="uebersicht"><a href="#level-1" data-ziel="level-1"><b>1 · Den Pi in Betrieb nehmen</b><span class="klein">SD-Karte, Benutzer, Updates, IP-Adresse</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-2" data-ziel="level-2"><b>2 · Fernzugriff mit SSH</b><span class="klein">openssh-server, ssh, scp</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-3" data-ziel="level-3"><b>3 · Der Webserver Apache</b><span class="klein">apache2, Port 80, /var/www/html</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-4" data-ziel="level-4"><b>4 · PHP auf dem Webserver</b><span class="klein">php, libapache2-mod-php, php-mysql, info.php</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-5" data-ziel="level-5"><b>5 · MySQL und phpMyAdmin</b><span class="klein">mysql-server, phpmyadmin, Leertaste!</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-6" data-ziel="level-6"><b>6 · Datenbank und Tabellen anlegen</b><span class="klein">CREATE USER, GRANT, PRIMARY KEY, AUTO_INCREMENT</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-7" data-ziel="level-7"><b>7 · Eine eigene PHP-Schnittstelle</b><span class="klein">mysqli, SELECT, json_encode</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-8" data-ziel="level-8"><b>8 · Die fertige REST-API</b><span class="klein">php-crud-api, GET/POST/PUT/DELETE, curl</span><span class="fertig-marke">✓ geschafft</span></a><a href="#level-9" data-ziel="level-9"><b>9 · Die REST-API aus Dart nutzen</b><span class="klein">package:http, async/await, jsonDecode</span><span class="fertig-marke">✓ geschafft</span></a></div>
+      <p style="margin-top:14px"><a class="knopf primaer" href="#level-1">Los geht's mit Level 1 ▶</a></p></div>
+  </section>
+
+<section class="ansicht level" id="level-1" data-level="1">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">1</span>
+    <div><h2>Level 1 – Den Pi in Betrieb nehmen</h2><p class="stich">SD-Karte, Benutzer, Updates, IP-Adresse</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Ihr Raspberry Pi läuft mit Ubuntu, ist aktuell
+und im Netz erreichbar. Sie kennen seine IP-Adresse.</p>
+<p><strong>Dateien:</strong> <code>pi.txt</code> ·
+<strong>Skript:</strong> Ubuntu – SD-Karte erstellen, Einrichten des
+Raspberry Pi</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Erstellen Sie mit dem <strong>Raspberry Pi Imager</strong> eine
+SD-Karte mit <em>Ubuntu Desktop (64-bit, LTS)</em>.</li>
+<li>Starten Sie den Pi und legen Sie den Benutzer
+<code>administrator</code> mit dem Passwort <code>Pa$$w0rd</code>
+an.</li>
+<li>Stecken Sie das LAN-Kabel ins <strong>pädagogische
+Netz</strong>.</li>
+<li>Öffnen Sie das Terminal, werden Sie Administrator und bringen Sie
+das System auf den neuesten Stand:
+<pre class="bash"><code>sudo -i
+apt update
+apt upgrade -y
+apt autoremove -y</code></pre></li>
+<li>Lesen Sie die IP-Adresse aus und tragen Sie sie auf Ihrem
+<strong>PC</strong> in <code>pi.txt</code> ein (<code>ip=…</code>):
+<pre class="bash"><code>hostname -I</code></pre></li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p><strong><code>sudo -i</code></strong> öffnet eine Shell als
+<code>root</code>. Danach steht vor jedem Befehl automatisch Admin-Recht
+– das <code>sudo</code> entfällt. Erkennbar am <code>#</code> statt
+<code>$</code> am Ende der Eingabezeile. Mit <code>exit</code> werden
+Sie wieder normaler Benutzer.</p>
+<p><strong><code>apt</code></strong> ist die Paketverwaltung von
+Ubuntu:</p>
+<table>
+<thead>
+<tr>
+<th>Befehl</th>
+<th>Was er tut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apt update</code></td>
+<td>lädt die <strong>Liste</strong> der verfügbaren Pakete neu –
+installiert nichts</td>
+</tr>
+<tr>
+<td><code>apt upgrade</code></td>
+<td>installiert neuere Versionen aller Pakete</td>
+</tr>
+<tr>
+<td><code>apt install paket</code></td>
+<td>installiert ein Paket</td>
+</tr>
+<tr>
+<td><code>apt autoremove</code></td>
+<td>entfernt nicht mehr benötigte Pakete</td>
+</tr>
+</tbody>
+</table>
+<p><strong>IP-Adresse:</strong> Jedes Gerät im Netz hat eine Adresse, z.
+B. <code>10.36.13.76</code>. Ihr PC braucht sie, um den Pi zu erreichen
+– per SSH, Browser und später aus der App. Das Skript nennt
+<code>ifconfig</code> (Paket <code>net-tools</code>); moderner und ohne
+Installation geht <code>hostname -I</code> oder
+<code>ip -4 a</code>.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 1</code> – das Tool klopft am Pi an.
+Antwortet er, ist er im Netz.</p>
+<details><summary>Tipp 1 – Pi nicht erreichbar?</summary>
+
+<p>Pingen Sie den Pi vom PC aus: <code>ping 10.36.13.76</code>. Kommt
+keine Antwort: Kabel, Netz und IP prüfen. Bei mehreren Adressen aus
+<code>hostname -I</code> ist die erste meistens die richtige.</p>
+</details>
+
+<details><summary>Tipp 2 – apt meldet „Sperre“ / lock</summary>
+
+<p>Direkt nach dem ersten Start sucht Ubuntu selbst nach Updates. Warten
+Sie ein paar Minuten und versuchen Sie es erneut.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> <code>apt update</code> aktualisiert nur die
+Paketliste, <code>apt upgrade</code> die Programme. Die IP-Adresse ist
+die „Hausnummer“ Ihres Servers im Netz.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Warum kann sich die IP-Adresse Ihres Pi
+nach einem Neustart ändern – und was bedeutet das für eine App, die fest
+auf diese Adresse zugreift?</p>
+
+      <details class="loesung" data-loesung="1" hidden><summary>🔓 Musterlösung Level 1</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="term"><figcaption>administrator@pi: ~</figcaption><pre>root@pi:~# hostname -I
+10.36.13.76
+root@pi:~# apt upgrade -y
+0 aktualisiert, 0 neu installiert …</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="spaeter"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="spaeter"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="spaeter"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="spaeter"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="spaeter"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="neu"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small><em class="neu-marke">neu</em></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>PC</b><span>kennt die IP aus pi.txt</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Netz</b><span>LAN im pädagogischen Netz</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Pi</b><span>antwortet unter 10.36.13.76</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#start">◀ Start</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 1</code>
+      <button class="erledigt" data-level="1">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-2">Level 2 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-2" data-level="2">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">2</span>
+    <div><h2>Level 2 – Fernzugriff mit SSH</h2><p class="stich">openssh-server, ssh, scp</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Sie steuern den Pi vom PC aus über das Netz –
+ohne Tastatur und Bildschirm am Pi.</p>
+<p><strong>Skript:</strong> SSH-Zugang einrichten, Zugriff auf den
+Pi</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Installieren Sie auf dem Pi den SSH-Server und starten Sie ihn
+dauerhaft:
+<pre class="bash"><code>apt install -y openssh-server
+systemctl enable --now ssh</code></pre></li>
+<li>Verbinden Sie sich vom <strong>PC</strong> aus – mit MobaXterm
+(<em>Session → SSH</em>, IP und Benutzer eintragen) oder im Terminal:
+<pre class="bash"><code>ssh administrator@10.36.13.76</code></pre></li>
+<li>Bestätigen Sie beim ersten Mal den Fingerabdruck mit
+<code>yes</code>. Geben Sie im SSH-Fenster <code>hostname</code> ein –
+es antwortet der Pi.</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p><strong>SSH</strong> (<em>Secure Shell</em>) ist eine
+<strong>verschlüsselte</strong> Terminal-Verbindung. Alles, was Sie
+tippen, läuft verschlüsselt über Port <strong>22</strong> zum Pi und
+wird dort ausgeführt. So betreut man Server, die im Rechenzentrum ohne
+Bildschirm stehen.</p>
+<p><strong><code>systemctl enable --now ssh</code></strong> –
+<code>enable</code> startet den Dienst bei jedem Hochfahren,
+<code>--now</code> startet ihn sofort.</p>
+<p><strong>Fingerabdruck:</strong> Beim ersten Verbinden merkt sich Ihr
+PC den Schlüssel des Pi. Ändert er sich später, warnt SSH – jemand
+könnte sich als Ihr Pi ausgeben.</p>
+<p><strong>Dateien kopieren</strong> geht mit demselben Zugang:
+<code>scp datei administrator@IP:/tmp/</code> – das brauchen Sie in
+Level 7.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 2</code></p>
+<details><summary>Tipp 1 – „Connection refused“</summary>
+
+<p>Der SSH-Dienst läuft nicht. Auf dem Pi:
+<code>systemctl status ssh</code> – steht dort nicht <em>active</em>,
+<code>systemctl enable --now ssh</code> wiederholen.</p>
+</details>
+
+<details><summary>Tipp 2 – „Permission denied“</summary>
+
+<p>Benutzername oder Passwort falsch. Achtung: Beim Tippen des Passworts
+erscheinen keine Sternchen – das ist normal.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> SSH = verschlüsselter Fernzugriff auf die
+Kommandozeile, Port 22. Ab jetzt können Sie alle weiteren Level vom PC
+aus erledigen.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Warum ist es gefährlich, auf einem Server
+im Internet SSH mit dem Passwort <code>Pa$$w0rd</code> offen zu
+lassen?</p>
+
+      <details class="loesung" data-loesung="2" hidden><summary>🔓 Musterlösung Level 2</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="term"><figcaption>PC – Terminal</figcaption><pre>C:\&gt; ssh administrator@10.36.13.76
+administrator@10.36.13.76&#x27;s password:
+Welcome to Ubuntu 24.04 LTS
+administrator@pi:~$ hostname
+pi</pre></figure><figure class="foto"><img src="bilder/moba_ssh.png" alt="MobaXterm: Session → SSH, IP und Benutzer eintragen" loading="lazy"><figcaption>MobaXterm: Session → SSH, IP und Benutzer eintragen</figcaption></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="spaeter"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="spaeter"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="spaeter"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="spaeter"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="neu"><b>SSH-Server</b><small>Fernzugriff, Port 22</small><em class="neu-marke">neu</em></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>PC: ssh</b><span>Tastatureingaben verschlüsselt</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Port 22</b><span>sshd auf dem Pi</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Shell auf dem Pi</b><span>führt Befehle aus</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-1">◀ Level 1</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 2</code>
+      <button class="erledigt" data-level="2">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-3">Level 3 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-3" data-level="3">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">3</span>
+    <div><h2>Level 3 – Der Webserver Apache</h2><p class="stich">apache2, Port 80, /var/www/html</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Auf dem Pi läuft ein Webserver, den Sie vom PC
+aus im Browser aufrufen.</p>
+<p><strong>Skript:</strong> Webserver installieren</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Installieren Sie Apache:
+<pre class="bash"><code>apt install -y apache2</code></pre></li>
+<li>Öffnen Sie auf dem <strong>PC</strong> im Browser
+<code>http://&lt;IP Ihres Pi&gt;</code> – es erscheint die <em>Apache2
+Ubuntu Default Page</em>.</li>
+<li>Finden Sie heraus, aus welcher Datei diese Seite kommt:
+<pre class="bash"><code>ls -l /var/www/html</code></pre></li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p>Ein <strong>Webserver</strong> wartet auf Port <strong>80</strong>
+auf HTTP-Anfragen und schickt Dateien zurück. Der Browser fragt
+<code>GET /</code>, Apache antwortet mit
+<code>/var/www/html/index.html</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Adresse im Browser</th>
+<th>Datei auf dem Pi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://IP/</code></td>
+<td><code>/var/www/html/index.html</code></td>
+</tr>
+<tr>
+<td><code>http://IP/info.php</code></td>
+<td><code>/var/www/html/info.php</code></td>
+</tr>
+<tr>
+<td><code>http://IP/php-crud-api/api.php</code></td>
+<td><code>/var/www/html/php-crud-api/api.php</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>/var/www/html</code> ist das <strong>Wurzelverzeichnis</strong>
+(<em>DocumentRoot</em>) – alles darin ist aus dem Netz erreichbar.
+Merken Sie sich das, es wird in Level 4, 7 und 8 wichtig.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 3</code></p>
+<details><summary>Tipp – Seite lädt nicht</summary>
+
+<p><code>systemctl status apache2</code> zeigt, ob Apache läuft. Achten
+Sie im Browser auf <code>http://</code> – nicht <code>https://</code>,
+dafür ist noch kein Zertifikat eingerichtet.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Apache liefert Dateien aus
+<code>/var/www/html</code> über HTTP (Port 80) aus. Pfad in der URL =
+Pfad unter <code>/var/www/html</code>.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Was würde passieren, wenn Sie eine Datei
+<code>passwoerter.txt</code> nach <code>/var/www/html</code> legen?</p>
+
+      <details class="loesung" data-loesung="3" hidden><summary>🔓 Musterlösung Level 3</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="browser"><div class="leiste"><span></span><span></span><span></span><code>http://10.36.13.76/</code></div><pre><b>Apache2 Ubuntu Default Page</b>
+It works!</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="spaeter"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="spaeter"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="spaeter"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="neu"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small><em class="neu-marke">neu</em></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>Browser</b><span>GET /</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Apache</b><span>Port 80</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>/var/www/html/index.html</b><span>wird unverändert geschickt</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-2">◀ Level 2</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 3</code>
+      <button class="erledigt" data-level="3">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-4">Level 4 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-4" data-level="4">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">4</span>
+    <div><h2>Level 4 – PHP auf dem Webserver</h2><p class="stich">php, libapache2-mod-php, php-mysql, info.php</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Apache führt PHP-Programme aus, statt sie nur
+auszuliefern. PHP kann mit MySQL sprechen.</p>
+<p><strong>Skript:</strong> PHP-MyAdmin installieren (Pakete),
+PHP-Info-Datei erstellen</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Installieren Sie PHP mit Apache-Modul und MySQL-Anbindung:
+<pre class="bash"><code>apt install -y php libapache2-mod-php php-mysql
+systemctl restart apache2</code></pre></li>
+<li>Legen Sie die Datei <code>info.php</code> an:
+<pre class="bash"><code>nano /var/www/html/info.php</code></pre>
+Inhalt: <code>&lt;?php phpinfo(); ?&gt;</code> – speichern mit
+<strong>Strg+O</strong>, Enter, beenden mit
+<strong>Strg+X</strong>.</li>
+<li>Rufen Sie <code>http://&lt;IP&gt;/info.php</code> im Browser auf und
+suchen Sie (Strg+F) nach <strong>mysqli</strong>.</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p>Bei <code>.html</code> schickt Apache die Datei
+<strong>unverändert</strong>. Bei <code>.php</code> übergibt er sie erst
+an den <strong>PHP-Interpreter</strong> – zurück geht nur, was das
+Programm ausgibt:</p>
+<pre class="text"><code>Browser ──GET /info.php──▶ Apache ──▶ PHP führt phpinfo() aus ──▶ HTML-Seite ──▶ Browser</code></pre>
+<p>Sieht der Browser <code>&lt;?php phpinfo(); ?&gt;</code> im Klartext,
+fehlt das Paket <code>libapache2-mod-php</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Paket</th>
+<th>wofür</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>php</code></td>
+<td>der PHP-Interpreter</td>
+</tr>
+<tr>
+<td><code>libapache2-mod-php</code></td>
+<td>verbindet Apache mit PHP</td>
+</tr>
+<tr>
+<td><code>php-mysql</code></td>
+<td>Erweiterung <strong>mysqli</strong> – damit PHP eine MySQL-Datenbank
+abfragen kann</td>
+</tr>
+</tbody>
+</table>
+<p>Das Skript installiert diese Pakete über <em>synaptic</em> („die 4
+Ubuntu-Pakete“). Mit <code>apt</code> geht es schneller und
+nachvollziehbar.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 4</code></p>
+<details><summary>Tipp 1 – 404 Not Found</summary>
+
+<p>Die Datei heißt <code>info.php</code> (nicht <code>php.info</code>)
+und liegt in <code>/var/www/html</code>. Kontrolle:
+<code>ls /var/www/html</code></p>
+</details>
+
+<details><summary>Tipp 2 – mysqli fehlt</summary>
+
+<p><code>apt install php-mysql</code> und danach unbedingt
+<code>systemctl restart apache2</code> – Apache lädt Erweiterungen nur
+beim Start.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Der Webserver führt <code>.php</code>-Dateien
+aus und schickt nur die Ausgabe. Nach dem Installieren von
+PHP-Erweiterungen Apache neu starten.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> <code>info.php</code> verrät Versionen
+und Pfade Ihres Servers. Warum sollte man sie auf einem echten Server
+wieder löschen? (→ Bonus)</p>
+
+      <details class="loesung" data-loesung="4" hidden><summary>🔓 Musterlösung Level 4</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="browser"><div class="leiste"><span></span><span></span><span></span><code>http://10.36.13.76/info.php</code></div><pre><b>PHP Version 8.3</b>
+…
+mysqli
+Client API library version  mysqlnd 8.3</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="spaeter"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="spaeter"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="neu"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small><em class="neu-marke">neu</em></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>Browser</b><span>GET /info.php</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Apache</b><span>erkennt .php</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>PHP</b><span>führt phpinfo() aus</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Browser</b><span>bekommt nur die Ausgabe</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-3">◀ Level 3</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 4</code>
+      <button class="erledigt" data-level="4">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-5">Level 5 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-5" data-level="5">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">5</span>
+    <div><h2>Level 5 – MySQL und phpMyAdmin</h2><p class="stich">mysql-server, phpmyadmin, Leertaste!</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Auf dem Pi läuft ein Datenbankserver. Mit
+phpMyAdmin verwalten Sie ihn im Browser.</p>
+<p><strong>Skript:</strong> MySQL-Server installieren, PHP-MyAdmin
+installieren</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Installieren Sie den Datenbankserver und testen Sie ihn:
+<pre class="bash"><code>apt install -y mysql-server
+mysql -e &quot;SELECT VERSION();&quot;</code></pre></li>
+<li>Installieren Sie phpMyAdmin samt fehlender PHP-Pakete:
+<pre class="bash"><code>apt install -y phpmyadmin php-mbstring php-zip php-gd php-curl</code></pre>
+<ul>
+<li>Webserver: <strong>apache2</strong> mit der
+<strong>Leertaste</strong> markieren (Sternchen!), dann mit
+<strong>Tab</strong> auf <em>Ok</em></li>
+<li><em>dbconfig-common</em> einrichten: <strong>Ja</strong></li>
+<li>Passwort für phpMyAdmin: <code>Pa$$w0rd</code></li>
+</ul></li>
+<li><code>systemctl restart apache2</code> und im Browser
+<code>http://&lt;IP&gt;/phpmyadmin</code> öffnen.</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p><img loading="lazy" src="bilder/pma_apache.png"
+alt="Apache mit der Leertaste markieren" /></p>
+<p>Der häufigste Fehler: Enter statt Leertaste – dann ist
+<strong>kein</strong> Webserver ausgewählt und phpMyAdmin bleibt
+unsichtbar.</p>
+<p><strong>Wer ist root?</strong> In MySQL auf Ubuntu darf sich
+<code>root</code> nur anmelden, wenn er auch auf dem Pi
+<code>root</code> ist (<em>auth_socket</em>). Deshalb klappt
+<code>mysql</code> nach <code>sudo -i</code> ohne Passwort – im Browser
+bei phpMyAdmin aber nicht. Für Programme legen Sie in Level 6 einen
+<strong>eigenen Benutzer</strong> an.</p>
+<table>
+<thead>
+<tr>
+<th>Bestandteil</th>
+<th>Aufgabe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MySQL-Server</strong></td>
+<td>speichert die Daten, wartet nur auf <code>localhost:3306</code></td>
+</tr>
+<tr>
+<td><strong>phpMyAdmin</strong></td>
+<td>PHP-Programm zur Verwaltung im Browser</td>
+</tr>
+<tr>
+<td><strong>mysql</strong> (Kommandozeile)</td>
+<td>SQL direkt im Terminal ausführen</td>
+</tr>
+</tbody>
+</table>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 5</code></p>
+<details><summary>Tipp 1 – 404 bei /phpmyadmin</summary>
+
+<p><code>dpkg-reconfigure phpmyadmin</code> startet den Assistenten
+erneut – diesmal apache2 mit der Leertaste markieren.</p>
+</details>
+
+<details><summary>Tipp 2 – Seite bleibt weiß</summary>
+
+<p>Fehlende PHP-Pakete. Installieren Sie die Liste aus Schritt 2 und
+starten Sie Apache neu. Hilft das nicht: Browser-Cache leeren.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> MySQL ist nur auf dem Pi selbst erreichbar
+(localhost). Von außen kommt man nur über Programme auf dem Webserver an
+die Daten – phpMyAdmin, eigenes PHP oder die REST-API.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Warum ist es sicherer, dass MySQL nicht
+direkt aus dem Netz erreichbar ist?</p>
+
+      <details class="loesung" data-loesung="5" hidden><summary>🔓 Musterlösung Level 5</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="browser"><div class="leiste"><span></span><span></span><span></span><code>http://10.36.13.76/phpmyadmin/</code></div><pre><b>Willkommen bei phpMyAdmin</b>
+Benutzername: [          ]
+Passwort:     [          ]
+[ OK ]</pre></figure><figure class="foto"><img src="bilder/pma_login.png" alt="Anmeldeseite von phpMyAdmin" loading="lazy"><figcaption>Anmeldeseite von phpMyAdmin</figcaption></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="spaeter"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="neu"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small><em class="neu-marke">neu</em></li><li class="da"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>Browser</b><span>GET /phpmyadmin</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Apache + PHP</b><span>phpMyAdmin</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>MySQL</b><span>localhost:3306</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-4">◀ Level 4</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 5</code>
+      <button class="erledigt" data-level="5">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-6">Level 6 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-6" data-level="6">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">6</span>
+    <div><h2>Level 6 – Datenbank und Tabellen anlegen</h2><p class="stich">CREATE USER, GRANT, PRIMARY KEY, AUTO_INCREMENT</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Auf dem Pi gibt es die Datenbank
+<code>flutterDB</code> mit einem eigenen Benutzer und den Tabellen für
+Login und ToDo-Liste der App.</p>
+<p><strong>Dateien:</strong> <code>server/sql/flutterdb.sql</code> ·
+<strong>Skript:</strong> SQL-Datenbank und User einrichten</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Ergänzen Sie auf dem PC in <code>server/sql/flutterdb.sql</code> die
+<strong>TODOs 1–5</strong>.</li>
+<li>Prüfen Sie die Datei: <code>dart run tool/pruefen.dart 6</code></li>
+<li>Kopieren Sie die Datei auf den Pi und führen Sie sie aus:
+<pre class="bash"><code>scp server/sql/flutterdb.sql administrator@&lt;IP&gt;:/tmp/      # auf dem PC
+mysql &lt; /tmp/flutterdb.sql                                # auf dem Pi (als root)</code></pre></li>
+<li>Melden Sie sich in phpMyAdmin als <code>flutterUser</code> an und
+sehen Sie sich beide Tabellen an.</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<pre class="sql"><code>CREATE USER &#39;flutterUser&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;Pa$$w0rd&#39;;
+GRANT ALL PRIVILEGES ON flutterDB.* TO &#39;flutterUser&#39;@&#39;localhost&#39;;</code></pre>
+<ul>
+<li><strong>Eigener Benutzer statt root:</strong> PHP und REST-API
+melden sich mit <code>flutterUser</code> an. Der darf
+<strong>nur</strong> in <code>flutterDB</code> – wird das Passwort
+bekannt, sind die anderen Datenbanken sicher.</li>
+<li><code>@'localhost'</code> – der Benutzer darf sich nur vom Pi selbst
+anmelden.</li>
+<li><code>flutterDB.*</code> heißt <em>alle Tabellen in flutterDB</em>.
+Ohne <code>.*</code> meint MySQL eine <strong>Tabelle</strong> namens
+flutterDB.</li>
+</ul>
+<pre class="sql"><code>id INT AUTO_INCREMENT PRIMARY KEY</code></pre>
+<ul>
+<li><strong>PRIMARY KEY</strong> – die id ist eindeutig, über sie findet
+man genau einen Datensatz. Die REST-API in Level 8 braucht das für
+Adressen wie <code>…/records/ToDoTB/3</code>.</li>
+<li><strong>AUTO_INCREMENT</strong> – MySQL vergibt die nächste Nummer
+selbst. Deshalb steht die id beim <code>INSERT</code> nicht dabei.</li>
+</ul>
+<p>Datentypen für ToDoTB: <code>VARCHAR(100)</code> = Text bis 100
+Zeichen, <code>BOOLEAN</code> = wahr/falsch (MySQL speichert 1/0),
+<code>NOT NULL</code> = Pflichtfeld, <code>DEFAULT FALSE</code> =
+Standardwert.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 6</code> prüft Ihre SQL-Datei. Ob
+sie auf dem Pi richtig ausgeführt wurde, zeigt Level 7.</p>
+<details><summary>Tipp 1 – TODO 3</summary>
+
+<p>Die Spalte gehört als erste Zeile in die Klammer, mit Komma
+danach:</p>
+<pre class="sql"><code>CREATE TABLE flutterTB (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name …</code></pre>
+</details>
+
+<details><summary>Tipp 2 – TODO 4 Gerüst</summary>
+
+<pre class="sql"><code>CREATE TABLE ToDoTB (
+  id       … ,
+  titel    … ,
+  erledigt …
+);</code></pre>
+</details>
+
+<details><summary>Tipp 3 – Fehler beim Ausführen</summary>
+
+<p>MySQL nennt die Zeile: <code>ERROR 1064 … at line 12</code>. Häufig:
+fehlendes Komma oder Semikolon. Die Datei beginnt mit
+<code>DROP DATABASE IF EXISTS</code> – Sie können sie also nach jeder
+Korrektur einfach erneut ausführen.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Programme greifen mit einem eigenen Benutzer
+mit möglichst wenig Rechten auf die Datenbank zu. Jede Tabelle braucht
+einen Primärschlüssel.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> In <code>flutterTB</code> stehen die
+Passwörter im Klartext. Was passiert, wenn jemand die Tabelle ausliest?
+(→ Bonus)</p>
+
+      <details class="loesung" data-loesung="6" hidden><summary>🔓 Musterlösung Level 6</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="term"><figcaption>Pi – mysql</figcaption><pre>mysql&gt; USE flutterDB; SHOW TABLES;
++---------------------+
+| Tables_in_flutterDB |
++---------------------+
+| ToDoTB              |
+| flutterTB           |
++---------------------+</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="spaeter"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="neu"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small><em class="neu-marke">neu</em></li><li class="da"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="da"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>flutterdb.sql</b><span>auf dem PC schreiben</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>scp</b><span>auf den Pi kopieren</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>mysql &lt; …</b><span>auf dem Pi ausführen</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>flutterDB</b><span>Benutzer + 2 Tabellen</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-5">◀ Level 5</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 6</code>
+      <button class="erledigt" data-level="6">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-7">Level 7 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-7" data-level="7">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">7</span>
+    <div><h2>Level 7 – Eine eigene PHP-Schnittstelle</h2><p class="stich">mysqli, SELECT, json_encode</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Ein kleines PHP-Programm liest die Benutzer
+aus der Datenbank und gibt sie als <strong>JSON</strong> aus – ohne
+Passwörter.</p>
+<p><strong>Dateien:</strong> <code>server/php/benutzer.php</code> ·
+<strong>Skript:</strong> Schnittstelle zur Datenbank erstellen</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Ergänzen Sie in <code>server/php/benutzer.php</code> die
+<strong>TODOs 1–4</strong>.</li>
+<li>Kopieren Sie die Datei auf den Pi:
+<pre class="bash"><code>scp server/php/benutzer.php administrator@&lt;IP&gt;:/tmp/     # auf dem PC
+cp /tmp/benutzer.php /var/www/html/                      # auf dem Pi</code></pre></li>
+<li>Öffnen Sie <code>http://&lt;IP&gt;/benutzer.php</code> im Browser –
+Firefox zeigt das JSON übersichtlich an.</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<pre class="text"><code>Browser ──GET /benutzer.php──▶ Apache ──▶ PHP ──SQL──▶ MySQL
+        ◀── [{&quot;id&quot;:1,&quot;name&quot;:&quot;berno&quot;}, …] ── json_encode ◀── Zeilen</code></pre>
+<table>
+<thead>
+<tr>
+<th>Zeile</th>
+<th>Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>header('Content-Type: application/json; …')</code></td>
+<td>sagt dem Empfänger: hier kommt JSON, kein HTML</td>
+</tr>
+<tr>
+<td><code>new mysqli(host, user, pw, db)</code></td>
+<td>öffnet die Verbindung mit den Zugangsdaten aus Level 6</td>
+</tr>
+<tr>
+<td><code>$db-&gt;query('SELECT …')</code></td>
+<td>schickt SQL an MySQL</td>
+</tr>
+<tr>
+<td><code>fetch_all(MYSQLI_ASSOC)</code></td>
+<td>holt alle Zeilen als Liste von Arrays
+<code>['id' =&gt; 1, 'name' =&gt; 'berno']</code></td>
+</tr>
+<tr>
+<td><code>json_encode(...)</code></td>
+<td>macht daraus Text im JSON-Format</td>
+</tr>
+</tbody>
+</table>
+<p><strong>JSON</strong> ist das Austauschformat zwischen Server und
+App: <code>[ ]</code> = Liste, <code>{ }</code> = Objekt mit
+<code>"schlüssel": wert</code>. Ihre Flutter-App kann es mit
+<code>jsonDecode</code> direkt in Dart-Listen und -Maps verwandeln.</p>
+<p><strong>Nur id und name:</strong> Was die Schnittstelle ausgibt, kann
+jeder im Netz lesen. Deshalb nie <code>SELECT *</code> – und nie
+Passwörter.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 7</code> – erst die Datei auf Ihrem
+PC, dann die Antwort vom Pi.</p>
+<details><summary>Tipp 1 – TODO 2 und 3</summary>
+
+<pre class="php"><code>$db = new mysqli(&#39;localhost&#39;, &#39;flutterUser&#39;, &#39;Pa$$w0rd&#39;, &#39;flutterDB&#39;);
+$ergebnis = $db-&gt;query(&#39;SELECT id, name FROM flutterTB ORDER BY id&#39;);</code></pre>
+<p>In PHP stehen Variablen mit <code>$</code> – im Passwort in
+<strong>einfachen</strong> Anführungszeichen ist <code>$$</code> deshalb
+harmlos.</p>
+</details>
+
+<details><summary>Tipp 2 – HTTP 500 / weiße Seite</summary>
+
+<p>Die Fehlermeldung steht im Log des Webservers:
+<code>tail /var/log/apache2/error.log</code>. „Access denied“ =
+Zugangsdaten falsch, „Table doesn't exist“ = Level 6 nicht
+ausgeführt.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> Eine Schnittstelle (API) gibt Daten in einem
+festen Format (JSON) heraus – und nur die Daten, die der Empfänger
+wirklich braucht.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Für jede Tabelle und jede Aktion (lesen,
+anlegen, ändern, löschen) eine eigene PHP-Datei – wie viele Dateien
+wären das für 10 Tabellen? Was wäre besser? (→ Level 8)</p>
+
+      <details class="loesung" data-loesung="7" hidden><summary>🔓 Musterlösung Level 7</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="browser"><div class="leiste"><span></span><span></span><span></span><code>http://10.36.13.76/benutzer.php</code></div><pre>[
+  {&quot;id&quot;: 1, &quot;name&quot;: &quot;berno&quot;},
+  {&quot;id&quot;: 2, &quot;name&quot;: &quot;stoll&quot;}
+]</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="spaeter"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="neu"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small><em class="neu-marke">neu</em></li><li class="da"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="da"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="da"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>Browser</b><span>GET /benutzer.php</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>PHP</b><span>new mysqli(…)</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>MySQL</b><span>SELECT id, name …</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>PHP</b><span>json_encode → JSON</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-6">◀ Level 6</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 7</code>
+      <button class="erledigt" data-level="7">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-8">Level 8 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-8" data-level="8">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">8</span>
+    <div><h2>Level 8 – Die fertige REST-API</h2><p class="stich">php-crud-api, GET/POST/PUT/DELETE, curl</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Mit der <em>php-crud-api</em> stellen Sie
+<strong>alle</strong> Tabellen über eine einheitliche REST-Schnittstelle
+bereit – lesen, anlegen, ändern und löschen.</p>
+<p><strong>Skript:</strong> Schnittstelle zur Datenbank erstellen
+(php-crud-api)</p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<ol type="1">
+<li>Laden Sie die API in das Webverzeichnis:
+<pre class="bash"><code>apt install -y git
+cd /var/www/html
+git clone https://github.com/mevdschee/php-crud-api.git</code></pre></li>
+<li>Tragen Sie in <code>php-crud-api/api.php</code> ganz unten bei
+<code>$config</code> die Zugangsdaten aus Level 6 ein:
+<pre class="bash"><code>nano +99999 /var/www/html/php-crud-api/api.php</code></pre>
+<img loading="lazy" src="bilder/api_config.png" alt="Zugangsdaten in api.php" /></li>
+<li>Testen Sie im Browser:
+<ul>
+<li><code>http://&lt;IP&gt;/php-crud-api/api.php/records/flutterTB</code></li>
+<li><code>http://&lt;IP&gt;/php-crud-api/api.php/records/flutterTB/1</code></li>
+<li><code>http://&lt;IP&gt;/php-crud-api/api.php/records/ToDoTB</code></li>
+</ul></li>
+<li>Legen Sie vom PC aus mit <code>curl</code> ein ToDo an, haken Sie es
+ab und löschen Sie es wieder (siehe <strong>📘 Wissen:
+REST</strong>).</li>
+</ol>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p><strong>REST</strong> heißt: Jede Tabelle ist eine
+<strong>Ressource</strong> mit einer Adresse, die
+<strong>HTTP-Methode</strong> sagt, was passieren soll:</p>
+<table>
+<thead>
+<tr>
+<th>Methode</th>
+<th>Adresse</th>
+<th>SQL dahinter</th>
+<th>Antwort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/records/ToDoTB</code></td>
+<td><code>SELECT * FROM ToDoTB</code></td>
+<td><code>{"records":[…]}</code></td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/records/ToDoTB/3</code></td>
+<td><code>… WHERE id = 3</code></td>
+<td><code>{"id":3,…}</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/records/ToDoTB</code></td>
+<td><code>INSERT INTO ToDoTB …</code></td>
+<td>neue id, z. B. <code>7</code></td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td><code>/records/ToDoTB/3</code></td>
+<td><code>UPDATE ToDoTB SET … WHERE id = 3</code></td>
+<td><code>1</code> (geänderte Zeilen)</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/records/ToDoTB/3</code></td>
+<td><code>DELETE FROM ToDoTB WHERE id = 3</code></td>
+<td><code>1</code></td>
+</tr>
+</tbody>
+</table>
+<p><img loading="lazy" src="bilder/api_json.png" alt="JSON-Antwort im Browser" /></p>
+<p>Die API liest beim Start die Tabellen aus der Datenbank und erzeugt
+diese Adressen <strong>automatisch</strong> – für jede Tabelle, ohne
+eine Zeile eigenes PHP. Einzelne Datensätze findet sie über den
+<strong>Primärschlüssel</strong> – deshalb war TODO 3 in Level 6 so
+wichtig.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 8</code></p>
+<details><summary>Tipp 1 – {"code":1000,…} oder Access denied</summary>
+
+<p>Die API meldet Fehler als JSON mit <code>code</code> und
+<code>message</code>. Bei <em>Access denied</em> stimmen
+<code>username</code>, <code>password</code> oder <code>database</code>
+in <code>$config</code> nicht. Die Zeilen dürfen nicht mit
+<code>//</code> auskommentiert sein.</p>
+</details>
+
+<details><summary>Tipp 2 – curl unter Windows</summary>
+
+<p>In der PowerShell heißt <code>curl</code> etwas anderes. Nehmen Sie
+<code>curl.exe</code> – oder die SSH-Sitzung auf dem Pi mit
+<code>localhost</code> statt der IP.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> REST = Ressourcen (Tabellen) unter festen
+Adressen + HTTP-Methoden GET, POST, PUT, DELETE für Lesen, Anlegen,
+Ändern, Löschen (CRUD).</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> Rufen Sie
+<code>…/records/flutterTB</code> auf. Was sehen Sie, das dort nicht
+stehen sollte? Vergleichen Sie mit Ihrer Schnittstelle aus Level 7. (→
+Bonus)</p>
+
+      <details class="loesung" data-loesung="8" hidden><summary>🔓 Musterlösung Level 8</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="browser"><div class="leiste"><span></span><span></span><span></span><code>…/php-crud-api/api.php/records/ToDoTB</code></div><pre>{&quot;records&quot;: [
+  {&quot;id&quot;: 1, &quot;titel&quot;: &quot;Pi einrichten&quot;, &quot;erledigt&quot;: true},
+  {&quot;id&quot;: 2, &quot;titel&quot;: &quot;API testen&quot;, &quot;erledigt&quot;: false}
+]}</pre></figure><figure class="foto"><img src="bilder/api_json.png" alt="Firefox zeigt die JSON-Antwort der API" loading="lazy"><figcaption>Firefox zeigt die JSON-Antwort der API</figcaption></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="spaeter"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small></li><li class="neu"><b>php-crud-api</b><small>REST für alle Tabellen</small><em class="neu-marke">neu</em></li><li class="da"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="da"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="da"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="da"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>HTTP-Methode</b><span>GET · POST · PUT · DELETE</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Adresse</b><span>/records/ToDoTB/3</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>php-crud-api</b><span>erzeugt SQL</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Antwort</b><span>JSON</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-7">◀ Level 7</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 8</code>
+      <button class="erledigt" data-level="8">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#level-9">Level 9 ▶</a>
+  </div>
+</section>
+<section class="ansicht level" id="level-9" data-level="9">
+  <div class="card level-kopf">
+    <span class="nummer" aria-hidden="true">9</span>
+    <div><h2>Level 9 – Die REST-API aus Dart nutzen</h2><p class="stich">package:http, async/await, jsonDecode</p></div>
+  </div>
+  <div class="level-raster">
+    <div class="card lp-auftrag"><p><strong>Ziel:</strong> Eine Dart-Klasse <code>TodoApi</code> liest,
+legt an, hakt ab und löscht ToDos auf dem Pi. Genau diese Klasse bindet
+Ihre Flutter-App später ein.</p>
+<p><strong>Dateien:</strong> <code>lib/todo_api.dart</code> ·
+<strong>Ausprobieren:</strong>
+<code>dart run tool/todo_konsole.dart</code></p>
+<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<p>Ergänzen Sie in <code>lib/todo_api.dart</code> die <strong>TODOs
+1–5</strong>:</p>
+<ol type="1">
+<li><code>ToDo.fromJson</code> – baut aus einem JSON-Objekt ein
+<code>ToDo</code>. <code>erledigt</code> kann
+<code>true</code>/<code>false</code> <strong>oder</strong>
+<code>1</code>/<code>0</code> sein.</li>
+<li><code>alle()</code> – <code>GET</code>, Antwort mit
+<code>jsonDecode</code> lesen, die Liste unter <code>records</code> in
+ToDos umwandeln.</li>
+<li><code>anlegen(titel)</code> – <code>POST</code> mit JSON-Body, gibt
+die neue id zurück.</li>
+<li><code>abhaken(id, erledigt)</code> – <code>PUT</code> auf den
+einzelnen Datensatz.</li>
+<li><code>loeschen(id)</code> – <code>DELETE</code> auf den einzelnen
+Datensatz.</li>
+</ol>
+<p>Nach jedem TODO können Sie es ausprobieren:</p>
+<pre class="bash"><code>dart run tool/todo_konsole.dart
+dart run tool/todo_konsole.dart neu &quot;Milch kaufen&quot;
+dart run tool/todo_konsole.dart ab 3
+dart run tool/todo_konsole.dart weg 3</code></pre>
+</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<pre class="dart"><code>final antwort = await http.get(basis);            // ① Anfrage an den Pi, warten
+_pruefe(antwort);                                 // ② Statuscode 200?
+final daten = jsonDecode(antwort.body)            // ③ Text → Map
+    as Map&lt;String, dynamic&gt;;
+return (daten[&#39;records&#39;] as List)                 // ④ Liste unter &quot;records&quot;
+    .map((r) =&gt; ToDo.fromJson(r as Map&lt;String, dynamic&gt;))
+    .toList();</code></pre>
+<ol type="1">
+<li><strong><code>await</code></strong> – die Antwort kommt über das
+Netz, das dauert. Deshalb sind alle Methoden <code>async</code> und
+geben ein <code>Future</code> zurück.</li>
+<li><strong>Statuscode</strong> – <code>200</code> heißt OK. Bei
+<code>404</code> oder <code>500</code> wirft <code>_pruefe</code> eine
+Exception mit der Meldung des Servers.</li>
+<li><strong><code>jsonDecode</code></strong> macht aus dem JSON-Text
+Dart-Objekte: <code>{}</code> → <code>Map</code>, <code>[]</code> →
+<code>List</code>.</li>
+<li><strong><code>map(...).toList()</code></strong> wandelt jedes
+JSON-Objekt in ein <code>ToDo</code> um.</li>
+</ol>
+<p>Beim Senden ist es umgekehrt:
+<code>jsonEncode({'titel': titel, 'erledigt': false})</code> macht aus
+der Map JSON-Text. Der Header
+<code>Content-Type: application/json</code> sagt der API, wie sie den
+Body lesen soll.</p>
+<h3 id="prüfen">Prüfen</h3>
+<p><code>dart run tool/pruefen.dart 9</code> – legt ein Prüf-ToDo an,
+hakt es ab und löscht es wieder.</p>
+<details><summary>Tipp 1 – fromJson</summary>
+
+<pre class="dart"><code>final e = json[&#39;erledigt&#39;];
+return ToDo(id: json[&#39;id&#39;] as int, titel: json[&#39;titel&#39;] as String, erledigt: e == true || e == 1);</code></pre>
+</details>
+
+<details><summary>Tipp 2 – POST und PUT</summary>
+
+<pre class="dart"><code>final antwort = await http.post(basis, headers: _json, body: jsonEncode({…}));
+_pruefe(antwort);
+return jsonDecode(antwort.body) as int;</code></pre>
+<p><code>http.put(_eintrag(id), headers: _json, body: …)</code>
+funktioniert genauso.</p>
+</details>
+
+<details><summary>Tipp 3 – „Connection refused“ / Timeout</summary>
+
+<p>Die IP kommt aus <code>pi.txt</code>. Läuft Ihr Pi?
+<code>dart run tool/pruefen.dart</code> zeigt, ab welchem Level es
+hakt.</p>
+</details>
+
+<blockquote>
+<p><strong>Merke:</strong> HTTP-Anfragen sind asynchron
+(<code>async</code>/<code>await</code>). JSON wird mit
+<code>jsonDecode</code> gelesen und mit <code>jsonEncode</code>
+geschrieben. Erst den Statuscode prüfen, dann die Daten verwenden.</p>
+</blockquote>
+<p><strong>Denkfrage:</strong> In der Flutter-Einführung lag die
+ToDo-Liste in einer <code>Map</code> im State. Was ändert sich, wenn die
+Daten jetzt auf dem Pi liegen – z. B. wenn zwei Handys dieselbe Liste
+benutzen?</p>
+
+      <details class="loesung" data-loesung="9" hidden><summary>🔓 Musterlösung Level 9</summary></details>
+    </div>
+    <aside class="lp-seite">
+      <div class="card ziel"><h3>So soll es aussehen</h3><figure class="term"><figcaption>PC – dart run tool/todo_konsole.dart</figcaption><pre>http://10.36.13.76:80/php-crud-api/api.php/records/ToDoTB
+
+[x] 1: Pi einrichten
+[ ] 2: API testen</pre></figure></div>
+      <div class="card"><h3>Ihr Server-Stack</h3><ol class="stack"><li class="neu"><b>Dart: TodoApi</b><small>Client – später in der Flutter-App</small><em class="neu-marke">neu</em></li><li class="da"><b>php-crud-api</b><small>REST für alle Tabellen</small></li><li class="da"><b>benutzer.php</b><small>eigene Schnittstelle → JSON</small></li><li class="da"><b>flutterDB</b><small>flutterUser, flutterTB, ToDoTB</small></li><li class="da"><b>MySQL + phpMyAdmin</b><small>Datenbankserver, Port 3306 (nur localhost)</small></li><li class="da"><b>PHP</b><small>führt .php-Dateien aus, mysqli</small></li><li class="da"><b>Apache</b><small>Webserver, Port 80, /var/www/html</small></li><li class="da"><b>SSH-Server</b><small>Fernzugriff, Port 22</small></li><li class="da"><b>Raspberry Pi + Ubuntu</b><small>Hardware, Betriebssystem, apt</small></li></ol>
+        <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
+        <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
+    </aside>
+  </div>
+  <div class="card grafik"><h3>Was passiert hier?</h3><div class="kette"><div class="schritt-box"><b>TodoApi.alle()</b><span>Dart auf dem PC/Handy</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>http.get</b><span>GET …/records/ToDoTB</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>jsonDecode</b><span>Text → Map</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>List&lt;ToDo&gt;</b><span>fertig für die App</span></div></div></div>
+  <div class="card lp-fuss">
+    <a class="knopf" href="#level-8">◀ Level 8</a>
+    <div class="pruefen"><code>dart run tool/pruefen.dart 9</code>
+      <button class="erledigt" data-level="9">Prüfung ist grün – geschafft</button></div>
+    <a class="knopf primaer" href="#bonus">Bonus ▶</a>
+  </div>
+</section>
+  <section class="ansicht" id="wissen">
+<div class="card level-kopf"><span class="nummer" aria-hidden="true">📘</span>
+  <div><h2>Wissen: REST</h2><p class="stich">HTTP-Methoden, Statuscodes, JSON – und wie man eine API ausprobiert</p></div></div>
+
+<div class="card"><h3>Was ist eine REST-API?</h3>
+  <p>Eine App soll Daten vom Server lesen und ändern – aber <b>nicht</b> direkt in die Datenbank greifen
+  (dann bräuchte jedes Handy das Datenbank-Passwort). Dazwischen sitzt eine <b>API</b>: ein Programm auf dem Server,
+  das HTTP-Anfragen annimmt, mit der Datenbank spricht und JSON zurückgibt.</p>
+  <div class="kette">
+    <div class="schritt-box"><b>App / Browser / curl</b><span>schickt eine HTTP-Anfrage</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>Apache + php-crud-api</b><span>übersetzt in SQL</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>MySQL</b><span>führt das SQL aus</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>JSON</b><span>geht als Antwort zurück</span></div>
+  </div>
+  <p><b>REST</b> ist eine Regel, wie solche Anfragen aussehen: Jede <b>Ressource</b> (bei uns: jede Tabelle, jeder Datensatz)
+  hat eine feste <b>Adresse</b>. Was passieren soll, sagt die <b>HTTP-Methode</b>.</p>
+</div>
+
+<div class="card"><h3>Methoden, Adressen, SQL</h3>
+  <table>
+    <thead><tr><th>CRUD</th><th>Methode</th><th>Adresse (hinter …/api.php)</th><th>SQL</th><th>Antwort</th></tr></thead>
+    <tbody>
+      <tr><td>Read</td><td><code>GET</code></td><td><code>/records/ToDoTB</code></td><td><code>SELECT * FROM ToDoTB</code></td><td><code>{"records":[…]}</code></td></tr>
+      <tr><td>Read</td><td><code>GET</code></td><td><code>/records/ToDoTB/3</code></td><td><code>… WHERE id = 3</code></td><td><code>{"id":3,…}</code></td></tr>
+      <tr><td>Create</td><td><code>POST</code></td><td><code>/records/ToDoTB</code></td><td><code>INSERT INTO …</code></td><td>neue id</td></tr>
+      <tr><td>Update</td><td><code>PUT</code></td><td><code>/records/ToDoTB/3</code></td><td><code>UPDATE … WHERE id = 3</code></td><td><code>1</code></td></tr>
+      <tr><td>Delete</td><td><code>DELETE</code></td><td><code>/records/ToDoTB/3</code></td><td><code>DELETE … WHERE id = 3</code></td><td><code>1</code></td></tr>
+    </tbody>
+  </table>
+  <p>Filtern und sortieren geht über Parameter: <code>/records/ToDoTB?filter=erledigt,eq,0&amp;order=titel</code></p>
+</div>
+
+<div class="card"><h3>Statuscodes – was der Server meldet</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Bedeutung</th><th>typische Ursache bei uns</th></tr></thead>
+    <tbody>
+      <tr><td><code>200</code></td><td>OK</td><td>alles gut</td></tr>
+      <tr><td><code>404</code></td><td>Not Found</td><td>Datei nicht in /var/www/html, Tippfehler in Tabelle oder id</td></tr>
+      <tr><td><code>422</code></td><td>Unprocessable</td><td>Daten passen nicht zur Tabelle (z. B. titel fehlt)</td></tr>
+      <tr><td><code>500</code></td><td>Server-Fehler</td><td>PHP-Fehler, Datenbank-Zugangsdaten falsch → <code>/var/log/apache2/error.log</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card"><h3>REST-Baukasten – Anfragen zusammenstellen</h3>
+  <p class="klein">Wählen Sie Methode, Tabelle und id. Rechts sehen Sie, wie dieselbe Anfrage im Browser, mit curl, in Dart und als SQL aussieht.</p>
+  <div class="rest-bk">
+    <form onsubmit="return false">
+      <label for="bk-ip">IP Ihres Pi</label><input id="bk-ip" value="10.36.13.76">
+      <label for="bk-methode">Methode</label>
+      <select id="bk-methode"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>
+      <label for="bk-tabelle">Tabelle</label>
+      <select id="bk-tabelle"><option>ToDoTB</option><option>flutterTB</option></select>
+      <label for="bk-id">id (leer = alle)</label><input id="bk-id" inputmode="numeric" placeholder="z. B. 2">
+      <label for="bk-body">Daten (JSON)</label><textarea id="bk-body" rows="3"></textarea>
+    </form>
+    <div class="ausgabe" aria-live="polite">
+      <h4>Adresse</h4><pre><code id="bk-url"></code></pre>
+      <h4>curl (Terminal; Windows: <code>curl.exe</code>)</h4><pre><code id="bk-curl"></code></pre>
+      <h4>Dart (package:http)</h4><pre><code id="bk-dart"></code></pre>
+      <h4>SQL dahinter</h4><pre><code id="bk-sql"></code></pre>
+      <p id="bk-hinweis" class="klein"></p>
+    </div>
+  </div>
+</div>
+
+<div class="card"><h3>JSON in 30 Sekunden</h3>
+  <pre><code>{                              ← Objekt  → Dart: Map&lt;String, dynamic&gt;
+  "records": [                 ← Liste   → Dart: List
+    {"id": 1, "titel": "Pi einrichten", "erledigt": true}
+  ]
+}</code></pre>
+  <p>Zahlen ohne Anführungszeichen, Texte in <b>doppelten</b> Anführungszeichen, <code>true</code>/<code>false</code> klein.
+  In Dart: <code>jsonDecode(text)</code> liest, <code>jsonEncode(map)</code> schreibt.</p>
+</div>
+
+    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><a class="knopf primaer" href="#level-8">Zu Level 8 ▶</a></div>
+  </section>
+
+  <section class="ansicht" id="bonus">
+    <div class="card level-kopf"><span class="nummer" aria-hidden="true">★</span>
+      <div><h2>Bonus – Server absichern und App anbinden</h2><p class="stich">für alle, die fertig sind</p></div></div>
+    <div class="card"><p>Für alle, die fertig sind. Ihre Prüfung
+(<code>dart run tool/pruefen.dart</code>) soll grün bleiben.</p>
+<ol type="1">
+<li><strong>Flutter-App anbinden:</strong> Kopieren Sie
+<code>lib/todo_api.dart</code> in Ihr Projekt aus der Flutter-Einführung
+(<code>flutter pub add http</code>). Laden Sie die ToDos in
+<code>initState()</code> mit <code>TodoApi.alle()</code> und rufen Sie
+beim Hinzufügen, Abhaken und Löschen die passenden Methoden auf.
+Android: In <code>AndroidManifest.xml</code> sind unverschlüsselte
+HTTP-Verbindungen nur mit
+<code>android:usesCleartextTraffic="true"</code> erlaubt.</li>
+<li><strong>Aufräumen:</strong> Löschen Sie <code>info.php</code> – sie
+verrät Angreifern Versionen und Pfade.</li>
+<li><strong>Passwort verstecken:</strong> Die API zeigt
+<code>passwordLogin</code> an. Sorgen Sie dafür, dass die Spalte nicht
+mehr ausgegeben wird – z. B. mit der Middleware
+<code>authorization</code> und <code>authorization.columnHandler</code>
+in <code>$config</code> (Doku der php-crud-api).</li>
+<li><strong>Passwörter hashen:</strong> Speichern Sie statt des
+Klartextes einen Hash (<code>password_hash()</code> in PHP). Schreiben
+Sie eine <code>login.php</code>, die Name und Passwort per POST prüft
+(<code>password_verify()</code>) und nur <code>{"ok": true}</code> oder
+<code>{"ok": false}</code> antwortet.</li>
+<li><strong>.git-Ordner:</strong> Rufen Sie
+<code>http://&lt;IP&gt;/php-crud-api/.git/config</code> auf. Warum ist
+das ein Problem? Sperren Sie den Ordner oder kopieren Sie nur
+<code>api.php</code> ins Webverzeichnis.</li>
+<li><strong>Firewall:</strong> Erlauben Sie mit <code>ufw</code> nur SSH
+und HTTP: <code>ufw allow ssh</code>, <code>ufw allow http</code>,
+<code>ufw enable</code>. Was passiert mit phpMyAdmin?</li>
+<li><strong>Fernsteuerung mit Desktop:</strong>
+<code>apt install xrdp</code> und
+<code>systemctl enable --now xrdp</code> – dann mit
+<em>Remotedesktopverbindung</em> von Windows auf den Pi. Wer mag,
+installiert vorher <code>ubuntu-mate-desktop</code> (Skript: Optionale
+Softwareanpassungen).</li>
+<li><strong>Feste IP:</strong> Richten Sie mit <code>nmcli</code> eine
+feste IP ein – oder sprechen Sie mit der Netzwerkverwaltung über eine
+DHCP-Reservierung.</li>
+</ol>
+</div>
+    <div class="card lp-fuss"><a class="knopf" href="#level-9">◀ Level 9</a><a class="knopf" href="#start">Zum Start</a></div>
+  </section>
+
+  <section class="ansicht" id="loesungen">
+    <div class="card"><h2>🔒 Musterlösungen</h2>
+      <p>Die Lösungen zu Level 6, 7 und 9 sind verschlüsselt. Mit dem Passwort Ihrer Lehrkraft erscheinen sie im
+      jeweiligen Level unten im Auftrag. Erst selbst probieren – die Hinweise des Prüf-Tools verraten Ihnen mehr als jede Lösung!</p>
+      <form id="entsperren" class="pruefen">
+        <label for="pw" class="sr">Passwort</label>
+        <input id="pw" type="password" autocomplete="off" placeholder="Passwort"
+          style="font:inherit;padding:8px 12px;border-radius:12px;border:1px solid var(--line);min-height:42px">
+        <button class="primaer" type="submit">Lösungen anzeigen</button>
+        <span id="pw-status" role="status"></span>
+      </form></div>
+  </section>
+
+  <footer class="druckfuss"><small>Pi-Server &amp; REST-API LF11 · Version 1.0.0 vom 14.11.2026 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
+</div>
+<script>
+document.documentElement.classList.add("js");
+(function(){
+  var KEY = "rest-lernpfad-lf11", stand = {}, ANZAHL = 9;
+  try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  var ansichten = document.querySelectorAll(".ansicht");
+  function route(){
+    var ziel = document.getElementById((location.hash || "#start").slice(1));
+    var ansicht = ziel && ziel.closest(".ansicht");
+    if (!ansicht) { ansicht = document.getElementById("start"); ziel = null; }
+    var id = ansicht.id;
+    ansichten.forEach(function(a){ a.hidden = a.id !== id; });
+    document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
+    if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+  function zeigen(){
+    var n = 0;
+    document.querySelectorAll(".level").forEach(function(s){
+      var nr = s.dataset.level, ok = !!stand[nr];
+      if (ok) n++;
+      s.classList.toggle("fertig", ok);
+      var b = s.querySelector("button.erledigt");
+      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Prüfung ist grün – geschafft";
+      b.setAttribute("aria-pressed", ok);
+      document.querySelectorAll('[data-ziel="level-' + nr + '"]').forEach(function(c){ c.classList.toggle("ok", ok); });
+    });
+    document.getElementById("zaehler").textContent = n + " / " + ANZAHL;
+  }
+  document.querySelectorAll("button.erledigt").forEach(function(b){
+    b.addEventListener("click", function(){
+      stand[b.dataset.level] = !stand[b.dataset.level];
+      try { localStorage.setItem(KEY, JSON.stringify(stand)); } catch (e) {}
+      zeigen();
+    });
+  });
+  window.addEventListener("hashchange", route);
+  route(); zeigen();
+})();
+</script>
+<script>// REST-Baukasten auf der Wissen-Seite: zeigt zu Methode/Tabelle/id die Adresse, curl, Dart und SQL.
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  if (!$("bk-methode")) return;
+  var vorschlag = {
+    ToDoTB: {POST: '{"titel": "Milch kaufen", "erledigt": false}', PUT: '{"erledigt": true}'},
+    flutterTB: {POST: '{"name": "neu", "passwordLogin": "geheim"}', PUT: '{"name": "umbenannt"}'}
+  };
+  var letzte = "";
+  function sqlWert(v){ return typeof v === "string" ? "'" + v.replace(/'/g, "''") + "'" : (v === true ? "TRUE" : v === false ? "FALSE" : String(v)); }
+  function zeigen(){
+    var m = $("bk-methode").value, t = $("bk-tabelle").value, id = $("bk-id").value.trim(), ip = $("bk-ip").value.trim() || "IP";
+    var braucht = m === "POST" || m === "PUT";
+    var schluessel = m + t;
+    if (braucht && schluessel !== letzte) $("bk-body").value = vorschlag[t][m];
+    if (!braucht) $("bk-body").value = "";
+    letzte = braucht ? schluessel : "";
+    $("bk-body").disabled = !braucht;
+    var hinweis = "";
+    if (m === "POST" && id) { hinweis = "POST geht an die Tabelle, nicht an eine id – die vergibt die Datenbank (AUTO_INCREMENT)."; id = ""; }
+    if ((m === "PUT" || m === "DELETE") && !id) { hinweis = m + " braucht eine id – sonst weiß die API nicht, welchen Datensatz."; }
+    var pfad = "/php-crud-api/api.php/records/" + t + (id ? "/" + id : "");
+    var url = "http://" + ip + pfad, body = $("bk-body").value.trim(), daten = null;
+    if (braucht) { try { daten = JSON.parse(body); } catch (e) { hinweis = "Die Daten sind kein gültiges JSON (doppelte Anführungszeichen?)."; } }
+    $("bk-url").textContent = m + " " + url;
+    $("bk-curl").textContent = "curl" + (m === "GET" ? "" : " -X " + m) + (braucht ? " -H \"Content-Type: application/json\" -d '" + body + "'" : "") + " " + url;
+    var dartUri = "Uri.parse('" + url + "')";
+    $("bk-dart").textContent = "final antwort = await http." + m.toLowerCase() + "(" + dartUri +
+      (braucht ? ",\n    headers: {'Content-Type': 'application/json'},\n    body: jsonEncode(" + body.replace(/"/g, "'") + ")" : "") + ");\nprint(antwort.statusCode);\nprint(antwort.body);";
+    var sql = "";
+    var wo = id ? " WHERE id = " + (parseInt(id, 10) || 0) : "";
+    if (m === "GET") sql = "SELECT * FROM " + t + wo + ";";
+    if (m === "DELETE") sql = "DELETE FROM " + t + wo + ";";
+    if (daten && m === "POST") sql = "INSERT INTO " + t + " (" + Object.keys(daten).join(", ") + ")\nVALUES (" + Object.keys(daten).map(function(k){ return sqlWert(daten[k]); }).join(", ") + ");";
+    if (daten && m === "PUT") sql = "UPDATE " + t + " SET " + Object.keys(daten).map(function(k){ return k + " = " + sqlWert(daten[k]); }).join(", ") + wo + ";";
+    $("bk-sql").textContent = sql;
+    if (!hinweis && t === "flutterTB" && m === "GET") hinweis = "Achtung: Die Antwort enthält passwordLogin – siehe Bonus 3.";
+    $("bk-hinweis").textContent = hinweis;
+  }
+  ["bk-methode", "bk-tabelle", "bk-id", "bk-ip", "bk-body"].forEach(function(id){ $(id).addEventListener("input", zeigen); });
+  zeigen();
+})();
+</script>
+<script>var GEHEIM = null; var MARKER = "LOESUNG-OK\n";
+(function(){
+  if (typeof GEHEIM === "undefined" || !GEHEIM) return;
+  var b = function(s){ return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); };
+  var status = document.getElementById("pw-status");
+  async function entschluesseln(pw){
+    var basis = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+    var key = await crypto.subtle.deriveKey(
+      {name: "PBKDF2", salt: b(GEHEIM.salt), iterations: GEHEIM.iter, hash: "SHA-256"},
+      basis, {name: "AES-CBC", length: 256}, false, ["decrypt"]);
+    var klar = await crypto.subtle.decrypt({name: "AES-CBC", iv: b(GEHEIM.iv)}, key, b(GEHEIM.daten));
+    var text = new TextDecoder().decode(klar);
+    if (text.indexOf(MARKER) !== 0) throw new Error("falsch");
+    return JSON.parse(text.slice(MARKER.length));
+  }
+  function einfuegen(daten){
+    Object.keys(daten).forEach(function(nr){
+      var box = document.querySelector('[data-loesung="' + nr + '"]');
+      if (!box) return;
+      box.querySelectorAll("div").forEach(function(d){ d.remove(); });
+      daten[nr].forEach(function(f){
+        var div = document.createElement("div");
+        var h = document.createElement("h3"); h.textContent = f.datei;
+        var pre = document.createElement("pre"), code = document.createElement("code");
+        code.textContent = f.code; pre.appendChild(code);
+        div.appendChild(h); div.appendChild(pre); box.appendChild(div);
+      });
+      box.hidden = false;
+    });
+  }
+  document.getElementById("entsperren").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    status.textContent = "Prüfe …";
+    try {
+      einfuegen(await entschluesseln(document.getElementById("pw").value));
+      status.textContent = "✓ Freigeschaltet – die Lösungen stehen in Level 6, 7 und 9 unten im Auftrag.";
+    } catch (err) { status.textContent = "✗ Passwort falsch."; }
+  });
+})();
+</script>
+</body>
+</html>

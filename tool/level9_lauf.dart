@@ -1,0 +1,79 @@
+// Hilfsprogramm für  dart run tool/pruefen.dart 9  – testet lib/todo_api.dart am echten Pi.
+// Gibt Zeilen "OK: …" und "HINWEIS: …" aus.
+import 'dart:io';
+
+import '../lib/todo_api.dart';
+import 'pi_konfig.dart';
+
+void ok(String t) => stdout.writeln('OK: $t');
+void hinweis(String t) => stdout.writeln('HINWEIS: $t');
+
+String grund(Object e) {
+  if (e is UnimplementedError) return 'noch nicht programmiert (UnimplementedError).';
+  if (e is SocketException) return 'Der Pi ist nicht erreichbar (${e.message}).';
+  if (e is TypeError) return 'Falscher Datentyp: $e';
+  return '$e';
+}
+
+Future<void> main() async {
+  final pi = PiKonfig.lesen();
+  final api = TodoApi(pi.ip, port: pi.http);
+
+  // TODO 1 + 2: lesen
+  try {
+    final t = ToDo.fromJson({'id': 1, 'titel': 'A', 'erledigt': 1});
+    final f = ToDo.fromJson({'id': 2, 'titel': 'B', 'erledigt': false});
+    if (t.id == 1 && t.titel == 'A' && t.erledigt && !f.erledigt) {
+      ok('TODO 1: ToDo.fromJson versteht true/false und 1/0');
+    } else {
+      hinweis('TODO 1: ToDo.fromJson liest die Werte falsch (erledigt: 1 → true, false → false).');
+    }
+  } catch (e) {
+    hinweis('TODO 1: ${grund(e)}');
+  }
+  List<ToDo> liste;
+  try {
+    liste = await api.alle();
+    ok('TODO 2: alle() liefert ${liste.length} ToDos');
+    if (!liste.any((t) => t.titel == 'API testen')) {
+      hinweis("TODO 2: In der Liste fehlt 'API testen' – stimmt die Tabelle ToDoTB (Level 6)?");
+    }
+  } catch (e) {
+    hinweis('TODO 2: alle(): ${grund(e)}');
+    return;
+  }
+
+  // TODO 3–5: schreiben
+  final name = 'Prüfung ${DateTime.now().millisecondsSinceEpoch}';
+  int id;
+  try {
+    id = await api.anlegen(name);
+    final neu = (await api.alle()).where((t) => t.id == id).toList();
+    if (neu.length == 1 && neu.first.titel == name && !neu.first.erledigt) {
+      ok('TODO 3: anlegen() legt ein offenes ToDo an (id $id)');
+    } else {
+      hinweis('TODO 3: Nach anlegen() steht das ToDo nicht (offen) in der Liste.');
+      return;
+    }
+  } catch (e) {
+    hinweis('TODO 3: anlegen(): ${grund(e)}');
+    return;
+  }
+  try {
+    await api.abhaken(id, true);
+    final t = (await api.alle()).firstWhere((t) => t.id == id);
+    t.erledigt
+        ? ok('TODO 4: abhaken() setzt erledigt auf true')
+        : hinweis('TODO 4: Nach abhaken(id, true) ist das ToDo immer noch offen.');
+  } catch (e) {
+    hinweis('TODO 4: abhaken(): ${grund(e)}');
+  }
+  try {
+    await api.loeschen(id);
+    (await api.alle()).any((t) => t.id == id)
+        ? hinweis('TODO 5: Nach loeschen() ist das ToDo noch da.')
+        : ok('TODO 5: loeschen() entfernt das ToDo');
+  } catch (e) {
+    hinweis('TODO 5: loeschen(): ${grund(e)} – das Prüf-ToDo "$name" bitte von Hand löschen.');
+  }
+}
