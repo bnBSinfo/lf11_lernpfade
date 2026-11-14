@@ -218,9 +218,50 @@ def baum_html(knoten) -> str:
     return f'<span class="{klassen}"><b>{e(name)}</b>{n}{marke}</span>{sub}'
 
 
+MARKEN = json.loads((DOCS / "bilder" / "marken.json").read_text(encoding="utf-8")) \
+    if (DOCS / "bilder" / "marken.json").exists() else {}
+NUM = "①②③④⑤⑥⑦⑧⑨"
+
+
 def handy(bild, text):
-    return f"""<figure class="handy"><div class="rahmen"><img src="bilder/{bild}.png" width="360" height="640"
-      alt="{e(text)}" loading="lazy"></div><figcaption>{e(text)}</figcaption></figure>"""
+    """Zielbild mit nummerierten Markierungen (Positionen aus marken.json, logische Pixel 360 x 640)."""
+    kaesten, legende, belegt = [], [], []
+    for i, m in enumerate(MARKEN.get(bild, [])):
+        x, y, w, h = (m[k] for k in ("x", "y", "w", "h"))
+        # Nummer rechts neben den Kasten (verdeckt nichts); passt das nicht, oben links hinein
+        if w * h > 0.5 * 360 * 640:      # großer Kasten: Nummer unten links
+            bx, by = x + 6, y + h - 26
+        elif x + w + 26 <= 360:          # rechts daneben
+            bx, by = x + w + 4, y
+        else:                            # oben links hinein
+            bx, by = x + 4, y + 4
+        while any(abs(bx - ux) < 22 and abs(by - uy) < 22 for ux, uy in belegt):
+            by += 24  # Nummern nicht übereinander legen
+        belegt.append((bx, by))
+        pc = lambda v, ges: f"{v / ges * 100:.2f}%"
+        kaesten.append(
+            f'<span class="marke" data-marke="{i}" style="left:{pc(x,360)};top:{pc(y,640)};width:{pc(w,360)};height:{pc(h,640)}"></span>'
+            f'<span class="marke-nr" data-marke="{i}" style="left:{pc(bx,360)};top:{pc(by,640)}">{NUM[i]}</span>')
+        legende.append(f'<li data-marke="{i}"><span>{NUM[i]}</span> {e(m["text"].strip())}</li>')
+    leg = f'<ol class="marken-legende">{"".join(legende)}</ol>' if legende else ""
+    # Vergrößerter Ausschnitt, wenn der Inhalt nur einen kleinen Teil des Bildschirms füllt
+    klein = [m for m in MARKEN.get(bild, []) if m["w"] * m["h"] < 0.5 * 360 * 640]
+    lupe = ""
+    if klein:
+        x0 = max(0, min(m["x"] for m in klein) - 10); y0 = max(0, min(m["y"] for m in klein) - 10)
+        x1 = min(360, max(m["x"] + m["w"] for m in klein) + 10); y1 = min(640, max(m["y"] + m["h"] for m in klein) + 10)
+        if (x1 - x0) * (y1 - y0) < 0.3 * 360 * 640:
+            w, h = x1 - x0, max(y1 - y0, 40)
+            pos_x = 0 if w >= 360 else x0 / (360 - w) * 100
+            pos_y = 0 if h >= 640 else y0 / (640 - h) * 100
+            lupe = (f'<div class="ausschnitt"><span class="ausschnitt-titel">🔍 Ausschnitt vergrößert</span>'
+                    f'<span class="ausschnitt-bild" role="img" aria-label="Vergrößerter Ausschnitt: {e(text)}" '
+                    f'style="background-image:url(bilder/{bild}.png);aspect-ratio:{w:.0f}/{h:.0f};'
+                    f'background-size:{360 / w * 100:.2f}% auto;background-position:{pos_x:.2f}% {pos_y:.2f}%"></span></div>')
+    return f"""<figure class="handy"><button class="rahmen" type="button" aria-label="Bild groß anzeigen: {e(text)}">
+      <span class="bild"><img src="bilder/{bild}.png" width="360" height="640" alt="{e(text)}" loading="lazy">{"".join(kaesten)}</span>
+      <span class="lupe" aria-hidden="true">🔍</span></button>
+      <figcaption>{e(text)}</figcaption>{lupe}{leg}</figure>"""
 
 
 BAUKASTEN = {
@@ -327,8 +368,33 @@ a{color:var(--accent)}
 .lp-auftrag{min-width:0}
 .handys{display:flex;gap:10px;justify-content:center}
 .handy{margin:0;flex:1;max-width:220px;min-width:0;text-align:center}
-.handy .rahmen{background:#1a2130;border-radius:22px;padding:8px;box-shadow:var(--shadow)}
-.handy img{display:block;width:100%;height:auto;border-radius:14px;background:#fff}
+.handy .rahmen{display:block;width:100%;position:relative;background:#1a2130;border:0;border-radius:22px;padding:8px;
+  box-shadow:var(--shadow);cursor:zoom-in;min-height:0}
+.handy .rahmen:hover{background:#1a2130;outline:3px solid var(--accent)}
+.bild{display:block;position:relative;border-radius:14px;overflow:hidden;background:#fff}
+.bild img{display:block;width:100%;height:auto}
+.marke{position:absolute;border:2px solid #f59e0b;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.8);pointer-events:auto}
+.marke-nr{position:absolute;transform:translate(-2px,-2px);min-width:18px;height:18px;border-radius:9px;background:#f59e0b;color:#1a2130;
+  font-size:12px;font-weight:800;line-height:18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.marke.marke-hl{border-width:3px;background:rgba(245,158,11,.22)}
+.marke-nr.marke-hl{transform:translate(-2px,-2px) scale(1.25)}
+.lupe{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.9);border-radius:50%;width:28px;height:28px;
+  display:grid;place-items:center;font-size:14px}
+.ausschnitt{margin-top:8px;text-align:left}
+.ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
+.ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
+.marken-legende{list-style:none;margin:6px 0 0;padding:0;text-align:left;font-size:.8rem;line-height:1.3}
+.marken-legende li{display:flex;gap:6px;padding:3px 4px;border-radius:6px;cursor:default}
+.marken-legende li span{color:#b45309;font-weight:800}
+.marken-legende li.marke-hl{background:rgba(245,158,11,.2)}
+#gross{border:0;border-radius:18px;padding:16px;max-width:min(860px,94vw);box-shadow:var(--shadow)}
+#gross::backdrop{background:rgba(15,20,35,.6)}
+.gross-inhalt{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:18px;align-items:start}
+.gross-inhalt .bild{border:8px solid #1a2130;border-radius:22px}
+.gross-inhalt .marken-legende{font-size:.95rem}
+.gross-inhalt h3{margin-top:0}
+#gross form{text-align:right;margin-top:10px}
+@media (max-width:600px){.gross-inhalt{grid-template-columns:1fr}}
 .handy figcaption{font-size:.82rem;color:var(--ink-soft);margin-top:6px;line-height:1.3}
 /* Widget-Baum */
 .baum,.baum ul{list-style:none;margin:0;padding:0}
@@ -516,6 +582,27 @@ document.documentElement.classList.add("js");
       zeigen();
     });
   });
+  // Zielbilder: Markierung ↔ Legende, Großansicht
+  document.addEventListener("mouseover", function(ev){
+    var t = ev.target.closest("[data-marke]"), fig = t && t.closest(".handy, .gross-inhalt");
+    document.querySelectorAll(".marke-hl").forEach(function(el){ el.classList.remove("marke-hl"); });
+    if (fig) fig.querySelectorAll('[data-marke="' + t.dataset.marke + '"]').forEach(function(el){ el.classList.add("marke-hl"); });
+  });
+  var dlg = document.getElementById("gross");
+  document.querySelectorAll(".handy .rahmen").forEach(function(b){
+    b.addEventListener("click", function(){
+      var fig = b.closest(".handy"), ziel = dlg.querySelector(".gross-inhalt");
+      ziel.innerHTML = "";
+      ziel.appendChild(fig.querySelector(".bild").cloneNode(true));
+      var leg = fig.querySelector(".marken-legende"), cap = fig.querySelector("figcaption");
+      var rechts = document.createElement("div");
+      if (cap) { var h = document.createElement("h3"); h.textContent = cap.textContent; rechts.appendChild(h); }
+      if (leg) rechts.appendChild(leg.cloneNode(true));
+      ziel.appendChild(rechts);
+      if (dlg.showModal) dlg.showModal();
+    });
+  });
+  dlg.addEventListener("click", function(ev){ if (ev.target === dlg) dlg.close(); });
   window.addEventListener("hashchange", route);
   route(); zeigen();
 })();
@@ -653,6 +740,8 @@ def main() -> None:
 
   <footer class="druckfuss"><small>Flutter-Lernpfad LF11 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
+<dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
+  <form method="dialog"><button class="primaer">Schließen</button></form></dialog>
 <script>{JS}</script>
 <script>{(ROOT / "tool" / "baukasten.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
