@@ -9,8 +9,11 @@ python3 tool/seite_bauen.py "$@"
 TMP=$(mktemp -d)
 git clone -q "https://github.com/$REPO.git" "$TMP/repo" 2>/dev/null || true
 [ -d "$TMP/repo/.git" ] || { mkdir -p "$TMP/repo"; git -C "$TMP/repo" init -q -b main; }
-find "$TMP/repo" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+# Alles außer .git und docs/ entfernen; in docs/ nur die Dateien der Einführung ersetzen.
+# Unterordner wie docs/datenbank/ (eigene Lernpfad-Pakete) bleiben erhalten.
+find "$TMP/repo" -mindepth 1 -maxdepth 1 ! -name .git ! -name docs -exec rm -rf {} +
 mkdir -p "$TMP/repo/docs"
+find "$TMP/repo/docs" -mindepth 1 -maxdepth 1 -type f -exec rm -f {} +
 rsync -a docs/index.html docs/.nojekyll "$TMP/repo/docs/"
 cat > "$TMP/repo/README.md" <<'TXT'
 # Flutter-Einführung LF11
@@ -19,6 +22,12 @@ Die Lernpfad-Seite: https://bnbsinfo.github.io/flutter_lernpfad_schueler/
 
 Alles wird selbst getippt – es gibt bewusst kein Projekt zum Herunterladen.
 In Level 1 legen Sie mit `flutter create meine_app` Ihr eigenes Projekt an.
+
+## Fortsetzung: Datenbankanbindung
+
+https://bnbsinfo.github.io/flutter_lernpfad_schueler/datenbank/
+
+In 6 Leveln binden Sie Ihre App an den Pi aus dem REST-Lernpfad an – erst die Login-Maske, dann die ToDo-Liste.
 TXT
 cd "$TMP/repo"
 git add -A
