@@ -15,6 +15,7 @@ import 'package:flutter_lernpfad/level_05/app.dart' as l5;
 import 'package:flutter_lernpfad/level_06/app.dart' as l6;
 import 'package:flutter_lernpfad/level_07/app.dart' as l7;
 import 'package:flutter_lernpfad/level_08/app.dart' as l8;
+import 'package:flutter_lernpfad/level_09/my_first_app.dart' as l9;
 
 Future<void> schrift(String familie, List<String> dateien) async {
   final fonts = Platform.environment['MATERIAL_FONTS']!;
@@ -147,5 +148,28 @@ void main() {
       }, [
         ("Checkbox: done = true", find.byType(Checkbox).first),
         ("Checkbox: done = false", find.byType(Checkbox).at(1)),
+      ]));
+  Future<void> einloggen(WidgetTester t) async {
+    await t.enterText(felder.at(0), 'anna');
+    await t.enterText(felder.at(1), 'geheim');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await t.pumpAndSettle();
+  }
+
+  testWidgets('9a', (t) => bild(t, const l9.MyFirstApp(), 'level_9_login', einloggen, [
+        ("Login-Button → Navigator.push(ToDoList)", login),
+      ]));
+  testWidgets('9b', (t) => bild(t, const l9.MyFirstApp(), 'level_9', (t) async {
+        await einloggen(t);
+        await t.tap(login);
+        await t.pumpAndSettle();
+        for (final e in ['Milch kaufen', 'LF11 lernen']) {
+          await eintrag(t, e);
+        }
+        await t.tap(find.byType(Checkbox).first);
+        await t.pumpAndSettle();
+      }, [
+        ("Zurück-Pfeil (automatisch) → pop → Login", find.byType(BackButton)),
+        ("ToDoList aus Level 8 – Daten nur lokal im State", find.byType(ListView)),
       ]));
 }

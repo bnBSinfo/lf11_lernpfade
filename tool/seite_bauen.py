@@ -128,6 +128,15 @@ LEVEL = {
                                      k("Expanded"), k("IconButton")])])])])])]),
         grafik="map",
     ),
+    9: dict(
+        titel="Login → ToDo-Liste", stich="Navigator.push verbindet beide Teile zu einer App",
+        bilder=[("level_9_login", "Start: die Login-Maske aus Level 4"),
+                ("level_9", "Nach dem Login: die ToDo-Liste – mit Zurück-Pfeil")],
+        baum=k("MaterialApp", kinder=[k("Navigator", neu=True, notiz="Stapel der Seiten", kinder=[
+            k("Scaffold", notiz="unten: Login-Seite", kinder=[k("MyLogin", "stateful", notiz="onPressed → push")]),
+            k("ToDoList", "stateful", neu=True, notiz="oben: nach dem Login")])]),
+        grafik="navigator",
+    ),
 }
 
 # ---------------------------------------------------------------- Grafiken (HTML/CSS)
@@ -197,6 +206,16 @@ In HTML wären das CSS-Eigenschaften – in Flutter sind es Widgets.</p>"""),
   <div class="kasten stateless"><b>ToDoItem</b><small>kennt nur den „Knopf“ <code>remove</code> – 🗑 <code>onPressed: () =&gt; remove()</code></small></div>
 </div>
 <p class="klein">Danach: <code>setState</code> → <code>todos.removeAt(i)</code> → die Liste wird neu gebaut.</p>"""),
+    "navigator": ("Der Navigator: ein Stapel von Seiten", """
+<div class="zwei">
+  <div class="kasten"><b>Vor dem Login</b><small>eine Seite im Stapel</small>
+    <table><tr><td>🔐 Login-Maske (MyLogin)</td></tr></table></div>
+  <div class="verbindung"><span>push →<br>← pop</span></div>
+  <div class="kasten state"><b>Nach dem Login</b><small>neue Seite liegt oben</small>
+    <table><tr><td>📝 ToDoList</td></tr><tr><td>🔐 Login-Maske (verdeckt)</td></tr></table></div>
+</div>
+<p class="klein">Login-Button → <code>Navigator.of(context).push(MaterialPageRoute(...))</code>. Zurück-Pfeil → <code>pop()</code>.
+Die ToDos liegen nur lokal im State der Liste – keine Datenbank, nach dem Zurück sind sie weg.</p>"""),
     "map": ("Von der List zur Map", """
 <div class="zwei">
   <div class="kasten"><b>List&lt;String&gt;</b><small>nur Titel</small>
@@ -291,7 +310,7 @@ def level_ansicht(nr: int, d: dict) -> str:
               'Stateful Widgets</a></p>') if d.get("wissen") else ""
     bilder = "".join(handy(b, t) for b, t in d["bilder"])
     zurueck = f'<a class="knopf" href="#level-{nr-1}">◀ Level {nr-1}</a>' if nr > 1 else '<a class="knopf" href="#start">◀ Start</a>'
-    weiter = f'<a class="knopf primaer" href="#level-{nr+1}">Level {nr+1} ▶</a>' if nr < 8 else '<a class="knopf primaer" href="#bonus">Bonus ▶</a>'
+    weiter = f'<a class="knopf primaer" href="#level-{nr+1}">Level {nr+1} ▶</a>' if nr < max(LEVEL) else '<a class="knopf primaer" href="#bonus">Bonus ▶</a>'
     return f"""
 <section class="ansicht level" id="level-{nr}" data-level="{nr}">
   <div class="card level-kopf">
@@ -336,6 +355,7 @@ def loesungen_verschluesseln(passwort: str) -> str:
                  "void main() {{\n  runApp(const {klasse}());\n}}\n")
     daten["1"].insert(0, {"datei": "lib/main.dart", "code": main_dart.format(datei="my_first_app.dart", klasse="MyFirstApp")})
     daten["5"].insert(0, {"datei": "lib/main.dart", "code": main_dart.format(datei="todo_app.dart", klasse="ToDoApp")})
+    daten["9"].insert(0, {"datei": "lib/main.dart", "code": main_dart.format(datei="my_first_app.dart", klasse="MyFirstApp")})
     klartext = (MARKER + json.dumps(daten, ensure_ascii=False)).encode("utf-8")
     salt, iv = secrets.token_bytes(16), secrets.token_bytes(16)
     key = hashlib.pbkdf2_hmac("sha256", passwort.encode("utf-8"), salt, ITERATIONEN, 32)
@@ -600,7 +620,7 @@ document.documentElement.classList.add("js");
       b.setAttribute("aria-pressed", ok);
       document.querySelectorAll('[data-ziel="level-' + nr + '"]').forEach(function(c){ c.classList.toggle("ok", ok); });
     });
-    document.getElementById("zaehler").textContent = n + " / 8";
+    document.getElementById("zaehler").textContent = n + " / 9";
   }
   document.querySelectorAll("button.erledigt").forEach(function(b){
     b.addEventListener("click", function(){
@@ -685,7 +705,7 @@ def main() -> None:
             + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful">📘 Wissen</a>'
             + '<a class="chip" href="#bonus" data-ziel="bonus">★</a>'
             + '<a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen">🔒</a>'
-            + '<span class="chip zaehler" id="zaehler">0 / 8</span>')
+            + '<span class="chip zaehler" id="zaehler">0 / 9</span>')
     uebersicht = "".join(
         f'<a href="#level-{n}" data-ziel="level-{n}"><img src="bilder/{d["bilder"][-1][0]}.png" alt="" loading="lazy">'
         f'<b>{n} · {e(d["titel"])}</b><span class="klein">{e(d["stich"])}</span>'
@@ -698,7 +718,7 @@ def main() -> None:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flutter-Einführung LF11</title>
 <meta name="version" content="{VERSION}">
-<meta name="description" content="In 8 Leveln zur ersten eigenen Flutter-App – alles selbst getippt, mit Selbstkontrolle.">
+<meta name="description" content="In 9 Leveln zur eigenen Flutter-App mit Login und ToDo-Liste – alles selbst getippt, mit Selbstkontrolle.">
 <link rel="stylesheet" href="css/stil.css">
 <style>{CSS}{bausteine.CSS}</style>
 </head>
@@ -707,7 +727,7 @@ def main() -> None:
   <header class="card kopf">
     <div class="titel">
       <h1>Flutter-Einführung <span class="version">LF11 · Version {VERSION}</span></h1>
-      <div class="unter">In 8 Leveln zur ersten eigenen App – jede Zeile selbst getippt.</div>
+      <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
   </header>
@@ -736,7 +756,7 @@ def main() -> None:
     <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
       <p><a href="#wissen">📘 Wissen: Stateless &amp; Stateful</a> – Aufbau beider Widget-Arten Zeile für Zeile, Vergleich,
       setState, Lebenszyklus und typische Fehler. In Level 1–3 finden Sie außerdem interaktive Baukästen zu Scaffold und Layout.</p></div>
-    <div class="card"><h2>Ihr Weg in 8 Leveln</h2><div class="uebersicht">{uebersicht}</div>
+    <div class="card"><h2>Ihr Weg in 9 Leveln</h2><div class="uebersicht">{uebersicht}</div>
       <p style="margin-top:14px"><a class="knopf primaer" href="#level-1">Los geht's mit Level 1 ▶</a></p></div>
   </section>
 {ansichten}
@@ -749,7 +769,7 @@ def main() -> None:
     <div class="card level-kopf"><span class="nummer" aria-hidden="true">★</span>
       <div><h2>Bonus – Die App weiterentwickeln</h2><p class="stich">für alle, die fertig sind</p></div></div>
     <div class="card">{md_zu_html(DOCS / "bonus.md")}</div>
-    <div class="card lp-fuss"><a class="knopf" href="#level-8">◀ Level 8</a><a class="knopf" href="#start">Zum Start</a></div>
+    <div class="card lp-fuss"><a class="knopf" href="#level-9">◀ Level 9</a><a class="knopf" href="#start">Zum Start</a></div>
   </section>
 
   <section class="ansicht" id="loesungen">

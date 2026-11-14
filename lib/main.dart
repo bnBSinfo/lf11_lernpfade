@@ -8,6 +8,7 @@ import 'level_05/app.dart' as level5;
 import 'level_06/app.dart' as level6;
 import 'level_07/app.dart' as level7;
 import 'level_08/app.dart' as level8;
+import 'level_09/my_first_app.dart' as level9;
 
 // ┌──────────────────────────────────────────────────────────────┐
 // │ Welches Level wollen Sie im Emulator / Browser sehen?        │
@@ -25,6 +26,7 @@ void main() {
     5 => const level5.ToDoApp(),
     6 => const level6.ToDoApp(),
     7 => const level7.ToDoApp(),
-    _ => const level8.ToDoApp(),
+    8 => const level8.ToDoApp(),
+    _ => const level9.MyFirstApp(),
   });
 }

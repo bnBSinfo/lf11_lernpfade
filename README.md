@@ -1,7 +1,7 @@
 # Flutter-Einführung LF11 (Lehrkraft-Repo)
 
-In 8 Leveln bauen die Schüler ihre erste eigene Flutter-App: vom Grundgerüst über eine Login-Maske bis zur
-fertigen ToDo-Liste.
+In 9 Leveln bauen die Schüler ihre erste eigene Flutter-App: eine Login-Maske mit nachgeschalteter
+ToDo-Liste – ohne Datenbank, alle Daten bleiben lokal in der App.
 
 **Alles wird getippt:** Die Schüler bekommen kein Projekt zum Importieren. Sie legen in Level 1 mit
 `flutter create meine_app` ein eigenes Projekt an und bauen es Level für Level aus. Die Lernpfad-Seite ist eine

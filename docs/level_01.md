@@ -7,7 +7,7 @@ Grundgerüst einer App im Material Design.
 
 ## Vorher verstehen: `main()` und `runApp()`
 In der Methode `main()` startet jedes Dart-Programm. Eine Flutter-App übergibt dort ihr Start-Widget an
-`runApp()` – bei Ihnen die Klasse `MyFirstApp`. Diese App bauen Sie in allen 8 Leveln Schritt für Schritt aus.
+`runApp()` – bei Ihnen die Klasse `MyFirstApp`. Diese App bauen Sie in allen 9 Leveln Schritt für Schritt aus.
 
 ## Auftrag
 1. Legen Sie ein neues Flutter-Projekt an – in Android Studio (*New Flutter Project*, Name `meine_app`) oder im Terminal:

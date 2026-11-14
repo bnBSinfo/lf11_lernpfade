@@ -5,9 +5,9 @@ Dieses Repo ist **privat** (Musterlösungen, Tests, Werkzeuge). Die Schüler bek
 
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
-  Projekt an und bauen diese eine App bis Level 8 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,
-  `lib/my_login.dart` (L3/4), `lib/todo_item.dart`, `lib/todo_app.dart` (L5), `lib/todo_list.dart` (L6–8).
-  Ab Level 5 startet `main.dart` die `ToDoApp` – die Login-App bleibt im Projekt (→ Bonus 5).
+  Projekt an und bauen diese eine App bis Level 9 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,
+  `lib/my_login.dart` (L3/4, 9), `lib/todo_item.dart`, `lib/todo_app.dart` (L5), `lib/todo_list.dart` (L6–9).
+  Ab Level 5 startet `main.dart` die `ToDoApp` – in Level 9 startet wieder `MyFirstApp`, der Login-Button öffnet per `Navigator.push` die `ToDoList` (Ergänzung zum Skript, das hier endet; Daten nur lokal im State, keine Datenbank).
 - Der Auftrag beschreibt, **was** gebaut wird; Code steht in *Erklärt*, in den Tipps und im Baukasten.
 - Auf der Seite ist Kopieren von Code gesperrt (nicht markierbar, Kopieren/Rechtsklick abgefangen, Hinweis
   „Bitte abtippen“, kein Kopier-Knopf mehr im Baukasten). Ganz verhindern lässt sich das in keinem Browser.

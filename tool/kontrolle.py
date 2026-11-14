@@ -132,4 +132,20 @@ KONTROLLE = {
             ("Es löscht den Eintrag.", False, "Löschen geht mit remove."),
         ]),
     ]},
+    9: {"check": [
+        "Meine App startet mit der Login-Maske.",
+        "Nach dem Login sehe ich die ToDo-Liste und kann Einträge anlegen, abhaken und löschen.",
+        "Der Zurück-Pfeil führt wieder zur Login-Maske.",
+    ], "fragen": [
+        ("Was macht `Navigator.of(context).push(...)`?", [
+            ("Es legt eine neue Seite oben auf den Seitenstapel.", True, "Sichtbar ist immer die oberste Seite."),
+            ("Es speichert die ToDos in einer Datenbank.", False, "Gespeichert wird nichts – die Daten bleiben im State."),
+            ("Es schließt die App.", False, "Zum Schließen einer Seite dient pop()."),
+        ]),
+        ("Warum ist die Liste nach Zurück und erneutem Login leer?", [
+            ("Die ToDos stehen nur im State der Seite – beim Zurück wird die Seite mit ihrem State verworfen.", True, "Ohne Datenbank bleiben die Daten nur im Arbeitsspeicher."),
+            ("Weil das Passwort falsch war.", False, "Das Passwort wird in dieser App gar nicht geprüft."),
+            ("Weil setState fehlt.", False, "setState zeichnet neu, speichert aber nichts dauerhaft."),
+        ]),
+    ]},
 }
