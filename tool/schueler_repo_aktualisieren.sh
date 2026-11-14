@@ -6,7 +6,7 @@
 set -e
 cd "$(dirname "$0")/.."
 REPO=bnBSinfo/rest_lernpfad_schueler
-python3 tool/seite_bauen.py
+python3 tool/seite_bauen.py "$@"   # mit --ohne-loesungen: Seite ohne Musterlösungen
 TMP=$(mktemp -d)
 git clone -q "https://github.com/$REPO.git" "$TMP/repo" 2>/dev/null || true
 [ -d "$TMP/repo/.git" ] || { mkdir -p "$TMP/repo"; git -C "$TMP/repo" init -q -b main; }
