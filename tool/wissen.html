@@ -1,6 +1,12 @@
 <div class="card level-kopf"><span class="nummer" aria-hidden="true">📘</span>
   <div><h2>Wissen: REST</h2><p class="stich">HTTP-Methoden, Statuscodes, JSON – und wie man eine API ausprobiert</p></div></div>
 
+<div class="card grafik"><h3>Der Datenfluss im Überblick</h3>
+  <p class="klein">Die App (oder der Browser) spricht nie direkt mit der Datenbank: Die Anfrage geht über das Netz an Apache,
+  PHP übersetzt sie in SQL, MySQL liefert die Daten, und die Antwort kommt als JSON zurück. Verwaltet wird der Pi per SSH.</p>
+  <!--DATENFLUSS-->
+</div>
+
 <div class="card"><h3>Was ist eine REST-API?</h3>
   <p>Eine App soll Daten vom Server lesen und ändern – aber <b>nicht</b> direkt in die Datenbank greifen
   (dann bräuchte jedes Handy das Datenbank-Passwort). Dazwischen sitzt eine <b>API</b>: ein Programm auf dem Server,

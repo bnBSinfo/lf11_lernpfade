@@ -19,6 +19,9 @@ import secrets
 import subprocess
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from datenfluss import CSS as DATENFLUSS_CSS, datenfluss_svg  # noqa: E402
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 REPO = "bnBSinfo/rest_lernpfad_schueler"
@@ -140,7 +143,10 @@ def level_ansicht(nr: int, d: dict) -> str:
         <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
     </aside>
   </div>
-  <div class="card grafik"><h3>Was passiert hier?</h3>{kette(d['kette'])}</div>
+  <div class="card grafik"><h3>Wo sind wir im Datenfluss?</h3>{datenfluss_svg(nr)}
+    <p class="legende"><span class="knoten neu"><b>neu / im Einsatz in diesem Level</b></span><span class="knoten da"><b>schon da</b></span>
+    <span class="knoten spaeter"><b>kommt noch</b></span></p>
+    <h3>Schritt für Schritt</h3>{kette(d['kette'])}</div>
   <div class="card lp-fuss">
     {zurueck}
     <div class="pruefen"><code>dart run tool/pruefen.dart {nr}</code>
@@ -288,7 +294,7 @@ JS_LOESUNG = r"""
 def main() -> None:
     ohne = "--ohne-loesungen" in sys.argv
     geheim = "null" if ohne else loesungen_verschluesseln(passwort_holen())
-    css = (ROOT / "tool" / "seite.css").read_text(encoding="utf-8") + CSS_EXTRA
+    css = (ROOT / "tool" / "seite.css").read_text(encoding="utf-8") + CSS_EXTRA + DATENFLUSS_CSS
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
             + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
             + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: REST">📘 Wissen</a>'
@@ -349,7 +355,7 @@ def main() -> None:
   </section>
 {ansichten}
   <section class="ansicht" id="wissen">
-{(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8")}
+{(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8").replace("<!--DATENFLUSS-->", datenfluss_svg())}
     <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><a class="knopf primaer" href="#level-8">Zu Level 8 ▶</a></div>
   </section>
 
