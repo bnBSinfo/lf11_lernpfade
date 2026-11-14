@@ -5,12 +5,14 @@
 **Skript:** Schnittstelle zur Datenbank erstellen (php-crud-api)
 
 ## Auftrag
-1. Laden Sie die API in das Webverzeichnis:
+1. Laden Sie die API auf den Pi – sie besteht aus einer einzigen Datei `api.php`:
    ```bash
-   apt install -y git
-   cd /var/www/html
-   git clone https://github.com/mevdschee/php-crud-api.git
+   mkdir -p /var/www/html/php-crud-api
+   cd /var/www/html/php-crud-api
+   wget https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php
    ```
+   **⬇ Download:** [api.php](downloads/api.php) (php-crud-api v2.16.7, MIT-Lizenz) – liegt auch in Ihrem Projekt unter
+   `docs/downloads/api.php` und kann mit `scp` auf den Pi kopiert werden.
 2. Tragen Sie in `php-crud-api/api.php` ganz unten bei `$config` die Zugangsdaten aus Level 6 ein:
    ```bash
    nano +99999 /var/www/html/php-crud-api/api.php
@@ -46,7 +48,17 @@ Die API liest beim Start die Tabellen aus der Datenbank und erzeugt diese Adress
 Die API meldet Fehler als JSON mit `code` und `message`. Bei *Access denied* stimmen `username`, `password` oder `database` in `$config` nicht. Die Zeilen dürfen nicht mit `//` auskommentiert sein.
 </details>
 
-<details><summary>Tipp 2 – curl unter Windows</summary>
+<details><summary>Tipp 2 – Alternative wie im Skript: git clone</summary>
+
+```bash
+apt install -y git
+cd /var/www/html
+git clone https://github.com/mevdschee/php-crud-api.git
+```
+Dann holen Sie das ganze Entwickler-Repository samt `.git`-Ordner auf den Webserver (→ Bonus 5). Die Datei `api.php` liegt danach am selben Ort.
+</details>
+
+<details><summary>Tipp 3 – curl unter Windows</summary>
 
 In der PowerShell heißt `curl` etwas anderes. Nehmen Sie `curl.exe` – oder die SSH-Sitzung auf dem Pi mit `localhost` statt der IP.
 </details>

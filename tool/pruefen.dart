@@ -281,6 +281,7 @@ Future<Ergebnis> level7() async {
 }
 
 const api = '/php-crud-api/api.php/records';
+const apiDownload = 'https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php';
 
 Future<Ergebnis> level8() async {
   final r = Ergebnis();
@@ -290,8 +291,8 @@ Future<Ergebnis> level8() async {
     return r;
   }
   r.pruefe(a.status != 404 || a.typ == 'application/json', 'php-crud-api ist installiert',
-      'Unter ${pi.web}/php-crud-api/api.php gibt es nichts. Klonen Sie das Repository in /var/www/html:  '
-          'cd /var/www/html  und  git clone https://github.com/mevdschee/php-crud-api.git');
+      'Unter ${pi.web}/php-crud-api/api.php gibt es nichts. Auf dem Pi:  mkdir -p /var/www/html/php-crud-api  '
+          'und dort  wget $apiDownload');
   if (a.status == 404 && a.typ != 'application/json') return r;
   final daten = jsonOderNull(a.body);
   final fehler = daten is Map && daten.containsKey('code') ? ' (API meldet: ${daten['message']})' : '';

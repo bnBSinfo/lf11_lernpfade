@@ -19,6 +19,7 @@ so wie später Ihre Flutter-App. Fortsetzung der **Flutter-Einführung**.
 | 1 | `pi.txt` | IP-Adresse eintragen |
 | 6 | `server/sql/flutterdb.sql` | SQL-TODOs ergänzen, auf dem Pi ausführen |
 | 7 | `server/php/benutzer.php` | PHP-TODOs ergänzen, nach `/var/www/html` kopieren |
+| 8 | `docs/downloads/api.php` | REST-API (php-crud-api) – auf den Pi laden, Zugangsdaten eintragen |
 | 9 | `lib/todo_api.dart` | Dart-TODOs ergänzen, ausprobieren mit `dart run tool/todo_konsole.dart` |
 
 Level 1–5 und 8 erledigen Sie direkt auf dem Pi (Terminal / SSH).

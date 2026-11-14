@@ -46,6 +46,9 @@ Vorschläge für die Überarbeitung des Skripts:
   `php libapache2-mod-php php-mysql` (L4) und `php-mbstring php-zip php-gd php-curl` (L5).
 - `ifconfig`/`net-tools` ist veraltet → `hostname -I` (ifconfig als Alternative erwähnt).
 - `systemctl enable --now ssh` fehlt – sonst startet SSH nicht überall automatisch.
+- **REST-API als Download:** `docs/downloads/api.php` = Release v2.16.7 der php-crud-api (MIT, Lizenz liegt daneben),
+  über GitHub Pages per `wget` abrufbar. Statt `git clone` – kein `.git`-Ordner im Webverzeichnis, feste Version.
+  Aktualisieren: `gh release download <tag> -R mevdschee/php-crud-api -p api.php -D docs/downloads --clobber`.
 - `gedit api.php` braucht einen Desktop, per SSH geht das nicht → `nano`.
 - „php.info-Datei“ → die Datei heißt `info.php`. `nano`: Speichern ist Strg+O, Strg+X beendet (Skript: „strg x, Y“ – geht auch).
 - Sicherheit (→ Bonus): Klartext-Passwörter, die API gibt `passwordLogin` aus, `info.php` bleibt liegen,
