@@ -1,0 +1,7 @@
+# Tragen Sie hier die IP-Adresse Ihres Raspberry Pi ein (Level 1).
+# Beispiel:  ip=10.36.13.76
+ip=0.0.0.0
+
+# Nur ändern, wenn Ihre Lehrkraft es sagt:
+http=80
+ssh=22

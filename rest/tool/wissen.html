@@ -1,0 +1,90 @@
+<div class="card level-kopf"><span class="nummer" aria-hidden="true">📘</span>
+  <div><h2>Wissen: REST</h2><p class="stich">HTTP-Methoden, Statuscodes, JSON – und wie man eine API ausprobiert</p></div></div>
+
+<div class="card grafik"><h3>Der Datenfluss im Überblick</h3>
+  <p class="klein">Die App (oder der Browser) spricht nie direkt mit der Datenbank: Die Anfrage geht über das Netz an Apache,
+  PHP übersetzt sie in SQL, MySQL liefert die Daten, und die Antwort kommt als JSON zurück. Verwaltet wird der Pi per SSH.</p>
+  <!--DATENFLUSS-->
+</div>
+
+<div class="card"><h3>Was ist eine REST-API?</h3>
+  <p>Eine App soll Daten vom Server lesen und ändern – aber <b>nicht</b> direkt in die Datenbank greifen
+  (dann bräuchte jedes Handy das Datenbank-Passwort). Dazwischen sitzt eine <b>API</b>: ein Programm auf dem Server,
+  das HTTP-Anfragen annimmt, mit der Datenbank spricht und JSON zurückgibt.</p>
+  <div class="kette">
+    <div class="schritt-box"><b>App / Browser / curl</b><span>schickt eine HTTP-Anfrage</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>Apache + php-crud-api</b><span>übersetzt in SQL</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>MySQL</b><span>führt das SQL aus</span></div><span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>JSON</b><span>geht als Antwort zurück</span></div>
+  </div>
+  <p><b>REST</b> ist eine Regel, wie solche Anfragen aussehen: Jede <b>Ressource</b> (bei uns: jede Tabelle, jeder Datensatz)
+  hat eine feste <b>Adresse</b>. Was passieren soll, sagt die <b>HTTP-Methode</b>.</p>
+</div>
+
+<div class="card"><h3>Methoden, Adressen, SQL</h3>
+  <table>
+    <thead><tr><th>CRUD</th><th>Methode</th><th>Adresse (hinter …/api.php)</th><th>SQL</th><th>Antwort</th></tr></thead>
+    <tbody>
+      <tr><td>Read</td><td><code>GET</code></td><td><code>/records/ToDoTB</code></td><td><code>SELECT * FROM ToDoTB</code></td><td><code>{"records":[…]}</code></td></tr>
+      <tr><td>Read</td><td><code>GET</code></td><td><code>/records/ToDoTB/3</code></td><td><code>… WHERE id = 3</code></td><td><code>{"id":3,…}</code></td></tr>
+      <tr><td>Create</td><td><code>POST</code></td><td><code>/records/ToDoTB</code></td><td><code>INSERT INTO …</code></td><td>neue id</td></tr>
+      <tr><td>Update</td><td><code>PUT</code></td><td><code>/records/ToDoTB/3</code></td><td><code>UPDATE … WHERE id = 3</code></td><td><code>1</code></td></tr>
+      <tr><td>Delete</td><td><code>DELETE</code></td><td><code>/records/ToDoTB/3</code></td><td><code>DELETE … WHERE id = 3</code></td><td><code>1</code></td></tr>
+    </tbody>
+  </table>
+  <p>Filtern und sortieren geht über Parameter: <code>/records/ToDoTB?filter=checkbox,eq,0&amp;order=name</code></p>
+</div>
+
+<div class="card"><h3>⬇ Download: die REST-API</h3>
+  <p>Die <b>php-crud-api</b> ist eine einzige PHP-Datei. Sie macht aus jeder Tabelle einer MySQL-Datenbank automatisch eine REST-Schnittstelle.</p>
+  <p><a class="knopf primaer" href="downloads/api.php">api.php herunterladen</a>
+  <a class="knopf" href="downloads/LICENSE-php-crud-api.txt">Lizenz (MIT)</a></p>
+  <p class="klein">Version 2.16.7 von Maurits van der Schee, github.com/mevdschee/php-crud-api. Direkt auf dem Pi (Level 8):</p>
+  <pre><code>mkdir -p /var/www/html/php-crud-api
+cd /var/www/html/php-crud-api
+wget https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php</code></pre>
+</div>
+
+<div class="card"><h3>Statuscodes – was der Server meldet</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Bedeutung</th><th>typische Ursache bei uns</th></tr></thead>
+    <tbody>
+      <tr><td><code>200</code></td><td>OK</td><td>alles gut</td></tr>
+      <tr><td><code>404</code></td><td>Not Found</td><td>Datei nicht in /var/www/html, Tippfehler in Tabelle oder id</td></tr>
+      <tr><td><code>422</code></td><td>Unprocessable</td><td>Daten passen nicht zur Tabelle (z. B. name fehlt)</td></tr>
+      <tr><td><code>500</code></td><td>Server-Fehler</td><td>PHP-Fehler, Datenbank-Zugangsdaten falsch → <code>/var/log/apache2/error.log</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card"><h3>REST-Baukasten – Anfragen zusammenstellen</h3>
+  <p class="klein">Wählen Sie Methode, Tabelle und id. Rechts sehen Sie, wie dieselbe Anfrage im Browser, mit curl, in Dart und als SQL aussieht.</p>
+  <div class="rest-bk">
+    <form onsubmit="return false">
+      <label for="bk-ip">IP Ihres Pi</label><input id="bk-ip" value="10.36.13.76">
+      <label for="bk-methode">Methode</label>
+      <select id="bk-methode"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>
+      <label for="bk-tabelle">Tabelle</label>
+      <select id="bk-tabelle"><option>ToDoTB</option><option>flutterTB</option></select>
+      <label for="bk-id">id (leer = alle)</label><input id="bk-id" inputmode="numeric" placeholder="z. B. 2">
+      <label for="bk-body">Daten (JSON)</label><textarea id="bk-body" rows="3"></textarea>
+    </form>
+    <div class="ausgabe" aria-live="polite">
+      <h4>Adresse</h4><pre><code id="bk-url"></code></pre>
+      <h4>curl (Terminal; Windows: <code>curl.exe</code>)</h4><pre><code id="bk-curl"></code></pre>
+      <h4>Dart (package:http)</h4><pre><code id="bk-dart"></code></pre>
+      <h4>SQL dahinter</h4><pre><code id="bk-sql"></code></pre>
+      <p id="bk-hinweis" class="klein"></p>
+    </div>
+  </div>
+</div>
+
+<div class="card"><h3>JSON in 30 Sekunden</h3>
+  <pre><code>{                              ← Objekt  → Dart: Map&lt;String, dynamic&gt;
+  "records": [                 ← Liste   → Dart: List
+    {"id": 1, "name": "Pi einrichten", "checkbox": true}
+  ]
+}</code></pre>
+  <p>Zahlen ohne Anführungszeichen, Texte in <b>doppelten</b> Anführungszeichen, <code>true</code>/<code>false</code> klein.
+  In Dart: <code>jsonDecode(text)</code> liest, <code>jsonEncode(map)</code> schreibt.</p>
+</div>
