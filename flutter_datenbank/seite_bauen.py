@@ -6,11 +6,13 @@ import base64, io, json, os, re, sys
 from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from inhalt import *
+import ablauf_grafik
+from ablauf_grafik import ablauf_html
 
 HIER = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(HIER, 'bilder') + '/'
 VORLAGE = open(os.path.join(HIER, 'vorlage_einfuehrung.html'), encoding='utf-8').read()
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 DATUM = '14.11.2026'
 N = 6
 
@@ -134,7 +136,7 @@ EXTRA_CSS = '''<style>
 .handy.breit img{width:100%;height:auto;display:block;border-radius:8px}
 .lp-seite .handys{flex-direction:column;align-items:stretch}
 .handy:not(.breit) img{width:100%;height:auto;display:block;border-radius:14px}
-</style>
+''' + ablauf_grafik.CSS + '''</style>
 '''
 
 def verschluesseln(pw, daten):
@@ -168,7 +170,7 @@ def bauen(pw, ziel):
     s_geh = v[i_geh:]
     s_geh = re.sub(r'var GEHEIM = \{.*?\};', 'var GEHEIM = ' + json.dumps(verschluesseln(pw, LOESUNGEN)) + ';', s_geh, count=1, flags=re.S)
     body = ('<body data-thema="technik">\n<div class="app">\n  ' + KOPF + START + ''.join(L) + WISSEN + LOES)
-    out = head + body + s_nav_sk + s_geh
+    out = head + body + '<script>' + ablauf_grafik.JS + '</script>' + s_nav_sk + s_geh
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     open(ziel, 'w', encoding='utf-8').write(out)
     return out

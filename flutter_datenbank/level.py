@@ -110,7 +110,7 @@ L.append(level(3, 'Name und Passwort prüfen', 'loadContactData_L(), data_L und 
    '<p><strong>Denkfrage:</strong> Ein Mitschüler sitzt im selben WLAN und zeichnet den Netzwerkverkehr auf. Was sieht er, wenn Ihre App startet?</p>'),
  ziel(figur('json_benutzer', 'JSON-Ansicht von records mit mehreren Benutzern und ihren Passwörtern', 'Das steht in data_L – alle Benutzer mit Passwort')) +
  baumkarte('Dateien im Projekt', dateien([('webRequest.dart', '+ loadContactData_L()', True), ('my_login.dart', 'data_L, loadDataFromDB_L, where', True), ('todo_list.dart', '', False), ('todo_item.dart', '', False)])),
- '<h3>Ablauf in der App – Schritte 1 bis 3 gehören zum Login</h3>\n<div class="handys">' + figur('ablauf', 'Ablaufdiagramm: 1 Login öffnen, 2 REST-API liefert Login-Daten als JSON, 3 Prüfung, 4 ToDo-Liste lädt ToDos, 5 Plus-Button, 6 neues ToDo wird gesendet', 'Schritte 1–3: Login (Level 1–3) · Schritte 4–6: ToDo-Liste (Level 4–6)') + '</div>\n'
+ '<h3>Ablauf in der App – Schritte 1 bis 3 gehören zum Login</h3>\n' + ablauf_html([1, 2, 3], 'l3') + '\n'
  + kette([('initState()', 'loadDataFromDB_L()'), ('loadContactData_L()', 'GET …/flutterTB/'), ('data_L', 'Liste aller Benutzer'), ('Login-Button', 'data_L.where(…)'), ('validName.isNotEmpty', 'openList()')]),
  selbst(3, ['Mit Name und Passwort eines Benutzers aus flutterTB komme ich zur ToDo-Liste.', 'Mit dem Namen des einen und dem Passwort eines anderen Benutzers komme ich nicht hinein.', 'Ich kann erklären, warum diese Lösung nicht sicher ist.'],
    [('Was steht in <code>validName</code>, wenn Name und Passwort falsch sind?',
@@ -191,9 +191,8 @@ L.append(level(5, 'CRUD-Methoden und ToDos laden', 'webRequest erweitern, loadDa
    + INFO_LINT
    + '<p><strong>Merke:</strong> Daten aus dem Netz werden in <code>initState</code> angestoßen und mit <code>setState</code> angezeigt, sobald sie da sind.</p>\n'
    '<p><strong>Denkfrage:</strong> Legen Sie jetzt ein ToDo an und starten Sie die App neu. Warum ist es weg – die ToDos aus der Datenbank aber nicht?</p>'),
- ziel(figur('ablauf', 'Ablaufdiagramm: Schritt 4 – die ToDo-Liste lädt die ToDos als JSON von der REST-API', 'Schritt 4: Die ToDo-Liste lädt die ToDos aus der Datenbank')) +
  baumkarte('Dateien im Projekt', dateien([('webRequest.dart', '+ loadDataToDo, sendDS, deletDS, updateDS', True), ('todo_list_object.dart', '', False), ('todo_list.dart', 'dataToDo, loadDataFromDBToDo, initState', True), ('todo_item.dart', '', False)])),
- '<h3>Vom Datensatz zum ToDo auf dem Bildschirm</h3>\n' + kette([('initState()', 'ToDo-Liste öffnet'), ('loadDataToDo()', 'GET …/ToDoTB/'), ('dataToDo', 'Liste aus records'), ('ToDoListObject(…)', 'je Datensatz ein Objekt'), ('todos.add', 'in die Liste'), ('setState', 'neu zeichnen')]),
+ '<h3>So soll es aussehen – Schritt 4: die ToDo-Liste lädt ihre Daten</h3>\n' + ablauf_html([4], 'l5') + '<h3>Vom Datensatz zum ToDo auf dem Bildschirm</h3>\n' + kette([('initState()', 'ToDo-Liste öffnet'), ('loadDataToDo()', 'GET …/ToDoTB/'), ('dataToDo', 'Liste aus records'), ('ToDoListObject(…)', 'je Datensatz ein Objekt'), ('todos.add', 'in die Liste'), ('setState', 'neu zeichnen')]),
  selbst(5, ['Die Tabelle ToDoTB existiert, …/records/ToDoTB/ zeigt meine Test-ToDos.', 'Nach dem Login sehe ich die ToDos aus der Datenbank.', 'webRequest.dart enthält loadDataToDo, sendDS, deletDS und updateDS.'],
    [('Welche HTTP-Methode benutzt <code>sendDS</code>?',
      [('POST – Create', True, 'POST legt einen neuen Datensatz an.'), ('GET – Read', False, 'GET liest nur.'), ('PUT – Update', False, 'PUT ändert einen vorhandenen Datensatz.')]),
@@ -224,7 +223,7 @@ L.append(level(6, 'Methoden anpassen', 'Aufgabe 3 – Anlegen, Löschen und Abha
    '<p><strong>Denkfrage:</strong> Zwei Handys sind eingeloggt. Auf dem einen wird ein ToDo abgehakt. Wann sieht das andere Handy den Haken? (Skript: Refresh-Button)</p>'),
  ziel(figur('methoden', 'Dart-Methoden addItem, deleteItem und checkBoxDone mit Kommentaren', 'Diese drei Methoden sprechen jetzt mit der Datenbank')) +
  baumkarte('Dateien im Projekt', dateien([('webRequest.dart', 'Login und CRUD', False), ('my_login.dart', 'Login gegen flutterTB', False), ('todo_list_object.dart', 'id, name, checkbox', False), ('todo_list.dart', 'sendDS, deletDS, updateDS', True), ('todo_item.dart', 'mit id', False)])),
- '<h3>Ablauf in der App – Schritte 5 und 6</h3>\n<div class="handys">' + figur('ablauf', 'Ablaufdiagramm: Schritt 5 Plus-Button öffnet Eingabe, Schritt 6 neues ToDo geht als JSON an die REST-API und erscheint in der Liste', 'Schritt 5: neues ToDo eingeben · Schritt 6: in die Liste und an die Datenbank') + '</div>\n'
+ '<h3>Ablauf in der App – Schritte 5 und 6</h3>\n' + ablauf_html([5, 6], 'l6') + '\n'
  + kette([('Create', 'addItem → sendDS'), ('Read', 'loadDataFromDBToDo → loadDataToDo'), ('Update', 'checkBoxDone → updateDS'), ('Delete', 'deleteItem → deletDS')]),
  selbst(6, ['Ein neues ToDo steht nach dem Anlegen in ToDoTB (Browser prüfen).', 'Abhaken und Löschen sind nach einem Neustart der App noch so.', 'Ich kann zu jeder Methode in todo_list.dart die Methode aus webRequest.dart und die CRUD-Operation nennen.'],
    [('Welche Methode aus <code>webRequest.dart</code> ruft <code>checkBoxDone</code> auf?',
