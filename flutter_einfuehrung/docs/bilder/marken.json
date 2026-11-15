@@ -1,0 +1,229 @@
+{
+ "level_1": [
+  {
+   "text": " Text – steht im body ganz oben links",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 163.541015625,
+   "h": 20.0
+  },
+  {
+   "text": " Scaffold – füllt den ganzen Bildschirm",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 360.0,
+   "h": 640.0
+  }
+ ],
+ "level_2": [
+  {
+   "text": "Padding – 50 px Rand rundherum",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 360.0,
+   "h": 640.0
+  },
+  {
+   "text": "ColoredBox – graue Fläche",
+   "x": 50.0,
+   "y": 50.0,
+   "w": 260.0,
+   "h": 540.0
+  },
+  {
+   "text": "Center → Text in der Mitte",
+   "x": 74.44482421875,
+   "y": 310.0,
+   "w": 211.1103515625,
+   "h": 20.0
+  }
+ ],
+ "level_3": [
+  {
+   "text": "AppBar mit title",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 360.0,
+   "h": 56.0
+  },
+  {
+   "text": "body: MyLogin (Stateful Widget)",
+   "x": 78.64501953125,
+   "y": 338.0,
+   "w": 202.7099609375,
+   "h": 20.0
+  }
+ ],
+ "level_4_leer": [
+  {
+   "text": "Text 'Willkommen'",
+   "x": 140.06201171875,
+   "y": 252.0,
+   "w": 79.8759765625,
+   "h": 20.0
+  },
+  {
+   "text": "TextField Benutzername",
+   "x": 30.0,
+   "y": 272.0,
+   "w": 300.0,
+   "h": 56.0
+  },
+  {
+   "text": "TextField Passwort (verdeckt)",
+   "x": 30.0,
+   "y": 340.0,
+   "w": 300.0,
+   "h": 56.0
+  },
+  {
+   "text": "TextButton – grau, weil _canLogin false",
+   "x": 148.0,
+   "y": 396.0,
+   "w": 64.0,
+   "h": 48.0
+  }
+ ],
+ "level_4": [
+  {
+   "text": "onChanged speichert _username",
+   "x": 30.0,
+   "y": 272.0,
+   "w": 300.0,
+   "h": 56.0
+  },
+  {
+   "text": "obscureText: true → Punkte",
+   "x": 30.0,
+   "y": 340.0,
+   "w": 300.0,
+   "h": 56.0
+  },
+  {
+   "text": "TextButton – aktiv nach setState",
+   "x": 148.0,
+   "y": 396.0,
+   "w": 64.0,
+   "h": 48.0
+  }
+ ],
+ "level_5": [
+  {
+   "text": "ein ToDoItem = eine Row",
+   "x": 8.0,
+   "y": 56.0,
+   "w": 344.0,
+   "h": 48.0
+  },
+  {
+   "text": "Checkbox (noch inaktiv)",
+   "x": 8.0,
+   "y": 56.0,
+   "w": 48.0,
+   "h": 48.0
+  },
+  {
+   "text": "Expanded → Text(title)",
+   "x": 56.0,
+   "y": 70.0,
+   "w": 248.0,
+   "h": 20.0
+  },
+  {
+   "text": "IconButton Mülleimer",
+   "x": 304.0,
+   "y": 56.0,
+   "w": 48.0,
+   "h": 48.0
+  }
+ ],
+ "level_6_dialog": [
+  {
+   "text": "AlertDialog aus showDialog",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 360.0,
+   "h": 640.0
+  },
+  {
+   "text": "TextField – Enter ruft addItem",
+   "x": 64.0,
+   "y": 292.0,
+   "w": 232.0,
+   "h": 48.0
+  }
+ ],
+ "level_6": [
+  {
+   "text": "AppBar 'ToDo Liste'",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 360.0,
+   "h": 56.0
+  },
+  {
+   "text": "ListView.builder – ein ToDoItem je Eintrag",
+   "x": 0.0,
+   "y": 56.0,
+   "w": 360.0,
+   "h": 584.0
+  },
+  {
+   "text": "FloatingActionButton → newEntry",
+   "x": 288.0,
+   "y": 568.0,
+   "w": 56.0,
+   "h": 56.0
+  }
+ ],
+ "level_7": [
+  {
+   "text": "Mülleimer ruft remove() → deleteItem(1)",
+   "x": 304.0,
+   "y": 104.0,
+   "w": 48.0,
+   "h": 48.0
+  }
+ ],
+ "level_8": [
+  {
+   "text": "Checkbox: done = true",
+   "x": 8.0,
+   "y": 56.0,
+   "w": 48.0,
+   "h": 48.0
+  },
+  {
+   "text": "Checkbox: done = false",
+   "x": 8.0,
+   "y": 104.0,
+   "w": 48.0,
+   "h": 48.0
+  }
+ ],
+ "level_9_login": [
+  {
+   "text": "Login-Button → Navigator.push(ToDoList)",
+   "x": 148.0,
+   "y": 396.0,
+   "w": 64.0,
+   "h": 48.0
+  }
+ ],
+ "level_9": [
+  {
+   "text": "Zurück-Pfeil (automatisch) → pop → Login",
+   "x": 4.0,
+   "y": 4.0,
+   "w": 48.0,
+   "h": 48.0
+  },
+  {
+   "text": "ToDoList aus Level 8 – Daten nur lokal im State",
+   "x": 0.0,
+   "y": 56.0,
+   "w": 360.0,
+   "h": 584.0
+  }
+ ]
+}

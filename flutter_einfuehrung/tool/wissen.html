@@ -1,0 +1,233 @@
+<!-- Wissensseite "Stateless & Stateful" – wird von tool/seite_bauen.py in die Webseite eingebaut. -->
+<div class="card level-kopf"><span class="nummer" aria-hidden="true">📘</span>
+  <div><h2>Wissen: Stateless &amp; Stateful Widgets</h2>
+  <p class="stich">Aufbau, Unterschiede, Lebenszyklus, setState – zum Nachschlagen in jedem Level</p></div></div>
+
+<nav class="card inhalt-navi" aria-label="Inhalt">
+  <a href="#w-widget">1 · Was ist ein Widget?</a>
+  <a href="#w-stateless">2 · Aufbau Stateless</a>
+  <a href="#w-stateful">3 · Aufbau Stateful</a>
+  <a href="#w-vergleich">4 · Vergleich</a>
+  <a href="#w-setstate">5 · setState genau</a>
+  <a href="#w-leben">6 · Lebenszyklus</a>
+  <a href="#w-wahl">7 · Welches nehme ich?</a>
+  <a href="#w-fehler">8 · Typische Fehler</a>
+</nav>
+
+<!-- 1 -->
+<div class="card" id="w-widget">
+  <h3>1 · Was ist ein Widget?</h3>
+  <p>In Flutter ist <b>alles ein Widget</b>: ein Text, ein Abstand, eine Farbe, ein Button, die ganze App.
+  Ein Widget ist ein <b>Bauplan</b> für ein Stück Oberfläche. Es beschreibt, <i>was</i> angezeigt werden soll –
+  Flutter kümmert sich darum, <i>wie</i> es gezeichnet wird.</p>
+  <div class="zwei">
+    <div class="kasten"><b>Widgets sind unveränderlich</b>
+      <small>Ein Widget-Objekt wird nie nachträglich geändert. Soll etwas anders aussehen, baut Flutter
+      einfach ein <b>neues</b> Widget. Deshalb sind alle Felder eines Widgets <code>final</code>.</small></div>
+    <div class="kasten"><b>Widgets bilden einen Baum</b>
+      <small>Jedes Widget kann Kinder haben (<code>child</code> oder <code>children</code>). Ganz oben steht
+      das Widget, das Sie an <code>runApp()</code> übergeben – die Wurzel des Widget-Baums.</small></div>
+  </div>
+  <p>Die Frage ist nur: <b>Woher kommen die Daten, die ein Widget anzeigt – und können sie sich ändern,
+  während die App läuft?</b> Genau darin unterscheiden sich Stateless und Stateful.</p>
+  <div class="zwei vergleich-bild">
+    <div class="kasten stateless"><b>🖼 Stateless = gedrucktes Plakat</b>
+      <small>Was draufsteht, wird beim Drucken festgelegt. Will man etwas anderes zeigen, druckt man ein neues Plakat.</small></div>
+    <div class="kasten state"><b>🧑‍🏫 Stateful = Whiteboard mit Schreiber</b>
+      <small>Das Whiteboard (Widget) bleibt hängen, aber eine Person (der <b>State</b>) merkt sich, was gerade
+      gilt, und schreibt es neu an, sobald sich etwas ändert.</small></div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="card" id="w-stateless">
+  <h3>2 · Aufbau eines Stateless Widgets</h3>
+  <p><i>Stateless</i> heißt „ohne Zustand“. Das Widget zeigt nur an, was ihm <b>von außen</b> über den
+  Konstruktor gegeben wird. Es kann sich nichts merken und sich nicht selbst neu zeichnen.</p>
+  <div class="anatomie">
+<pre><code><span class="m">①</span>class ToDoItem extends StatelessWidget {
+<span class="m">②</span>  final String title;
+
+<span class="m">③</span>  const ToDoItem(this.title, {super.key});
+
+<span class="m">④</span>  @override
+  Widget build(BuildContext context) {
+<span class="m">⑤</span>    return Row(
+      children: [
+        const Checkbox(value: false, onChanged: null),
+        Expanded(child: Text(title)),
+      ],
+    );
+  }
+}</code></pre>
+    <ol class="marken">
+      <li><b>Klasse erbt von <code>StatelessWidget</code>.</b> Damit weiß Flutter: Das ist ein Widget ohne eigenen Zustand.
+        Klassennamen schreibt man in <code>UpperCamelCase</code>.</li>
+      <li><b>Felder sind <code>final</code>.</b> Die Daten (hier der Titel) werden einmal beim Erzeugen übergeben und nie mehr geändert.</li>
+      <li><b>Konstruktor.</b> <code>this.title</code> speichert den übergebenen Wert direkt im Feld.
+        <code>const</code> erlaubt Flutter, gleiche Widgets wiederzuverwenden (schneller).
+        <code>{super.key}</code> reicht einen optionalen Schlüssel an die Oberklasse weiter – brauchen Sie meist nicht, gehört aber dazu.</li>
+      <li><b><code>build</code>-Methode.</b> <code>@override</code> heißt: Wir überschreiben die Methode der Oberklasse.
+        Flutter ruft <code>build</code> auf, wann immer es das Widget zeichnen will. <code>context</code> sagt dem Widget, wo es im Baum steht.</li>
+      <li><b>Rückgabe = Widget-Baum.</b> <code>build</code> gibt immer genau <b>ein</b> Widget zurück – das darf beliebig viele Kinder haben.</li>
+    </ol>
+  </div>
+  <p class="klein">Im Kurs: <code>MyFirstApp</code> (Level 1–3) und <code>ToDoItem</code> (Level 5–8) sind Stateless Widgets.
+  Selbst wenn ein ToDoItem später abgehakt wird, bleibt es Stateless – den Haken bekommt es von außen (<code>done</code>).</p>
+</div>
+
+<!-- 3 -->
+<div class="card" id="w-stateful">
+  <h3>3 · Aufbau eines Stateful Widgets</h3>
+  <p><i>Stateful</i> heißt „mit Zustand“. Ein Stateful Widget besteht immer aus <b>zwei Klassen</b>:
+  dem Widget selbst (unveränderlich, wie oben) und einem <b>State-Objekt</b>, das sich Daten merkt und die Oberfläche baut.</p>
+  <div class="anatomie zwei-code">
+    <div>
+      <p class="code-titel stateful">Klasse 1: das Widget</p>
+<pre><code><span class="m">①</span>class MyLogin extends StatefulWidget {
+<span class="m">②</span>  const MyLogin({super.key});
+
+<span class="m">③</span>  @override
+  State&lt;MyLogin&gt; createState() =&gt; _MyLoginState();
+}</code></pre>
+      <p class="code-titel state">Klasse 2: der State</p>
+<pre><code><span class="m">④</span>class _MyLoginState extends State&lt;MyLogin&gt; {
+<span class="m">⑤</span>  String _username = '';
+  bool _canLogin = false;
+
+<span class="m">⑥</span>  void _onChangedUsername(String text) {
+    setState(() {
+      _username = text;
+      _canLogin = _username.isNotEmpty;
+    });
+  }
+
+<span class="m">⑦</span>  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      TextField(onChanged: _onChangedUsername),
+      TextButton(
+        onPressed: _canLogin ? () {} : null,
+        child: const Text('Login'),
+      ),
+    ]);
+  }
+}</code></pre>
+    </div>
+    <ol class="marken">
+      <li><b>Erbt von <code>StatefulWidget</code>.</b> Diese Klasse ist genauso unveränderlich wie ein Stateless Widget.</li>
+      <li><b>Konstruktor</b> – wie beim Stateless Widget. Hier könnten auch <code>final</code>-Felder stehen, die von außen kommen
+        (z. B. ein Titel). Im State liest man sie mit <code>widget.titel</code>.</li>
+      <li><b><code>createState()</code></b> ist die einzige Aufgabe dieser Klasse: Sie erzeugt <b>einmal</b> das passende State-Objekt.
+        Es gibt hier <b>keine</b> <code>build</code>-Methode!</li>
+      <li><b>Die State-Klasse</b> erbt von <code>State&lt;MyLogin&gt;</code> – in den spitzen Klammern steht, zu welchem Widget sie gehört.
+        Der Unterstrich <code>_</code> macht sie privat: Nur diese Datei kennt sie.</li>
+      <li><b>Zustand = normale Variablen</b> (nicht <code>final</code>!). Sie bleiben erhalten, solange das Widget auf dem Bildschirm ist –
+        auch wenn <code>build</code> hundertmal neu läuft.</li>
+      <li><b>Methoden, die den Zustand ändern</b>, tun das <b>innerhalb von <code>setState(() { … })</code></b>.
+        Das ist das Signal an Flutter: „Daten haben sich geändert – bitte neu zeichnen.“</li>
+      <li><b><code>build</code> liegt im State</b>, nicht im Widget. Sie liest die Variablen und baut daraus die Oberfläche.
+        Läuft sie nach <code>setState</code> neu, ist der Button plötzlich aktiv.</li>
+    </ol>
+  </div>
+  <p class="klein">Tipp: In Android Studio und VS Code erzeugt das Kürzel <code>stful</code> + Tab beide Klassen auf einmal,
+  <code>stless</code> ein Stateless Widget. Danach nur noch die Namen anpassen.</p>
+</div>
+
+<!-- 4 -->
+<div class="card" id="w-vergleich">
+  <h3>4 · Vergleich auf einen Blick</h3>
+  <table class="vergleich">
+    <tr><th></th><th class="stateless">StatelessWidget</th><th class="stateful">StatefulWidget</th></tr>
+    <tr><td>Anzahl Klassen</td><td>1</td><td>2 (Widget + State)</td></tr>
+    <tr><td>Woher kommen die Daten?</td><td>nur von außen (Konstruktor)</td><td>von außen <b>und</b> eigene Variablen im State</td></tr>
+    <tr><td>Felder</td><td>alle <code>final</code></td><td>im Widget <code>final</code>, im State veränderbar</td></tr>
+    <tr><td>Wo steht <code>build</code>?</td><td>im Widget</td><td>im State</td></tr>
+    <tr><td>Kann sich selbst neu zeichnen?</td><td>nein</td><td>ja, mit <code>setState</code></td></tr>
+    <tr><td>Typische Beispiele</td><td>Text, Icon, Überschrift, ein Listeneintrag</td><td>Formular, Zähler, Liste mit Hinzufügen/Löschen, Checkbox mit eigenem Haken</td></tr>
+    <tr><td>Im Kurs</td><td><code>MyFirstApp</code>, <code>ToDoItem</code></td><td><code>MyLogin</code>, <code>ToDoList</code></td></tr>
+  </table>
+</div>
+
+<!-- 5 -->
+<div class="card" id="w-setstate">
+  <h3>5 · Was macht <code>setState</code> genau?</h3>
+  <div class="kette">
+    <div class="schritt-box"><b>1. Ereignis</b><span>Nutzer tippt, klickt, gibt etwas ein</span></div>
+    <span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>2. setState(() {…})</b><span>Variable im State wird geändert</span></div>
+    <span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>3. „schmutzig“</b><span>Flutter markiert das Widget zum Neuzeichnen</span></div>
+    <span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>4. build()</b><span>läuft neu und liest die neuen Werte</span></div>
+    <span class="pfeil" aria-hidden="true">→</span>
+    <div class="schritt-box"><b>5. Bildschirm</b><span>zeigt den neuen Zustand</span></div>
+  </div>
+  <ul>
+    <li><b>Ohne <code>setState</code></b> ändert sich zwar die Variable, aber Flutter erfährt nichts davon –
+      <code>build</code> läuft nicht neu, der Bildschirm bleibt alt.</li>
+    <li><code>setState</code> gibt es <b>nur im State</b> eines Stateful Widgets. Ein Stateless Widget hat keins.</li>
+    <li>Nur das Widget, dessen State sich ändert, <b>und seine Kinder</b> werden neu gebaut – nicht die ganze App.</li>
+    <li>Rufen Sie <code>setState</code> <b>nie in <code>build</code></b> auf – das ergäbe eine Endlosschleife.</li>
+  </ul>
+</div>
+
+<!-- 6 -->
+<div class="card" id="w-leben">
+  <h3>6 · Lebenszyklus eines Stateful Widgets</h3>
+  <p>Ein State-Objekt durchläuft immer dieselben Stationen. Für die meisten Apps brauchen Sie nur
+  <code>build</code> und <code>setState</code> – die anderen sind gut zu kennen.</p>
+  <div class="leben">
+    <div class="station"><b>createState()</b><span>Widget kommt in den Baum – State wird <b>einmal</b> erzeugt</span></div>
+    <div class="station"><b>initState()</b><span>einmalige Vorbereitung, z. B. Startwerte laden. Zuerst <code>super.initState()</code> aufrufen.</span></div>
+    <div class="station schleife"><b>build()</b><span>Oberfläche bauen – läuft <b>oft</b></span>
+      <div class="zurueck">↺ <code>setState()</code> → <code>build()</code> … so oft wie nötig</div></div>
+    <div class="station"><b>dispose()</b><span>Widget verschwindet (z. B. Seite geschlossen) – aufräumen, z. B. Controller schließen</span></div>
+  </div>
+<pre><code>@override
+void initState() {
+  super.initState();
+  debugPrint('initState: einmal am Anfang');
+}
+
+@override
+void dispose() {
+  debugPrint('dispose: einmal am Ende');
+  super.dispose();
+}</code></pre>
+  <p class="klein">Ausprobieren: Bauen Sie diese beiden Methoden in <code>_MyLoginState</code> ein und beobachten Sie die Konsole
+  (Bonus-Aufgabe 6). Setzen Sie zusätzlich ein <code>debugPrint('build')</code> in <code>build</code> – wie oft erscheint es beim Tippen?</p>
+</div>
+
+<!-- 7 -->
+<div class="card" id="w-wahl">
+  <h3>7 · Welches Widget nehme ich?</h3>
+  <div class="entscheidung">
+    <div class="frage">Muss sich das Widget <b>selbst</b> etwas merken, das sich <b>ändert, während die App läuft</b>
+      (Eingaben, Haken, Liste, Zähler)?</div>
+    <div class="antworten">
+      <div class="kasten stateful"><b>Ja → StatefulWidget</b><small>Die veränderlichen Daten kommen als Variablen in den State,
+        Änderungen immer mit <code>setState</code>.</small></div>
+      <div class="kasten stateless"><b>Nein → StatelessWidget</b><small>Alles, was es anzeigt, bekommt es über den Konstruktor.
+        Auch Funktionen (z. B. <code>remove</code>) kann man so übergeben.</small></div>
+    </div>
+  </div>
+  <p><b>Faustregel:</b> So viele Stateless Widgets wie möglich, so wenige Stateful wie nötig – und den Zustand dort
+  ablegen, wo er gebraucht wird. In der ToDo-App gehört die Liste in <code>ToDoList</code> (Stateful), weil dort
+  hinzugefügt und gelöscht wird. Jedes <code>ToDoItem</code> bleibt Stateless und meldet Klicks über Funktionen nach oben.</p>
+</div>
+
+<!-- 8 -->
+<div class="card" id="w-fehler">
+  <h3>8 · Typische Fehler</h3>
+  <table>
+    <tr><th>Fehler</th><th>Was passiert?</th><th>Lösung</th></tr>
+    <tr><td>Variable ändern ohne <code>setState</code></td><td>Bildschirm ändert sich nicht</td><td>Änderung in <code>setState(() { … })</code> packen</td></tr>
+    <tr><td>Variable <b>in</b> <code>build</code> anlegen</td><td>Wert wird bei jedem Neuzeichnen zurückgesetzt</td><td>Variable als Feld im State anlegen, außerhalb von <code>build</code></td></tr>
+    <tr><td><code>setState</code> im Stateless Widget</td><td>Fehler: <i>setState isn't defined</i></td><td>Widget in Stateful umwandeln – oder Funktion von außen übergeben</td></tr>
+    <tr><td><code>build</code> in die Widget-Klasse eines Stateful Widgets geschrieben</td><td>Fehler / wird nie aufgerufen</td><td><code>build</code> gehört in die State-Klasse</td></tr>
+    <tr><td>Veränderbare Felder im Widget (ohne <code>final</code>)</td><td>Warnung <i>must_be_immutable</i></td><td>Felder <code>final</code> machen, Veränderliches in den State</td></tr>
+    <tr><td><code>onPressed: newEntry()</code> mit Klammern</td><td>Funktion läuft sofort beim Bauen</td><td>Ohne Klammern übergeben: <code>onPressed: newEntry</code></td></tr>
+    <tr><td><code>const</code> vor Widgets mit Variablen</td><td>Fehler: <i>Invalid constant value</i></td><td><code>const</code> nur vor Widgets, die sich nie ändern</td></tr>
+  </table>
+</div>
