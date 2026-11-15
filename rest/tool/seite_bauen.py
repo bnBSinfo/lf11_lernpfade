@@ -26,8 +26,8 @@ from kontrolle import KONTROLLE  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
-REPO = "bnBSinfo/rest_lernpfad_schueler"
-PAGES = "https://bnbsinfo.github.io/rest_lernpfad_schueler/"  # Downloads (api.php) liegen dort
+REPO = "bnBSinfo/lf11_lernpfade"
+PAGES = "https://bnbsinfo.github.io/lf11_lernpfade/rest/"  # Downloads (api.php) liegen dort
 ITERATIONEN = 600_000
 VERSION = re.search(r"^version:\s*([\d.]+)", (ROOT / "pubspec.yaml").read_text(encoding="utf-8"), re.M).group(1)
 STAND = _dt.date.today().strftime("%d.%m.%Y")

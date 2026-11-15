@@ -1,7 +1,7 @@
 # Hinweise für die Lehrkraft
 
-Dieses Repo ist **privat** (Musterlösungen, Tests, Werkzeuge). Die Schüler bekommen nur die Lernpfad-Seite –
-über mebis oder https://bnbsinfo.github.io/flutter_lernpfad_schueler/.
+Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlösungen, Tests, Werkzeuge). Die Schüler arbeiten mit der Lernpfad-Seite –
+über mebis oder https://bnbsinfo.github.io/lf11_lernpfade/flutter/.
 
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
@@ -32,7 +32,7 @@ GitHub-Pages-Adresse verlinken. Vorschau ohne Lösungen: `python3 tool/seite_bau
 | `loesungen/lib/level_0X/` | Musterlösungen (auf der Seite verschlüsselt, mit Dateinamen wie im Schülerprojekt) |
 | `lib/level_0X/`, `test/level_0X_test.dart` | nur noch für Sie: frühere Starter-Fassung und Widget-Tests, mit denen `tool/loesungen_pruefen.sh` die Musterlösungen prüft |
 | `tool/bilder_erzeugen.sh` | Zielbilder = Screenshots der Musterlösungen |
-| `tool/schueler_repo_aktualisieren.sh` | baut die Seite und überträgt nur `docs/` ins öffentliche Repo |
+| `../veroeffentlichen.sh` | baut die Seite, legt sie nach `docs/` im Hauptordner und überträgt sie |
 
 Die Widget-Tests eignen sich auch zur **Abnahme**: Schülerdateien nach `lib/level_0X/` kopieren
 (Dateinamen anpassen) und `flutter test test/level_0X_test.dart` ausführen.
@@ -65,11 +65,10 @@ Vorschläge für die Überarbeitung des Skripts:
 ```
 
 ## Schüler-Repo und Webseite
-- Privat (dieses Repo, mit Lösungen): https://github.com/bnBSinfo/flutter_lernpfad
-- Öffentlich (nur die Seite `docs/`): https://github.com/bnBSinfo/flutter_lernpfad_schueler
-- Webseite (GitHub Pages): https://bnbsinfo.github.io/flutter_lernpfad_schueler/
+- Repo (alle drei Lernpfade): https://github.com/bnBSinfo/lf11_lernpfade
+- Webseite (GitHub Pages): https://bnbsinfo.github.io/lf11_lernpfade/flutter/
 
-Nach Änderungen: `./tool/schueler_repo_aktualisieren.sh` (fragt das Lösungs-Passwort; `--ohne-loesungen` für eine Seite ohne Lösungen)
+Nach Änderungen im Hauptordner: `./veroeffentlichen.sh flutter` (fragt das Lösungs-Passwort; `--ohne-loesungen` für eine Seite ohne Lösungen)
 
 ## Bilder auf der Webseite
 - Zielbilder (`docs/bilder/*.png`) sind echte Screenshots der Musterlösungen.

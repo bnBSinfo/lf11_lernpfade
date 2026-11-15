@@ -35,7 +35,7 @@ class Ergebnis {
 
 late PiKonfig pi;
 const api = '/php-crud-api/api.php/records';
-const apiDownload = 'https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php';
+const apiDownload = 'https://bnbsinfo.github.io/lf11_lernpfade/rest/downloads/api.php';
 const zeitlimit = Duration(seconds: 4);
 
 // ---------------------------------------------------------------- Netzwerk-Helfer

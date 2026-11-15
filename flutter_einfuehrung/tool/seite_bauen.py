@@ -24,7 +24,7 @@ from kontrolle import KONTROLLE  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
-REPO = "bnBSinfo/flutter_lernpfad_schueler"
+REPO = "bnBSinfo/lf11_lernpfade"
 ITERATIONEN = 600_000
 # Versionsnummer aus pubspec.yaml (vor dem Veröffentlichen dort erhöhen), Datum = Tag des Bauens
 VERSION = re.search(r"^version:\s*([\d.]+)", (ROOT / "pubspec.yaml").read_text(encoding="utf-8"), re.M).group(1)

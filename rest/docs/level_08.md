@@ -9,7 +9,7 @@
    ```bash
    mkdir -p /var/www/html/php-crud-api
    cd /var/www/html/php-crud-api
-   wget https://bnbsinfo.github.io/rest_lernpfad_schueler/downloads/api.php
+   wget https://bnbsinfo.github.io/lf11_lernpfade/rest/downloads/api.php
    ```
    **⬇ Download:** [api.php](downloads/api.php) (php-crud-api v2.16.7, MIT-Lizenz) – liegt auch in Ihrem Projekt unter
    `docs/downloads/api.php` und kann mit `scp` auf den Pi kopiert werden.

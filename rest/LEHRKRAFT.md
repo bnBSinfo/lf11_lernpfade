@@ -1,7 +1,7 @@
 # Hinweise für die Lehrkraft
 
-Dieses Repo ist **privat** (Musterlösungen, Abnahme-Werkzeug, Probe-Server). Die Schüler bekommen nur die
-Lernpfad-Seite – über mebis oder https://bnbsinfo.github.io/rest_lernpfad_schueler/.
+Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlösungen, Abnahme-Werkzeug, Probe-Server). Die Schüler arbeiten mit der
+Lernpfad-Seite – über mebis oder https://bnbsinfo.github.io/lf11_lernpfade/rest/.
 
 Aufgebaut nach dem Muster der **Flutter-Einführung**: Level mit Auftrag, Erklärung, gestuften Tipps, Merke und
 Denkfrage, Zielbild, Server-Stack, Datenfluss, Selbstkontrolle, verschlüsselte Musterlösungen.
@@ -41,7 +41,7 @@ Datei in den mebis-Kurs legen.
 | `tool/pruefen.dart` + `pi.txt` | **Abnahme-Werkzeug** für Sie: prüft einen Schüler-Pi über das Netz |
 | `test/probe_server.dart` | simuliert einen fertigen Pi (für Tests ohne Hardware) |
 | `tool/loesungen_pruefen.sh` | Abnahme-Werkzeug und Musterlösung gegen den Probe-Server |
-| `tool/schueler_repo_aktualisieren.sh` | baut die Seite und überträgt nur `docs/` ins öffentliche Repo |
+| `../veroeffentlichen.sh` | baut die Seite, legt sie nach `docs/` im Hauptordner und überträgt sie |
 
 ## Abnahme mit dem Werkzeug
 IP des Schüler-Pi in `pi.txt` eintragen, dann `dart run tool/pruefen.dart` (Übersicht) oder `… 7` (ein Level).
@@ -77,7 +77,7 @@ Vorschläge für die Überarbeitung des Skripts:
 2. Lernpfad-Seite in mebis öffnen, Pi bereitlegen.
 3. Je Level: Auftrag → abtippen und umsetzen → Selbstkontrolle.
 4. Abnahme stichprobenartig mit `dart run tool/pruefen.dart` und dem Abnahmeprotokoll.
-5. Ausblick (Bonus 1): Lernpfad Flutter-Datenbankanbindung (https://bnbsinfo.github.io/flutter_lernpfad_schueler/datenbank/) – die ToDo-App nutzt dieselbe Tabelle `ToDoTB`.
+5. Ausblick (Bonus 1): Lernpfad Flutter-Datenbankanbindung (https://bnbsinfo.github.io/lf11_lernpfade/datenbank/) – die ToDo-App nutzt dieselbe Tabelle `ToDoTB`.
 
 ## Prüfen nach Änderungen
 ```
