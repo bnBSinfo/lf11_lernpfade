@@ -147,7 +147,7 @@ L.append(level(4, 'ToDo-Objekte und Liste', 'ToDoListObject, List statt Map, ToD
    + tipp('„The getter \'name\' isn\'t defined for the type \'String\'“?', 'Irgendwo steht noch Code der alten Map, z. B. <code>todos.keys</code>. <code>todos[i]</code> ist jetzt ein <code>ToDoListObject</code>.')
    + '<p><strong>Merke:</strong> Ein Objekt bündelt die Werte eines Datensatzes – die <code>id</code> macht jedes ToDo eindeutig.</p>\n'
    '<p><strong>Denkfrage:</strong> Zwei ToDos heißen „Einkaufen“. Was wäre mit der Map passiert – und was passiert jetzt?</p>'),
- ziel(figur('datenfluss', 'Datenfluss: Eingabedialog mit addItem, Objekt mit id 6, checkbox false, name Netzplan, Liste todos, Datenbank todoListDB mit loadDataFromDBToDo', 'Vom Eingabedialog zum Objekt in der Liste todos')) +
+ ziel(figur('datenfluss_l4', 'Datenfluss ohne Datenbank: Eingabedialog mit addItem, Objekt ToDoListObject newtodo mit id 6, checkbox false, name Netzplan, Liste todos, neues ToDo in der App', 'Vom Eingabedialog über ToDoListObject in die Liste todos')) +
  baumkarte('Widget-Baum', baum(('ToDoList', 'Stateful · List&lt;ToDoListObject&gt; todos', True, [('Scaffold', '', False, [('ListView.builder', 'todos[i] → ToDoItem', True, [('ToDoItem', 'id, name, checkbox, …', True, None)]), ('FloatingActionButton', 'newEntry', False, None)])]))),
  '<h3>Von der Map zur Liste von Objekten</h3>\n<div class="zwei">'
  '<div class="kasten"><b>Flutter-Einführung</b><small>Map&lt;String, bool&gt;</small><table><tr><td>\'Milch kaufen\'</td><td>true</td></tr><tr><td>\'LF11 lernen\'</td><td>false</td></tr></table></div>'
@@ -284,7 +284,7 @@ void loadDataFromDB_L() async {
 UEB = [('level-1', 'json_einzeln', '1 · http und erster Abruf', 'webRequest.dart, loadContactData()'),
        ('level-2', 'login', '2 · Passwort aus der Datenbank', 'loadDataFromDB(), passwordLog'),
        ('level-3', 'json_benutzer', '3 · Name und Passwort prüfen', 'loadContactData_L(), where'),
-       ('level-4', 'datenfluss', '4 · ToDo-Objekte und Liste', 'ToDoListObject, ToDoItem mit id'),
+       ('level-4', 'datenfluss_l4', '4 · ToDo-Objekte und Liste', 'ToDoListObject, ToDoItem mit id'),
        ('level-5', 'ablauf', '5 · CRUD und ToDos laden', 'loadDataToDo, initState'),
        ('level-6', 'methoden', '6 · Methoden anpassen', 'sendDS, deletDS, updateDS')]
 START = '''<section class="ansicht" id="start">
