@@ -189,6 +189,10 @@ def passwort_holen() -> str:
 
 CSS_EXTRA = """
 .auftrags-kasten pre code{background:transparent}
+.start-pi{display:flex;gap:24px;align-items:center}
+.start-pi img{width:300px;max-width:40%;height:auto;flex:none}
+.start-pi h2{margin-top:0}
+@media (max-width:700px){.start-pi{flex-direction:column;align-items:flex-start}.start-pi img{width:220px;max-width:70%}}
 .term,.browser{margin:0 0 10px;border-radius:12px;overflow:hidden;border:1px solid var(--line);font-size:.8rem}
 .term figcaption{background:#2d3442;color:#cfd6e4;padding:5px 10px;font-family:ui-monospace,Consolas,monospace}
 .term pre{margin:0;background:#141922;color:#d6f5d6;padding:10px 12px;white-space:pre-wrap;border-radius:0}
@@ -331,10 +335,12 @@ def main() -> None:
   </header>
 
   <section class="ansicht" id="start">
-    <div class="card echt"><span aria-hidden="true">🍓</span><div>
-      <b>Gearbeitet wird am echten Raspberry Pi und in Ihrer eigenen Entwicklungsumgebung</b> – Terminal, SSH, Webserver,
-      Datenbank und Dart, genau wie im Betrieb. Es gibt <b>keine Vorlagen zum Herunterladen</b>: Jede Zeile tippen Sie selbst.
-      Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Datenfluss, Hilfen und Selbstkontrolle.</div></div>
+    <div class="card start-pi">
+      <img src="bilder/raspberry_pi.png" alt="Raspberry Pi 4: Platine mit USB-, LAN- und HDMI-Anschlüssen" width="480" height="308">
+      <div><h2>Ihr Server im Taschenformat</h2>
+      <p><b>Gearbeitet wird am echten Raspberry Pi und in Ihrer eigenen Entwicklungsumgebung</b> – Terminal, SSH, Webserver,
+      Datenbank und Dart, genau wie im Betrieb. Es gibt <b>keine Vorlagen zum Herunterladen</b>: Jede Zeile tippen Sie selbst.</p>
+      <p>Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Datenfluss, Hilfen und Selbstkontrolle.</p></div></div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
         <div><h3>1 · Bereitlegen</h3>
