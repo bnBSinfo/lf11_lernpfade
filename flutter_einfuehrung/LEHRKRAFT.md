@@ -16,7 +16,9 @@ Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlö
 - Code wird nicht doppelt gepflegt: `{{code N}}` setzt beim Bauen den N-ten Code-Block der Standardfassung ein.
   Wer in `docs/level_0X.md` Code-Blöcke hinzufügt oder umstellt, muss die Nummern in der einfachen Fassung anpassen.
 - In einfacher Sprache steht je Level ein Kasten **📖 Wichtige Wörter** (Artikel, Mehrzahl, Erklärung) aus `tool/woerter.py`.
-- Noch nur in Standardsprache: Selbstkontrolle (Haken und Fragen), Wissen-Seite, Grafiken, Bildunterschriften, Bonus.
+- Selbstkontrolle in einfacher Sprache: `tool/kontrolle_einfach.py` (gleiche Reihenfolge wie `kontrolle.py`;
+  richtig/falsch steht nur in `kontrolle.py`). Haken und Antworten zählen in beiden Sprachstufen gleich.
+- Noch nur in Standardsprache: Wissen-Seite, Grafiken, Bildunterschriften, Bonus.
 
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes

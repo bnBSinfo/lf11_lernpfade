@@ -22,6 +22,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import lernpfad_bausteine as bausteine  # noqa: E402
 from kontrolle import KONTROLLE  # noqa: E402
 from woerter import WOERTER, LEVEL_WOERTER  # noqa: E402
+from kontrolle_einfach import KONTROLLE_EINFACH  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
@@ -384,7 +385,7 @@ def level_ansicht(nr: int, d: dict) -> str:
   </div>
   {baukasten}
   <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
-  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr])}
+  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr], KONTROLLE_EINFACH.get(nr))}
   <div class="card lp-fuss">
     {zurueck}
     <div class="pruefen"><button class="erledigt" data-level="{nr}" disabled>Level geschafft</button></div>
