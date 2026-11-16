@@ -476,6 +476,27 @@ a{color:var(--accent)}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
 pre.rahmen-code{padding:10px 0;line-height:1.45}
 .modus-profi .nur-begleitet{display:none!important}
+.druck-leiste{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.druck-fuss{display:none}
+@media print{
+  @page{size:A4;margin:14mm 12mm}
+  html,body{background:#fff!important}
+  body{font-size:10.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .kopf,.druck-leiste,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
+  html.druck-wissen .ansicht:not(#wissen){display:none!important}
+  html.druck-wissen #wissen{display:flex!important}
+  .app{max-width:none!important;padding:0!important}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid-page;page-break-inside:avoid}
+  #wissen .card{break-inside:auto;page-break-inside:auto}
+  #wissen h2,#wissen h3,#wissen h4{break-after:avoid;page-break-after:avoid;color:#000}
+  #wissen pre,#wissen table,#wissen .kasten,#wissen .schritt-box,#wissen .station{break-inside:avoid;page-break-inside:avoid}
+  #wissen pre{background:#f5f6f8!important;color:#111!important;border:1px solid #bbb;white-space:pre-wrap}
+  #wissen pre *{color:#111!important}
+  #wissen a{color:#000;text-decoration:none}
+  .druck-fuss{display:block;font-size:8.5pt;color:#555;text-align:center;margin-top:8px}
+  html.druck-wissen .druckfuss,:root:has(#wissen:target) .druckfuss{display:none!important}
+  #wissen .card:has(.anatomie){break-before:page;page-break-before:always}
+}
 .spr-einfach .sprache-standard{display:none!important}
 html:not(.spr-einfach) .sprache-einfach{display:none!important}
 .sprach-wahl{align-items:center;padding-left:10px}
@@ -695,6 +716,7 @@ document.documentElement.classList.add("js");
   }
   var m = "begleitet"; try { m = localStorage.getItem(MKEY) || m; } catch (e) {}
   setze(m);
+  window.addEventListener("afterprint", function(){ wurzel.classList.remove("druck-wissen"); });
   var SKEY = "flutter-lernpfad-lf11-sprache";
   function sprache(s){
     wurzel.classList.toggle("spr-einfach", s === "einfach");
@@ -706,6 +728,7 @@ document.documentElement.classList.add("js");
   var sp = "standard"; try { sp = localStorage.getItem(SKEY) || sp; } catch (e) {}
   sprache(sp);
   document.addEventListener("click", function(ev){
+    if (ev.target.closest("[data-drucken]")) { wurzel.classList.add("druck-wissen"); window.print(); return; }
     var sb = ev.target.closest("[data-sprache]");
     if (sb) { var ns = sb.getAttribute("data-sprache"); sprache(ns); try { localStorage.setItem(SKEY, ns); } catch (e) {} return; }
     var b = ev.target.closest("[data-modus]");
@@ -908,8 +931,10 @@ def main() -> None:
   </section>
 {ansichten}
   <section class="ansicht" id="wissen">
+    <div class="druck-leiste"><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><span class="klein">Druckt nur diese Wissen-Seite (auch als PDF speichern).</span></div>
 {(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8")}
-    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><a class="knopf primaer" href="#level-1">Zu Level 1 ▶</a></div>
+    <p class="druck-fuss">Flutter-Einführung LF11 · Version {VERSION} · Stand {STAND} · bnbsinfo.github.io/lf11_lernpfade/flutter/</p>
+    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><a class="knopf primaer" href="#level-1">Zu Level 1 ▶</a></div>
   </section>
 
   <section class="ansicht" id="bonus">
