@@ -3,12 +3,20 @@
 Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlösungen, Tests, Werkzeuge). Die Schüler arbeiten mit der Lernpfad-Seite –
 über mebis oder https://bnbsinfo.github.io/lf11_lernpfade/flutter/.
 
+## Zwei Pfade
+- **🧭 Begleitet:** Auftrag Schritt für Schritt mit Code-Rahmen (grau/grün/rot), Erklärungen, Tipps, Baukästen.
+- **🚀 Profi:** je Level nur eine Anforderungsliste (`## Profi-Auftrag` in `docs/level_0X.md`), Erklärungen
+  eingeklappt, keine Baukästen. Gleiche App, gleiche Level, gleiche Selbstkontrolle.
+- Umschalten im Seitenkopf oder auf der Startseite; die Wahl merkt sich der Browser.
+
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
   Projekt an und bauen diese eine App bis Level 9 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,
   `lib/my_login.dart` (L3/4, 9), `lib/todo_item.dart`, `lib/todo_app.dart` (L5), `lib/todo_list.dart` (L6–9).
   Ab Level 5 startet `main.dart` die `ToDoApp` – in Level 9 startet wieder `MyFirstApp`, der Login-Button öffnet per `Navigator.push` die `ToDoList` (Ergänzung zum Skript, das hier endet; Daten nur lokal im State, keine Datenbank).
-- Der Auftrag beschreibt, **was** gebaut wird; Code steht in *Erklärt*, in den Tipps und im Baukasten.
+- Der Auftrag zeigt je Schritt, ob eine Datei **neu**, zu **ändern** oder etwas zu **löschen** ist, und in einem
+  Code-Rahmen (```diff in den .md-Dateien) die genaue Stelle: grau = steht schon da, grün + = neu tippen, rot − = löschen.
+  Größere Inhalte (Login-Logik, Dialog, ListView) bleiben als Platzhalter-Kommentar, die Schüler füllen sie selbst.
 - Auf der Seite ist Kopieren von Code gesperrt (nicht markierbar, Kopieren/Rechtsklick abgefangen, Hinweis
   „Bitte abtippen“, kein Kopier-Knopf mehr im Baukasten). Ganz verhindern lässt sich das in keinem Browser.
 

@@ -7,12 +7,56 @@
 **Skript:** Beispiel 2c
 
 ## Auftrag
-1. `todo_list.dart`: `deleteItem(int i)` – in `setState` `todos.removeAt(i)`.
-2. `todo_item.dart`: Feld `final VoidCallback remove;` und Konstruktor
-   `const ToDoItem(this.title, this.remove, {super.key});`
-3. `todo_item.dart`: Der `IconButton` bekommt `onPressed: () => remove()` (und das
-   `const` davor muss weg).
-4. `todo_list.dart`: im `itemBuilder` `ToDoItem(todos[i], () => deleteItem(i))`.
+1. **✏️ Ändern** `lib/todo_list.dart` – eine neue Methode `deleteItem` **zwischen** `addItem` und `newEntry` einfügen:
+   ```diff
+     void addItem(String item) {
+       …
+     }
+
+   + void deleteItem(int i) {
+   +   setState(() {
+   +     todos.removeAt(i);
+   +   });
+   + }
+   +
+     void newEntry() {
+   ```
+2. **✏️ Ändern** `lib/todo_item.dart` – ein neues Feld **hinzufügen** und den Konstruktor **ersetzen**:
+   ```diff
+     class ToDoItem extends StatelessWidget {
+       final String title;
+   +   final VoidCallback remove;
+
+   -   const ToDoItem(this.title, {super.key});
+   +   const ToDoItem(this.title, this.remove, {super.key});
+   ```
+3. **✏️ Ändern** `lib/todo_item.dart` – der `IconButton` wird aktiv. Das `const` muss weg, weil `remove` erst zur
+   Laufzeit feststeht:
+   ```diff
+           Expanded(child: Text(title)),
+   -       const IconButton(
+   -         icon: Icon(Icons.delete),
+   -         onPressed: null,
+   -       ),
+   +       IconButton(
+   +         icon: const Icon(Icons.delete),
+   +         onPressed: () => remove(),
+   +       ),
+   ```
+4. **✏️ Ändern** `lib/todo_list.dart` – im `itemBuilder` bekommt jedes `ToDoItem` seine Löschfunktion:
+   ```diff
+           itemBuilder: (context, i) {
+   -         return ToDoItem(todos[i]);
+   +         return ToDoItem(todos[i], () => deleteItem(i));
+           },
+   ```
+
+## Profi-Auftrag
+- Der Mülleimer löscht **genau sein** ToDo.
+- `ToDoItem` bleibt **Stateless**: Gelöscht wird im State der Liste. Die Löschfunktion bekommt das Item als zweiten
+  Konstruktor-Parameter (`VoidCallback`).
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

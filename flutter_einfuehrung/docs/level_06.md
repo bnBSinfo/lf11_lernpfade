@@ -6,19 +6,70 @@ Neue Einträge kommen über einen Dialog hinzu.
 **Sie schreiben:** `lib/todo_list.dart` neu, `lib/todo_app.dart` ändern · **Skript:** Beispiel 2b
 
 ## Auftrag
-Legen Sie `lib/todo_list.dart` an mit dem **Stateful Widget** `ToDoList` (Kürzel `stful`). Im State:
-
-1. `List<String> todos = [];`
-2. `addItem(String item)`: in `setState` `todos.add(item)`, danach
-   `Navigator.of(context).pop();` (schließt den Dialog).
+1. **📄 Neue Datei** `lib/todo_list.dart` mit dem **Stateful Widget** `ToDoList` (`stful` + Tab). Der Rahmen:
+   ```diff
+   + import 'package:flutter/material.dart';
+   + import 'todo_item.dart';
+   +
+   + class ToDoList extends StatefulWidget {
+   +   const ToDoList({super.key});
+   +
+   +   @override
+   +   State<ToDoList> createState() => _ToDoListState();
+   + }
+   +
+   + class _ToDoListState extends State<ToDoList> {
+   +   List<String> todos = [];
+   +
+   +   void addItem(String item) {
+   +     // Schritt 2
+   +   }
+   +
+   +   void newEntry() {
+   +     // Schritt 3
+   +   }
+   +
+   +   @override
+   +   Widget build(BuildContext context) {
+   +     return Scaffold(
+   +       // Schritt 4
+   +     );
+   +   }
+   + }
+   ```
+2. `addItem(String item)`: in `setState` `todos.add(item)`, danach (außerhalb von `setState`)
+   `Navigator.of(context).pop();` – das schließt den Dialog.
 3. `newEntry()`: `showDialog` mit einem `AlertDialog`, dessen `content` ein
    `TextField(onSubmitted: addItem)` ist.
-4. `build`: `Scaffold` mit
+4. Im `Scaffold` (statt des Kommentars):
    - `appBar: AppBar(title: Text('ToDo Liste'))`
    - `body: ListView.builder(itemCount: todos.length, itemBuilder: …)` – baut für
      jeden Index `i` ein `ToDoItem(todos[i])`
    - `floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))`
-5. `lib/todo_app.dart`: Die `MaterialApp` startet jetzt mit `home: const ToDoList()` – die Vorschau aus Level 5 hat ausgedient.
+5. **✏️ Ändern** `lib/todo_app.dart` – die Vorschau aus Level 5 hat ausgedient. Import und den **ganzen**
+   Inhalt von `build` **ersetzen**:
+   ```diff
+     import 'package:flutter/material.dart';
+   - import 'todo_item.dart';
+   + import 'todo_list.dart';
+     …
+     Widget build(BuildContext context) {
+   -   return MaterialApp(
+   -     home: Scaffold(
+   -       … (die ganze Vorschau mit den drei ToDoItems)
+   -     ),
+   -   );
+   +   return const MaterialApp(home: ToDoList());
+     }
+   ```
+
+## Profi-Auftrag
+- `lib/todo_list.dart`: Stateful Widget `ToDoList`, die Titel liegen als Liste im State.
+- AppBar „ToDo Liste“, darunter ein `ToDoItem` je Eintrag (`ListView.builder`), unten rechts ein Plus-Button.
+- Plus öffnet einen `AlertDialog` mit Textfeld; Enter fügt den Eintrag hinzu und schließt den Dialog.
+- `ToDoApp` startet direkt die `ToDoList`.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

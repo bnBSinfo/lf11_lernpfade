@@ -7,23 +7,83 @@ wandeln Sie die Liste in eine `Map<String, bool>` um.
 **Skript:** Beispiel 2d
 
 ## Auftrag
-1. `Map<String, bool> todos = {};` statt der Liste.
-2. `addItem`: `todos[item] = false;` · `deleteItem(String key)`: `todos.remove(key);`
-3. Neu: `checkBoxDone(String key)` – in `setState`
-   `todos.update(key, (bool done) => !done);`
-4. `todo_item.dart`: Felder `final bool done;` und `final VoidCallback checkBoxDone;`,
-   Konstruktor `(this.title, this.done, this.remove, this.checkBoxDone, {super.key})`.
-5. Die Checkbox: `value: done`, `onChanged: (value) => checkBoxDone()`.
-6. `itemBuilder`:
-   ```dart
-   var key = todos.keys.elementAt(i);
-   return ToDoItem(
-     key,                         // Titel
-     todos.values.elementAt(i),   // Checkboxstatus
-     () => deleteItem(key),       // Löschfunktion
-     () => checkBoxDone(key),     // Checkboxfunktion
-   );
+Gehen Sie in der Reihenfolge 1 → 6 vor. Nach Schritt 1 sind alle Stellen rot unterstrichen, die noch mit der
+Liste arbeiten – genau die ändern Sie in den Schritten danach.
+
+1. **✏️ Ändern** `lib/todo_list.dart` – die Liste durch eine Map **ersetzen**:
+   ```diff
+     class _ToDoListState extends State<ToDoList> {
+   -   List<String> todos = [];
+   +   Map<String, bool> todos = {};
    ```
+2. **✏️ Ändern** `lib/todo_list.dart` – `addItem` und `deleteItem` arbeiten jetzt mit der Map:
+   ```diff
+     void addItem(String item) {
+       setState(() {
+   -     todos.add(item);
+   +     todos[item] = false;
+       });
+       Navigator.of(context).pop();
+     }
+
+   - void deleteItem(int i) {
+   + void deleteItem(String key) {
+       setState(() {
+   -     todos.removeAt(i);
+   +     todos.remove(key);
+       });
+     }
+   ```
+3. **✏️ Ändern** `lib/todo_list.dart` – neue Methode `checkBoxDone` direkt **unter** `deleteItem` einfügen:
+   ```diff
+   + void checkBoxDone(String key) {
+   +   setState(() {
+   +     todos.update(key, (bool done) => !done);
+   +   });
+   + }
+   ```
+4. **✏️ Ändern** `lib/todo_item.dart` – zwei Felder **hinzufügen**, Konstruktor **ersetzen**:
+   ```diff
+       final String title;
+   +   final bool done;
+       final VoidCallback remove;
+   +   final VoidCallback checkBoxDone;
+
+   -   const ToDoItem(this.title, this.remove, {super.key});
+   +   const ToDoItem(this.title, this.done, this.remove, this.checkBoxDone,
+   +       {super.key});
+   ```
+5. **✏️ Ändern** `lib/todo_item.dart` – die Checkbox wird aktiv (das `const` muss weg):
+   ```diff
+         children: [
+   -       const Checkbox(value: false, onChanged: null),
+   +       Checkbox(
+   +         value: done,
+   +         onChanged: (value) => checkBoxDone(),
+   +       ),
+           Expanded(child: Text(title)),
+   ```
+6. **✏️ Ändern** `lib/todo_list.dart` – im `itemBuilder` die eine `return`-Zeile **ersetzen**:
+   ```diff
+           itemBuilder: (context, i) {
+   -         return ToDoItem(todos[i], () => deleteItem(i));
+   +         var key = todos.keys.elementAt(i);
+   +         return ToDoItem(
+   +           key, // Titel
+   +           todos.values.elementAt(i), // Checkboxstatus
+   +           () => deleteItem(key), // Löschfunktion
+   +           () => checkBoxDone(key), // Checkboxfunktion
+   +         );
+           },
+   ```
+
+## Profi-Auftrag
+- Jedes ToDo hat einen Erledigt-Status. Die Checkbox zeigt ihn und schaltet ihn beim Antippen um.
+- Die Daten liegen als `Map<String, bool>` vor (Titel → erledigt).
+- `ToDoItem(title, done, remove, checkBoxDone)` – weiterhin Stateless.
+- Hinzufügen und Löschen funktionieren weiter.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

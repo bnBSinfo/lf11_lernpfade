@@ -10,21 +10,51 @@ In der Methode `main()` startet jedes Dart-Programm. Eine Flutter-App übergibt 
 `runApp()` – bei Ihnen die Klasse `MyFirstApp`. Diese App bauen Sie in allen 9 Leveln Schritt für Schritt aus.
 
 ## Auftrag
-1. Legen Sie ein neues Flutter-Projekt an – in Android Studio (*New Flutter Project*, Name `meine_app`) oder im Terminal:
+1. **📁 Projekt anlegen** – in Android Studio (*New Flutter Project*, Name `meine_app`) oder im Terminal:
    ```bash
    flutter create meine_app
    ```
-2. Löschen Sie den **gesamten** Inhalt von `lib/main.dart` und die Datei `test/widget_test.dart` (sie passt nicht mehr zu Ihrer App).
-3. Legen Sie die Datei `lib/my_first_app.dart` an (Rechtsklick auf `lib` → *New → Dart File*). Schreiben Sie darin:
-   - `import 'package:flutter/material.dart';`
-   - die Klasse `MyFirstApp` als **Stateless Widget** mit Konstruktor `const MyFirstApp({super.key});`
-   - eine `build`-Methode, die eine `MaterialApp` zurückgibt. Deren `home` ist ein `Scaffold`, dessen `body` ist
-     `Text('Das ist mein Grundgerüst')`.
-4. Schreiben Sie in `lib/main.dart` die beiden Imports (`material.dart` und `my_first_app.dart`) und
-   `void main() { runApp(const MyFirstApp()); }`
-5. Starten Sie die App (Emulator oder Chrome). Nach jeder Änderung genügt **Hot Reload** (Blitz-Symbol bzw. `r`).
+2. **🗑️ Löschen**
+   - In `lib/main.dart`: den **gesamten Inhalt** markieren (Strg/Cmd + A) und löschen – die Datei bleibt, ist aber leer.
+   - Die Datei `test/widget_test.dart` **ganz** löschen (sie passt nicht mehr zu Ihrer App).
+3. **📄 Neue Datei** `lib/my_first_app.dart` (Rechtsklick auf `lib` → *New → Dart File*). Die Datei ist leer – alles wird neu getippt.
+   Tipp: `stless` + Tab erzeugt den Rahmen der Klasse, Sie ergänzen nur noch Namen und `build`-Inhalt.
+   ```diff
+   + import 'package:flutter/material.dart';
+   +
+   + class MyFirstApp extends StatelessWidget {
+   +   const MyFirstApp({super.key});
+   +
+   +   @override
+   +   Widget build(BuildContext context) {
+   +     return const MaterialApp(
+   +       home: Scaffold(
+   +         body: Text('Das ist mein Grundgerüst'),
+   +       ),
+   +     );
+   +   }
+   + }
+   ```
+4. **✏️ Ändern** `lib/main.dart` – in die jetzt leere Datei tippen:
+   ```diff
+   + import 'package:flutter/material.dart';
+   + import 'my_first_app.dart';
+   +
+   + void main() {
+   +   runApp(const MyFirstApp());
+   + }
+   ```
+5. **▶️ Starten** (Emulator oder Chrome). Nach jeder Änderung genügt **Hot Reload** (Blitz-Symbol bzw. `r`).
 
-Tipp: Tippen Sie `stless` und drücken Sie Tab – die IDE erzeugt das Grundgerüst eines Stateless Widgets.
+## Profi-Auftrag
+Eine lauffähige Flutter-App mit eigenem Start-Widget.
+
+- Neues Projekt `meine_app` anlegen; den Beispielcode aus `lib/main.dart` und die Datei `test/widget_test.dart` entfernen.
+- `lib/my_first_app.dart`: Stateless Widget `MyFirstApp` → `MaterialApp` → `Scaffold`; der body zeigt „Das ist mein Grundgerüst“.
+- `lib/main.dart` startet `MyFirstApp`.
+- Die App läuft im Emulator oder in Chrome.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

@@ -6,11 +6,48 @@ die ToDo-Liste aus Level 8. Alle Daten bleiben lokal in der App – es gibt kein
 **Sie ändern:** `lib/main.dart`, `lib/my_login.dart` · **Skript:** Beispiel 1 + Beispiel 2
 
 ## Auftrag
-1. `lib/main.dart`: Starten Sie wieder `MyFirstApp` (die App mit der Login-Maske) statt `ToDoApp`.
-2. `lib/my_login.dart`: Importieren Sie `todo_list.dart`.
-3. Der Login-Button bekommt eine Aufgabe: Statt der leeren Funktion `() {}` öffnet er mit
-   `Navigator.of(context).push(...)` die `ToDoList` als neue Seite.
-4. Probieren Sie aus: einloggen, ToDos anlegen, mit dem Zurück-Pfeil zur Login-Maske, wieder einloggen.
+1. **✏️ Ändern** `lib/main.dart` – die App startet wieder mit der Login-Maske. Zwei Zeilen **ersetzen**:
+   ```diff
+     import 'package:flutter/material.dart';
+   - import 'todo_app.dart';
+   + import 'my_first_app.dart';
+
+     void main() {
+   -   runApp(const ToDoApp());
+   +   runApp(const MyFirstApp());
+     }
+   ```
+2. **✏️ Ändern** `lib/my_login.dart` – die ToDo-Liste importieren (oben, unter dem ersten Import):
+   ```diff
+     import 'package:flutter/material.dart';
+   + import 'todo_list.dart';
+   ```
+3. **✏️ Ändern** `lib/my_login.dart` – ganz unten in `build` steht der `TextButton`. Seine leere Funktion `() {}`
+   wird **ersetzt** durch eine Funktion, die die `ToDoList` öffnet:
+   ```diff
+           TextButton(
+   -         onPressed: _canLogin ? () {} : null,
+   +         onPressed: _canLogin
+   +             ? () {
+   +                 Navigator.of(context).push(
+   +                   MaterialPageRoute(
+   +                     builder: (context) => const ToDoList(),
+   +                   ),
+   +                 );
+   +               }
+   +             : null,
+             child: const Text('Login'),
+           ),
+   ```
+4. **▶️ Ausprobieren:** einloggen, ToDos anlegen, mit dem Zurück-Pfeil zur Login-Maske, wieder einloggen.
+
+## Profi-Auftrag
+- Die App startet mit der Login-Maske (`MyFirstApp`).
+- „Login“ öffnet die `ToDoList` als **neue Seite**. Der Zurück-Pfeil in der AppBar führt zur Login-Maske zurück.
+- Keine Datenbank: Alle Daten bleiben lokal im State.
+- Lesen Sie danach den *Ausblick*: Warum wird als Nächstes eine Datenbank nötig?
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

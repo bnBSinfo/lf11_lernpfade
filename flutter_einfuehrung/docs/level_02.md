@@ -9,12 +9,35 @@ auch für Abstand, Farbe und Ausrichtung.
 In HTML/CSS würden Sie `padding`, `background` und `text-align` als Eigenschaften
 setzen. In Flutter verpacken Sie stattdessen Widgets ineinander.
 
-Bauen Sie den `body` von außen nach innen:
+**✏️ Ändern** `lib/my_first_app.dart` – nur die Zeile mit `body:` wird **ersetzt**, alles andere bleibt:
+```diff
+    Widget build(BuildContext context) {
+      return const MaterialApp(
+        home: Scaffold(
+-         body: Text('Das ist mein Grundgerüst'),
++         body: Padding(
++           // hier hinein verschachteln: Schritte 1 bis 4
++         ),
+        ),
+      );
+    }
+```
+
+Bauen Sie den neuen `body` von außen nach innen. Jedes Widget kommt mit `child:` **in** das vorherige:
 
 1. `Padding` mit `padding: EdgeInsets.all(50)`
 2. darin eine `ColoredBox` mit `color: Colors.grey`
 3. darin ein `Center`
 4. darin `Text('hier ist das zentrale Feld der App')`
+
+Den Kommentar `// hier hinein …` löschen Sie am Ende wieder.
+
+## Profi-Auftrag
+- Der body zeigt „hier ist das zentrale Feld der App“ **zentriert** auf einer **grauen** Fläche.
+- Die Fläche hat rundum **50 Pixel** Abstand zum Rand.
+- Nur durch Verschachteln von Ein-Zweck-Widgets lösen – ohne `Container`.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flutter-Einführung LF11</title>
-<meta name="version" content="2.1.1">
+<meta name="version" content="2.3.0">
 <meta name="description" content="In 9 Leveln zur eigenen Flutter-App mit Login und ToDo-Liste – alles selbst getippt, mit Selbstkontrolle.">
 <style>/* Look der Lernpakete (Lernpaket-Kompass 2).
    Bedienung und Aufbau sind für alle Pakete gleich; jedes Paket bekommt über
@@ -282,6 +282,34 @@ a{color:var(--accent)}
 .auftrags-kasten h3{color:#b42318;margin-top:.6rem}
 .auftrags-kasten h3::before{content:"✏️ "}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
+pre.rahmen-code{padding:10px 0;line-height:1.45}
+.modus-profi .nur-begleitet{display:none!important}
+html:not(.modus-profi) .nur-profi{display:none!important}
+.profi-kasten h3::before{content:"🚀 "!important}
+.modus-profi .erklaert{border:1px dashed var(--line);border-radius:12px;padding:0 14px;margin:12px 0}
+.modus-profi .erklaert>h3{cursor:pointer;user-select:none}
+.modus-profi .erklaert>h3::after{content:" ▸ bei Bedarf einblenden";font-size:.8rem;font-weight:500;color:#6b7280}
+.modus-profi .erklaert.offen>h3::after{content:" ▾ ausblenden"}
+.modus-profi .erklaert:not(.offen)>:not(h3){display:none}
+.pfad-wahl{display:flex;gap:4px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px;flex:none}
+.pfad-wahl button{border:0;background:none;border-radius:999px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer;color:#fff}
+.pfad-wahl button.gewaehlt{background:#fff;color:#b42318}
+.pfad-karten{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
+.pfad-karte{text-align:left;font:inherit;color:inherit;background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.pfad-karte.gewaehlt{border-color:#d9534f;background:#fdecec}
+.pk-titel{font-weight:800;font-size:1.15rem}.pk-unter{font-weight:600;color:#b42318}
+.pk-liste{font-size:.92rem;line-height:1.6}.pk-fuer{font-size:.85rem;color:#6b7280}
+@media (max-width:620px){.pfad-karten{grid-template-columns:minmax(0,1fr)}}
+pre.rahmen-code .z{display:block;padding:0 14px 0 0;white-space:pre}
+pre.rahmen-code .z i{display:inline-block;width:26px;text-align:center;font-style:normal;font-weight:700}
+pre.rahmen-code .z.rahmen{color:#7f8aa0}
+pre.rahmen-code .z.neu{background:rgba(34,197,94,.22);color:#eafff1}
+pre.rahmen-code .z.neu i{color:#4ade80}
+pre.rahmen-code .z.weg{background:rgba(239,68,68,.22);color:#ffd9d9;text-decoration:line-through;text-decoration-color:rgba(255,160,160,.8)}
+pre.rahmen-code .z.weg i{color:#f87171;text-decoration:none}
+.rahmen-legende{font-size:.88rem;background:#fff;border:1px solid #f3b4b4;border-radius:10px;padding:8px 12px;line-height:1.9}
+.rahmen-legende .lg{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:.82rem;border-radius:5px;padding:0 6px;background:#1a2130}
+.rahmen-legende .lg.rahmen{color:#9aa4b8}.rahmen-legende .lg.neu{color:#4ade80;background:#173a2a}.rahmen-legende .lg.weg{color:#f87171;background:#3d1c22;text-decoration:line-through}
 .ausschnitt{margin-top:8px;text-align:left}
 .ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
 .ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
@@ -476,10 +504,14 @@ pre,code,.kette,.term,.browser{-webkit-user-select:none;user-select:none}
 <div class="app">
   <header class="card kopf">
     <div class="titel">
-      <h1>Flutter-Einführung <span class="version">LF11 · Version 2.1.1</span></h1>
+      <h1>Flutter-Einführung <span class="version">LF11 · Version 2.3.0</span></h1>
       <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
     </div>
     <nav class="fortschritt" aria-label="Level"><a class="chip" href="#start" data-ziel="start">Start</a><a class="chip" href="#level-1" data-ziel="level-1">1</a><a class="chip" href="#level-2" data-ziel="level-2">2</a><a class="chip" href="#level-3" data-ziel="level-3">3</a><a class="chip" href="#level-4" data-ziel="level-4">4</a><a class="chip" href="#level-5" data-ziel="level-5">5</a><a class="chip" href="#level-6" data-ziel="level-6">6</a><a class="chip" href="#level-7" data-ziel="level-7">7</a><a class="chip" href="#level-8" data-ziel="level-8">8</a><a class="chip" href="#level-9" data-ziel="level-9">9</a><a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful">📘 Wissen</a><a class="chip" href="#bonus" data-ziel="bonus">★</a><a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen">🔒</a><span class="chip zaehler" id="zaehler">0 / 9</span></nav>
+    <div class="pfad-wahl" role="group" aria-label="Lernpfad wählen">
+      <button type="button" data-modus="begleitet" aria-pressed="true">🧭 Begleitet</button>
+      <button type="button" data-modus="profi" aria-pressed="false">🚀 Profi</button>
+    </div>
   </header>
 
   <section class="ansicht" id="start">
@@ -488,13 +520,33 @@ pre,code,.kette,.term,.browser{-webkit-user-select:none;user-select:none}
       (Android Studio oder VS Code) – mit eigenem Flutter-Projekt und Emulator, genau wie im Betrieb.
       Es gibt <b>keine Vorlagen zum Herunterladen</b>: Sie legen das Projekt selbst an und tippen jede Zeile.
       Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Widget-Baum, Hilfen und Selbstkontrolle.</div></div>
+    <div class="card"><h2>Wählen Sie Ihren Pfad</h2>
+      <p>Beide Pfade bauen <b>dieselbe App</b> mit denselben Leveln und derselben Selbstkontrolle. Sie können jederzeit
+      oben rechts umschalten – auch mitten in einem Level.</p>
+      <div class="pfad-karten">
+        <button type="button" class="pfad-karte" data-modus="begleitet">
+          <span class="pk-titel">🧭 Begleiteter Pfad</span>
+          <span class="pk-unter">mit sehr viel Unterstützung</span>
+          <span class="pk-liste">✔ jeder Schritt einzeln: neue Datei, ändern oder löschen<br>
+          ✔ Code-Rahmen zeigen genau die Stelle in der Datei<br>✔ Erklärungen, Tipps und interaktive Baukästen</span>
+          <span class="pk-fuer">Für alle, die Flutter zum ersten Mal sehen.</span>
+        </button>
+        <button type="button" class="pfad-karte" data-modus="profi">
+          <span class="pk-titel">🚀 Profipfad</span>
+          <span class="pk-unter">nur Anforderungen – den Weg finden Sie selbst</span>
+          <span class="pk-liste">✔ je Level eine knappe Liste: Was muss die App können?<br>
+          ✔ kein Code vorgegeben, Erklärungen nur auf Klick<br>✔ Zielbild und Widget-Baum als Spezifikation</span>
+          <span class="pk-fuer">Für alle, die schon programmieren und selbstständig arbeiten wollen.</span>
+        </button>
+      </div>
+    </div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
         <div><h3>1 · Projekt anlegen</h3>
           <p>In Level 1 legen Sie mit <code>flutter create meine_app</code> Ihr eigenes Projekt an.
           Diese eine App bauen Sie in allen Leveln weiter aus.</p></div>
         <div><h3>2 · Auftrag lesen</h3>
-          <p>Der rote Kasten sagt, was zu tun ist. <i>Erklärt</i> sagt, warum. Zielbild und Widget-Baum zeigen, wo Sie hinwollen.</p></div>
+          <p>Der rote Kasten sagt, was zu tun ist – im begleiteten Pfad Schritt für Schritt, im Profipfad als Anforderungsliste. <i>Erklärt</i> sagt, warum. Zielbild und Widget-Baum zeigen, wo Sie hinwollen.</p></div>
         <div><h3>3 · Abtippen</h3>
           <p>Code wird <b>abgetippt</b> – Kopieren ist auf dieser Seite gesperrt. Wer tippt, liest jede Zeile und lernt die
           Fehlermeldungen der IDE kennen. Nach Änderungen: <b>Hot Reload</b>.</p></div>
@@ -529,38 +581,48 @@ und 4a</p>
 Flutter-App übergibt dort ihr Start-Widget an <code>runApp()</code> –
 bei Ihnen die Klasse <code>MyFirstApp</code>. Diese App bauen Sie in
 allen 9 Leveln Schritt für Schritt aus.</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li>Legen Sie ein neues Flutter-Projekt an – in Android Studio (<em>New
+<li><strong>📁 Projekt anlegen</strong> – in Android Studio (<em>New
 Flutter Project</em>, Name <code>meine_app</code>) oder im Terminal:
 <pre class="bash"><code>flutter create meine_app</code></pre></li>
-<li>Löschen Sie den <strong>gesamten</strong> Inhalt von
-<code>lib/main.dart</code> und die Datei
-<code>test/widget_test.dart</code> (sie passt nicht mehr zu Ihrer
-App).</li>
-<li>Legen Sie die Datei <code>lib/my_first_app.dart</code> an
-(Rechtsklick auf <code>lib</code> → <em>New → Dart File</em>). Schreiben
-Sie darin:
+<li><strong>🗑️ Löschen</strong>
 <ul>
-<li><code>import 'package:flutter/material.dart';</code></li>
-<li>die Klasse <code>MyFirstApp</code> als <strong>Stateless
-Widget</strong> mit Konstruktor
-<code>const MyFirstApp({super.key});</code></li>
-<li>eine <code>build</code>-Methode, die eine <code>MaterialApp</code>
-zurückgibt. Deren <code>home</code> ist ein <code>Scaffold</code>,
-dessen <code>body</code> ist
-<code>Text('Das ist mein Grundgerüst')</code>.</li>
+<li>In <code>lib/main.dart</code>: den <strong>gesamten Inhalt</strong>
+markieren (Strg/Cmd + A) und löschen – die Datei bleibt, ist aber
+leer.</li>
+<li>Die Datei <code>test/widget_test.dart</code> <strong>ganz</strong>
+löschen (sie passt nicht mehr zu Ihrer App).</li>
 </ul></li>
-<li>Schreiben Sie in <code>lib/main.dart</code> die beiden Imports
-(<code>material.dart</code> und <code>my_first_app.dart</code>) und
-<code>void main() { runApp(const MyFirstApp()); }</code></li>
-<li>Starten Sie die App (Emulator oder Chrome). Nach jeder Änderung
-genügt <strong>Hot Reload</strong> (Blitz-Symbol bzw.
+<li><strong>📄 Neue Datei</strong> <code>lib/my_first_app.dart</code>
+(Rechtsklick auf <code>lib</code> → <em>New → Dart File</em>). Die Datei
+ist leer – alles wird neu getippt. Tipp: <code>stless</code> + Tab
+erzeugt den Rahmen der Klasse, Sie ergänzen nur noch Namen und
+<code>build</code>-Inhalt.
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class MyFirstApp extends StatelessWidget {</span><span class="z neu"><i>+</i>  const MyFirstApp({super.key});</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  Widget build(BuildContext context) {</span><span class="z neu"><i>+</i>    return const MaterialApp(</span><span class="z neu"><i>+</i>      home: Scaffold(</span><span class="z neu"><i>+</i>        body: Text(&#39;Das ist mein Grundgerüst&#39;),</span><span class="z neu"><i>+</i>      ),</span><span class="z neu"><i>+</i>    );</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/main.dart</code> – in die jetzt
+leere Datei tippen:
+<pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;my_first_app.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>void main() {</span><span class="z neu"><i>+</i>  runApp(const MyFirstApp());</span><span class="z neu"><i>+</i>}</span></code></pre></li>
+<li><strong>▶️ Starten</strong> (Emulator oder Chrome). Nach jeder
+Änderung genügt <strong>Hot Reload</strong> (Blitz-Symbol bzw.
 <code>r</code>).</li>
 </ol>
-<p>Tipp: Tippen Sie <code>stless</code> und drücken Sie Tab – die IDE
-erzeugt das Grundgerüst eines Stateless Widgets.</p>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<p>Eine lauffähige Flutter-App mit eigenem Start-Widget.</p>
+<ul>
+<li>Neues Projekt <code>meine_app</code> anlegen; den Beispielcode aus
+<code>lib/main.dart</code> und die Datei
+<code>test/widget_test.dart</code> entfernen.</li>
+<li><code>lib/my_first_app.dart</code>: Stateless Widget
+<code>MyFirstApp</code> → <code>MaterialApp</code> →
+<code>Scaffold</code>; der body zeigt „Das ist mein Grundgerüst“.</li>
+<li><code>lib/main.dart</code> startet <code>MyFirstApp</code>.</li>
+<li>Die App läuft im Emulator oder in Chrome.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Zeile für Zeile:</strong></p>
 <ul>
 <li><code>import 'package:flutter/material.dart';</code> holt alle
@@ -634,7 +696,7 @@ Body und BottomNavigationBar.</p>
 </blockquote>
 <p><strong>Denkfrage:</strong> Warum steht der Text ganz oben links –
 und sogar unter der Statusleiste?</p>
-
+</div>
       <details class="loesung" data-loesung="1" hidden><summary>🔓 Musterlösung Level 1</summary></details>
     </div>
     <aside class="lp-seite">
@@ -650,7 +712,7 @@ und sogar unter der Statusleiste?</p>
       </div>
     </aside>
   </div>
-  <div class="card"><h3>🧩 Ausprobieren: Die Bereiche des Scaffold</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="scaffold"></div></div>
+  <div class="card nur-begleitet"><h3>🧩 Ausprobieren: Die Bereiche des Scaffold</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="scaffold"></div></div>
   <div class="card grafik"><h3>Was passiert beim Start?</h3><div class="kette"><div class="schritt-box"><b>main()</b><span>Hier startet jedes Dart-Programm</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>runApp(…)</b><span>bekommt das erste Widget</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>MyFirstApp</b><span>Ihr Stateless Widget</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>build()</b><span>liefert den Widget-Baum</span></div><span class="pfeil" aria-hidden="true">→</span><div class="schritt-box"><b>Bildschirm</b><span>Flutter zeichnet die App</span></div></div></div>
   <div class="card selbstkontrolle" data-sk-level="1">
   <h3>✅ Selbstkontrolle</h3>
@@ -676,11 +738,17 @@ Funktion ein eigenes Widget gibt – auch für Abstand, Farbe und
 Ausrichtung.</p>
 <p><strong>Sie ändern:</strong> <code>lib/my_first_app.dart</code> ·
 <strong>Skript:</strong> Kapitel 4a</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <p>In HTML/CSS würden Sie <code>padding</code>, <code>background</code>
 und <code>text-align</code> als Eigenschaften setzen. In Flutter
 verpacken Sie stattdessen Widgets ineinander.</p>
-<p>Bauen Sie den <code>body</code> von außen nach innen:</p>
+<p><strong>✏️ Ändern</strong> <code>lib/my_first_app.dart</code> – nur
+die Zeile mit <code>body:</code> wird <strong>ersetzt</strong>, alles
+andere bleibt:</p>
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>  Widget build(BuildContext context) {</span><span class="z rahmen"><i></i>    return const MaterialApp(</span><span class="z rahmen"><i></i>      home: Scaffold(</span><span class="z weg"><i>−</i>        body: Text(&#39;Das ist mein Grundgerüst&#39;),</span><span class="z neu"><i>+</i>        body: Padding(</span><span class="z neu"><i>+</i>          // hier hinein verschachteln: Schritte 1 bis 4</span><span class="z neu"><i>+</i>        ),</span><span class="z rahmen"><i></i>      ),</span><span class="z rahmen"><i></i>    );</span><span class="z rahmen"><i></i>  }</span></code></pre>
+<p>Bauen Sie den neuen <code>body</code> von außen nach innen. Jedes
+Widget kommt mit <code>child:</code> <strong>in</strong> das
+vorherige:</p>
 <ol type="1">
 <li><code>Padding</code> mit
 <code>padding: EdgeInsets.all(50)</code></li>
@@ -689,7 +757,22 @@ verpacken Sie stattdessen Widgets ineinander.</p>
 <li>darin ein <code>Center</code></li>
 <li>darin <code>Text('hier ist das zentrale Feld der App')</code></li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+<p>Den Kommentar <code>// hier hinein …</code> löschen Sie am Ende
+wieder.</p>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li>Der body zeigt „hier ist das zentrale Feld der App“
+<strong>zentriert</strong> auf einer <strong>grauen</strong>
+Fläche.</li>
+<li>Die Fläche hat rundum <strong>50 Pixel</strong> Abstand zum
+Rand.</li>
+<li>Nur durch Verschachteln von Ein-Zweck-Widgets lösen – ohne
+<code>Container</code>.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p>In HTML/CSS hängen Sie Eigenschaften an ein Element
 (<code>padding</code>, <code>background</code>,
 <code>text-align</code>). In Flutter gibt es dafür <strong>eigene
@@ -770,7 +853,7 @@ untergeordnete Widget der Eigenschaft <code>child</code> des
 <code>MyFirstApp</code> bis zum <code>Text</code>.</p>
 <p><strong>Experiment:</strong> Tauschen Sie <code>Padding</code> und
 <code>ColoredBox</code>. Was ändert sich – und warum?</p>
-
+</div>
       <details class="loesung" data-loesung="2" hidden><summary>🔓 Musterlösung Level 2</summary></details>
     </div>
     <aside class="lp-seite">
@@ -786,7 +869,7 @@ untergeordnete Widget der Eigenschaft <code>child</code> des
       </div>
     </aside>
   </div>
-  <div class="card"><h3>🧩 Ausprobieren: Widgets verschachteln</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="layout"></div></div>
+  <div class="card nur-begleitet"><h3>🧩 Ausprobieren: Widgets verschachteln</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="layout"></div></div>
   <div class="card grafik"><h3>Widgets sind wie Schachteln</h3>
 <div class="schachtel s1"><span class="etikett">Padding · 50 px Rand</span>
   <div class="schachtel s2"><span class="etikett">ColoredBox · grau</span>
@@ -818,30 +901,42 @@ eine eigene Datei aus und binden es in das Stateless Widget ein.</p>
 <p><strong>Sie schreiben:</strong> <code>lib/my_first_app.dart</code>
 ändern, <code>lib/my_login.dart</code> neu · <strong>Skript:</strong>
 Kapitel 4b</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li><code>my_first_app.dart</code>: Ergänzen Sie eine
-<code>appBar</code> mit
-<code>title: Text('Meine erste App')</code>.</li>
-<li>Legen Sie die Datei <code>lib/my_login.dart</code> an. Schreiben Sie
-darin das <strong>Stateful Widget</strong> <code>MyLogin</code>. Es
-besteht aus zwei Klassen:
-<ul>
-<li><code>MyLogin extends StatefulWidget</code> mit
-<code>createState()</code></li>
-<li><code>_MyLoginState extends State&lt;MyLogin&gt;</code> mit der
-<code>build</code>-Methode Die <code>build</code>-Methode zeigt
-zentriert <code>'Willkommen im Stateful Widget'</code>.</li>
-</ul></li>
-<li><code>my_first_app.dart</code>: Binden Sie die neue Datei mit
-<code>import 'my_login.dart';</code> ein und setzen Sie
-<code>body: const MyLogin()</code>.</li>
+<li><strong>✏️ Ändern</strong> <code>lib/my_first_app.dart</code> – eine
+<code>appBar</code> <strong>hinzufügen</strong>. Weil
+<code>AppBar</code> nicht <code>const</code> sein kann, wird das
+<code>const</code> vor <code>MaterialApp</code>
+<strong>gelöscht</strong> und stattdessen vor <code>Text</code>
+geschrieben:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>  Widget build(BuildContext context) {</span><span class="z weg"><i>−</i>    return const MaterialApp(</span><span class="z neu"><i>+</i>    return MaterialApp(</span><span class="z rahmen"><i></i>      home: Scaffold(</span><span class="z neu"><i>+</i>        appBar: AppBar(title: const Text(&#39;Meine erste App&#39;)),</span><span class="z rahmen"><i></i>        body: Padding(</span><span class="z rahmen"><i></i>          … (Ihr body aus Level 2 bleibt vorerst)</span></code></pre></li>
+<li><strong>📄 Neue Datei</strong> <code>lib/my_login.dart</code> mit
+dem <strong>Stateful Widget</strong> <code>MyLogin</code>. Es besteht
+aus <strong>zwei Klassen</strong>. Tipp: <code>stful</code> + Tab
+erzeugt beide Klassen auf einmal.
+<pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class MyLogin extends StatefulWidget {</span><span class="z neu"><i>+</i>  const MyLogin({super.key});</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  State&lt;MyLogin&gt; createState() =&gt; _MyLoginState();</span><span class="z neu"><i>+</i>}</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class _MyLoginState extends State&lt;MyLogin&gt; {</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  Widget build(BuildContext context) {</span><span class="z neu"><i>+</i>    return const Center(</span><span class="z neu"><i>+</i>      child: Text(&#39;Willkommen im Stateful Widget&#39;),</span><span class="z neu"><i>+</i>    );</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/my_first_app.dart</code> – die
+neue Datei einbinden und den <strong>ganzen</strong> <code>body</code>
+aus Level 2 (das <code>Padding</code> mit allem darin) durch
+<code>MyLogin</code> <strong>ersetzen</strong>:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;my_login.dart&#39;;</span><span class="z rahmen"><i></i>…</span><span class="z rahmen"><i></i>      appBar: AppBar(title: const Text(&#39;Meine erste App&#39;)),</span><span class="z weg"><i>−</i>      body: Padding(</span><span class="z weg"><i>−</i>        … (das ganze Padding mit ColoredBox, Center, Text)</span><span class="z weg"><i>−</i>      ),</span><span class="z neu"><i>+</i>      body: const MyLogin(),</span></code></pre></li>
 </ol>
 <p>Dateinamen schreibt man in <code>snake_case</code>
 (<code>my_login.dart</code>), Klassennamen in
 <code>UpperCamelCase</code> (<code>MyLogin</code>) – so lagert man
 Widgets aus.</p>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li>Die App bekommt eine AppBar mit dem Titel „Meine erste App“.</li>
+<li>Neue Datei <code>lib/my_login.dart</code> mit dem <strong>Stateful
+Widget</strong> <code>MyLogin</code>; es zeigt zentriert „Willkommen im
+Stateful Widget“.</li>
+<li><code>MyFirstApp</code> zeigt <code>MyLogin</code> als body.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Warum zwei Klassen?</strong> Widgets sind in Flutter
 unveränderlich. Soll sich etwas ändern (Text, Haken, Liste), braucht man
 einen Ort, an dem die <strong>veränderlichen Daten</strong> liegen – das
@@ -920,7 +1015,7 @@ die IDE einen Fehler, entfernen Sie das äußere <code>const</code> vor
 – der veränderliche Zustand liegt im <strong>State-Objekt</strong>. Der
 Unterstrich <code>_</code> macht die Klasse privat für diese Datei.</p>
 </blockquote>
-
+</div>
       <details class="loesung" data-loesung="3" hidden><summary>🔓 Musterlösung Level 3</summary></details>
     </div>
     <aside class="lp-seite">
@@ -936,7 +1031,7 @@ Unterstrich <code>_</code> macht die Klasse privat für diese Datei.</p>
       </div>
     </aside>
   </div>
-  <div class="card"><h3>🧩 Ausprobieren: Die Bereiche des Scaffold</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="scaffold"></div></div>
+  <div class="card nur-begleitet"><h3>🧩 Ausprobieren: Die Bereiche des Scaffold</h3><p class="klein">Schalten Sie Teile ein und aus und beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="scaffold"></div></div>
   <div class="card grafik"><h3>Stateful Widget = zwei Klassen</h3>
 <div class="zwei">
   <div class="kasten stateful"><b>MyLogin</b><small>extends StatefulWidget</small>
@@ -969,22 +1064,27 @@ Unterstrich <code>_</code> macht die Klasse privat für diese Datei.</p>
 Login-Button wird erst aktiv, wenn beide Felder gefüllt sind.</p>
 <p><strong>Sie ändern:</strong> <code>lib/my_login.dart</code> ·
 <strong>Skript:</strong> Beispiel 1</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
+<p>Sie arbeiten nur in <code>lib/my_login.dart</code>, und zwar in der
+<strong>zweiten Klasse</strong> <code>_MyLoginState</code>. Die erste
+Klasse <code>MyLogin</code> bleibt unverändert.</p>
+<p><strong>✏️ Ändern</strong> <code>lib/my_login.dart</code> – so sieht
+der Rahmen aus:</p>
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>class _MyLoginState extends State&lt;MyLogin&gt; {</span><span class="z neu"><i>+</i>  String _username = &#39;&#39;;</span><span class="z neu"><i>+</i>  String _password = &#39;&#39;;</span><span class="z neu"><i>+</i>  bool _canLogin = false;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  void _checkCanLogin() {</span><span class="z neu"><i>+</i>    // Schritt 2</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  void _onChangedUsername(String username) {</span><span class="z neu"><i>+</i>    // Schritt 3</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  void _onChangedPassword(String password) {</span><span class="z neu"><i>+</i>    // Schritt 3</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>&#8203;</span><span class="z rahmen"><i></i>  @override</span><span class="z rahmen"><i></i>  Widget build(BuildContext context) {</span><span class="z weg"><i>−</i>    return const Center(</span><span class="z weg"><i>−</i>      child: Text(&#39;Willkommen im Stateful Widget&#39;),</span><span class="z weg"><i>−</i>    );</span><span class="z neu"><i>+</i>    return Center(</span><span class="z neu"><i>+</i>      child: SizedBox(</span><span class="z neu"><i>+</i>        width: 300,</span><span class="z neu"><i>+</i>        child: Column(</span><span class="z neu"><i>+</i>          mainAxisSize: MainAxisSize.min,</span><span class="z neu"><i>+</i>          children: [</span><span class="z neu"><i>+</i>            // Schritt 4</span><span class="z neu"><i>+</i>          ],</span><span class="z neu"><i>+</i>        ),</span><span class="z neu"><i>+</i>      ),</span><span class="z neu"><i>+</i>    );</span><span class="z rahmen"><i></i>  }</span><span class="z rahmen"><i></i>}</span></code></pre>
+<p>Füllen Sie dann die Stellen mit den Kommentaren (Kommentare danach
+löschen):</p>
 <ol type="1">
-<li>Variablen im State: <code>String _username = '';</code>,
-<code>String _password = '';</code>,
-<code>bool _canLogin = false;</code></li>
-<li>Methode <code>_checkCanLogin()</code>: setzt <strong>in
+<li>Die drei Variablen stehen oben im State – sie sind das „Gedächtnis“
+der Login-Maske.</li>
+<li><code>_checkCanLogin()</code>: setzt <strong>in
 <code>setState(() { … })</code></strong> <code>_canLogin</code> auf
 <code>true</code>, wenn beide Strings nicht leer sind
 (<code>isNotEmpty</code>), sonst auf <code>false</code>.</li>
-<li>Zwei Methoden <code>_onChangedUsername(String username)</code> und
-<code>_onChangedPassword(String password)</code>: Wert speichern, dann
-<code>_checkCanLogin()</code>.</li>
-<li><code>build</code>: <code>Center</code> →
-<code>SizedBox(width: 300)</code> →
-<code>Column(mainAxisSize: MainAxisSize.min)</code> mit den
-<code>children</code>:
+<li><code>_onChangedUsername</code> / <code>_onChangedPassword</code>:
+den übergebenen Wert in <code>_username</code> bzw.
+<code>_password</code> speichern, dann <code>_checkCanLogin()</code>
+aufrufen.</li>
+<li>In die <code>children</code> der <code>Column</code>, untereinander:
 <ul>
 <li><code>Text('Willkommen')</code></li>
 <li><code>TextField</code> mit
@@ -998,7 +1098,22 @@ Login-Button wird erst aktiv, wenn beide Felder gefüllt sind.</p>
 <code>child: Text('Login')</code></li>
 </ul></li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<p><code>MyLogin</code> wird zur Login-Maske:</p>
+<ul>
+<li>zentriert, höchstens 300 Pixel breit: Überschrift „Willkommen“,
+Textfeld „Benutzername“, Textfeld „Passwort“ (Eingabe verdeckt), Button
+„Login“.</li>
+<li>Der Button ist <strong>nur aktiv, wenn beide Felder ausgefüllt
+sind</strong> – und wird wieder grau, wenn ein Feld geleert wird.</li>
+<li>Der Zustand liegt im State, die Oberfläche aktualisiert sich über
+<code>setState</code>.</li>
+<li>Der Button selbst macht vorerst nichts.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Die drei Variablen sind der Zustand (State) der
 Maske:</strong></p>
 <table>
@@ -1084,7 +1199,7 @@ sofort, <code>onSubmitted</code> erst nach Enter.
 </blockquote>
 <p><strong>Experiment:</strong> Nehmen Sie <code>setState</code> heraus
 und starten Sie die App. Was passiert?</p>
-
+</div>
       <details class="loesung" data-loesung="4" hidden><summary>🔓 Musterlösung Level 4</summary></details>
     </div>
     <aside class="lp-seite">
@@ -1133,30 +1248,47 @@ Widget, das ein ToDo darstellt.</p>
 <p>Die fertige App braucht: Liste von ToDos, Checkbox zum Abhaken,
 Löschbutton, Button zum Hinzufügen. Wir beginnen mit
 <strong>einem</strong> Listenelement.</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li>Legen Sie <code>lib/todo_item.dart</code> an mit dem Stateless
-Widget <code>ToDoItem</code>. Es bekommt seinen Titel über den
-Konstruktor: Feld <code>final String title;</code>, Konstruktor
-<code>const ToDoItem(this.title, {super.key});</code>. Bauen Sie in
-<code>build</code> eine <code>Row</code> mit
+<li><strong>📄 Neue Datei</strong> <code>lib/todo_item.dart</code> mit
+dem Stateless Widget <code>ToDoItem</code> (<code>stless</code> + Tab).
+Den Titel bekommt es über den Konstruktor:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class ToDoItem extends StatelessWidget {</span><span class="z neu"><i>+</i>  final String title;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  const ToDoItem(this.title, {super.key});</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  Widget build(BuildContext context) {</span><span class="z neu"><i>+</i>    return Row(</span><span class="z neu"><i>+</i>      children: [</span><span class="z neu"><i>+</i>        // hier die drei Widgets, siehe unten</span><span class="z neu"><i>+</i>      ],</span><span class="z neu"><i>+</i>    );</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>}</span></code></pre>
+In die <code>children</code> der <code>Row</code> kommen:
 <ul>
-<li><code>Checkbox(value: false, onChanged: null)</code> – noch
+<li><code>const Checkbox(value: false, onChanged: null)</code> – noch
 inaktiv</li>
 <li><code>Expanded(child: Text(title))</code></li>
-<li><code>IconButton(icon: Icon(Icons.delete), onPressed: null)</code> –
-noch inaktiv</li>
+<li><code>const IconButton(icon: Icon(Icons.delete), onPressed: null)</code>
+– noch inaktiv</li>
 </ul></li>
-<li>Legen Sie <code>lib/todo_app.dart</code> an mit dem Stateless Widget
-<code>ToDoApp</code>, das zur Vorschau drei Einträge zeigt:
-<code>MaterialApp</code> → <code>home: Scaffold</code> mit
-<code>appBar: AppBar(title: Text('ToDo-Element (Vorschau)'))</code> und
-<code>body: ListView(children: [ToDoItem('Einkaufen'), ToDoItem('Hausaufgaben LF11'), ToDoItem('Sport')])</code>.</li>
-<li><code>lib/main.dart</code>: Starten Sie jetzt <code>ToDoApp()</code>
-statt <code>MyFirstApp()</code> (Import nicht vergessen). Ihre Login-App
-bleibt im Projekt – Sie können jederzeit zurückschalten.</li>
+<li><strong>📄 Neue Datei</strong> <code>lib/todo_app.dart</code> mit
+dem Stateless Widget <code>ToDoApp</code>. Es zeigt zur Vorschau drei
+Einträge:
+<pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;todo_item.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class ToDoApp extends StatelessWidget {</span><span class="z neu"><i>+</i>  const ToDoApp({super.key});</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  Widget build(BuildContext context) {</span><span class="z neu"><i>+</i>    return MaterialApp(</span><span class="z neu"><i>+</i>      home: Scaffold(</span><span class="z neu"><i>+</i>        appBar: AppBar(title: const Text(&#39;ToDo-Element (Vorschau)&#39;)),</span><span class="z neu"><i>+</i>        body: ListView(</span><span class="z neu"><i>+</i>          children: const [</span><span class="z neu"><i>+</i>            ToDoItem(&#39;Einkaufen&#39;),</span><span class="z neu"><i>+</i>            ToDoItem(&#39;Hausaufgaben LF11&#39;),</span><span class="z neu"><i>+</i>            ToDoItem(&#39;Sport&#39;),</span><span class="z neu"><i>+</i>          ],</span><span class="z neu"><i>+</i>        ),</span><span class="z neu"><i>+</i>      ),</span><span class="z neu"><i>+</i>    );</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/main.dart</code> – zwei Zeilen
+<strong>ersetzen</strong>: Jetzt startet die <code>ToDoApp</code>.
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>import &#39;package:flutter/material.dart&#39;;</span><span class="z weg"><i>−</i>import &#39;my_first_app.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;todo_app.dart&#39;;</span><span class="z rahmen"><i></i>&#8203;</span><span class="z rahmen"><i></i>void main() {</span><span class="z weg"><i>−</i>  runApp(const MyFirstApp());</span><span class="z neu"><i>+</i>  runApp(const ToDoApp());</span><span class="z rahmen"><i></i>}</span></code></pre>
+Die Dateien <code>my_first_app.dart</code> und
+<code>my_login.dart</code> <strong>bleiben</strong> im Projekt – nicht
+löschen, Sie brauchen sie in Level 9 wieder.</li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li><code>lib/todo_item.dart</code>: Stateless Widget
+<code>ToDoItem</code>; der Titel kommt als <strong>positionaler</strong>
+Konstruktor-Parameter. Eine Zeile zeigt: Checkbox (inaktiv) · Titel
+(füllt die Breite) · Mülleimer-Button (inaktiv).</li>
+<li><code>lib/todo_app.dart</code>: <code>ToDoApp</code> zeigt zur
+Vorschau drei <code>ToDoItem</code>s (darunter „Einkaufen“) in einer
+<code>ListView</code>, AppBar „ToDo-Element (Vorschau)“.</li>
+<li><code>main.dart</code> startet <code>ToDoApp</code>. Die
+Login-Dateien bleiben im Projekt.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Warum ist <code>ToDoItem</code> Stateless?</strong> Ein
 Listeneintrag soll nur <strong>anzeigen</strong>, was man ihm gibt. Die
 Daten (der Titel) kommen von außen über den Konstruktor:</p>
@@ -1205,7 +1337,7 @@ so wandert der Mülleimer ganz nach rechts.</p>
 <code>const</code>-Konstruktor: Ein Stateless Widget bekommt seine Daten
 von außen und ändert sie nie selbst.</p>
 </blockquote>
-
+</div>
       <details class="loesung" data-loesung="5" hidden><summary>🔓 Musterlösung Level 5</summary></details>
     </div>
     <aside class="lp-seite">
@@ -1254,19 +1386,20 @@ Dialog hinzu.</p>
 <p><strong>Sie schreiben:</strong> <code>lib/todo_list.dart</code> neu,
 <code>lib/todo_app.dart</code> ändern · <strong>Skript:</strong>
 Beispiel 2b</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
-<p>Legen Sie <code>lib/todo_list.dart</code> an mit dem <strong>Stateful
-Widget</strong> <code>ToDoList</code> (Kürzel <code>stful</code>). Im
-State:</p>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li><code>List&lt;String&gt; todos = [];</code></li>
+<li><strong>📄 Neue Datei</strong> <code>lib/todo_list.dart</code> mit
+dem <strong>Stateful Widget</strong> <code>ToDoList</code>
+(<code>stful</code> + Tab). Der Rahmen:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z neu"><i>+</i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;todo_item.dart&#39;;</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class ToDoList extends StatefulWidget {</span><span class="z neu"><i>+</i>  const ToDoList({super.key});</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  State&lt;ToDoList&gt; createState() =&gt; _ToDoListState();</span><span class="z neu"><i>+</i>}</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>class _ToDoListState extends State&lt;ToDoList&gt; {</span><span class="z neu"><i>+</i>  List&lt;String&gt; todos = [];</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  void addItem(String item) {</span><span class="z neu"><i>+</i>    // Schritt 2</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  void newEntry() {</span><span class="z neu"><i>+</i>    // Schritt 3</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>&#8203;</span><span class="z neu"><i>+</i>  @override</span><span class="z neu"><i>+</i>  Widget build(BuildContext context) {</span><span class="z neu"><i>+</i>    return Scaffold(</span><span class="z neu"><i>+</i>      // Schritt 4</span><span class="z neu"><i>+</i>    );</span><span class="z neu"><i>+</i>  }</span><span class="z neu"><i>+</i>}</span></code></pre></li>
 <li><code>addItem(String item)</code>: in <code>setState</code>
-<code>todos.add(item)</code>, danach
-<code>Navigator.of(context).pop();</code> (schließt den Dialog).</li>
+<code>todos.add(item)</code>, danach (außerhalb von
+<code>setState</code>) <code>Navigator.of(context).pop();</code> – das
+schließt den Dialog.</li>
 <li><code>newEntry()</code>: <code>showDialog</code> mit einem
 <code>AlertDialog</code>, dessen <code>content</code> ein
 <code>TextField(onSubmitted: addItem)</code> ist.</li>
-<li><code>build</code>: <code>Scaffold</code> mit
+<li>Im <code>Scaffold</code> (statt des Kommentars):
 <ul>
 <li><code>appBar: AppBar(title: Text('ToDo Liste'))</code></li>
 <li><code>body: ListView.builder(itemCount: todos.length, itemBuilder: …)</code>
@@ -1274,11 +1407,26 @@ State:</p>
 <code>ToDoItem(todos[i])</code></li>
 <li><code>floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))</code></li>
 </ul></li>
-<li><code>lib/todo_app.dart</code>: Die <code>MaterialApp</code> startet
-jetzt mit <code>home: const ToDoList()</code> – die Vorschau aus Level 5
-hat ausgedient.</li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_app.dart</code> – die
+Vorschau aus Level 5 hat ausgedient. Import und den
+<strong>ganzen</strong> Inhalt von <code>build</code>
+<strong>ersetzen</strong>:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>import &#39;package:flutter/material.dart&#39;;</span><span class="z weg"><i>−</i>import &#39;todo_item.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;todo_list.dart&#39;;</span><span class="z rahmen"><i></i>…</span><span class="z rahmen"><i></i>Widget build(BuildContext context) {</span><span class="z weg"><i>−</i>  return MaterialApp(</span><span class="z weg"><i>−</i>    home: Scaffold(</span><span class="z weg"><i>−</i>      … (die ganze Vorschau mit den drei ToDoItems)</span><span class="z weg"><i>−</i>    ),</span><span class="z weg"><i>−</i>  );</span><span class="z neu"><i>+</i>  return const MaterialApp(home: ToDoList());</span><span class="z rahmen"><i></i>}</span></code></pre></li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li><code>lib/todo_list.dart</code>: Stateful Widget
+<code>ToDoList</code>, die Titel liegen als Liste im State.</li>
+<li>AppBar „ToDo Liste“, darunter ein <code>ToDoItem</code> je Eintrag
+(<code>ListView.builder</code>), unten rechts ein Plus-Button.</li>
+<li>Plus öffnet einen <code>AlertDialog</code> mit Textfeld; Enter fügt
+den Eintrag hinzu und schließt den Dialog.</li>
+<li><code>ToDoApp</code> startet direkt die <code>ToDoList</code>.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Warum ist <code>ToDoList</code> Stateful?</strong> Die Liste
 <strong>ändert sich</strong>, während die App läuft: Einträge kommen
 hinzu. Also braucht sie einen State mit der Variable
@@ -1346,7 +1494,7 @@ nimmt die oberste Seite weg.</li>
 </blockquote>
 <p><strong>Achtung Skript:</strong> Dort heißt die Liste an einer Stelle
 <code>products</code> – verwenden Sie überall <code>todos</code>.</p>
-
+</div>
       <details class="loesung" data-loesung="6" hidden><summary>🔓 Musterlösung Level 6</summary></details>
     </div>
     <aside class="lp-seite">
@@ -1395,20 +1543,36 @@ nimmt die oberste Seite weg.</li>
 <p><strong>Sie ändern:</strong> <code>lib/todo_list.dart</code>,
 <code>lib/todo_item.dart</code> · <strong>Skript:</strong> Beispiel
 2c</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li><code>todo_list.dart</code>: <code>deleteItem(int i)</code> – in
-<code>setState</code> <code>todos.removeAt(i)</code>.</li>
-<li><code>todo_item.dart</code>: Feld
-<code>final VoidCallback remove;</code> und Konstruktor
-<code>const ToDoItem(this.title, this.remove, {super.key});</code></li>
-<li><code>todo_item.dart</code>: Der <code>IconButton</code> bekommt
-<code>onPressed: () =&gt; remove()</code> (und das <code>const</code>
-davor muss weg).</li>
-<li><code>todo_list.dart</code>: im <code>itemBuilder</code>
-<code>ToDoItem(todos[i], () =&gt; deleteItem(i))</code>.</li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> – eine
+neue Methode <code>deleteItem</code> <strong>zwischen</strong>
+<code>addItem</code> und <code>newEntry</code> einfügen:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>void addItem(String item) {</span><span class="z rahmen"><i></i>  …</span><span class="z rahmen"><i></i>}</span><span class="z rahmen"><i></i>&#8203;</span><span class="z neu"><i>+</i>void deleteItem(int i) {</span><span class="z neu"><i>+</i>  setState(() {</span><span class="z neu"><i>+</i>    todos.removeAt(i);</span><span class="z neu"><i>+</i>  });</span><span class="z neu"><i>+</i>}</span><span class="z neu"><i>+</i>&#8203;</span><span class="z rahmen"><i></i>void newEntry() {</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_item.dart</code> – ein
+neues Feld <strong>hinzufügen</strong> und den Konstruktor
+<strong>ersetzen</strong>:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>class ToDoItem extends StatelessWidget {</span><span class="z rahmen"><i></i>  final String title;</span><span class="z neu"><i>+</i>  final VoidCallback remove;</span><span class="z rahmen"><i></i>&#8203;</span><span class="z weg"><i>−</i>  const ToDoItem(this.title, {super.key});</span><span class="z neu"><i>+</i>  const ToDoItem(this.title, this.remove, {super.key});</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_item.dart</code> – der
+<code>IconButton</code> wird aktiv. Das <code>const</code> muss weg,
+weil <code>remove</code> erst zur Laufzeit feststeht:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>      Expanded(child: Text(title)),</span><span class="z weg"><i>−</i>      const IconButton(</span><span class="z weg"><i>−</i>        icon: Icon(Icons.delete),</span><span class="z weg"><i>−</i>        onPressed: null,</span><span class="z weg"><i>−</i>      ),</span><span class="z neu"><i>+</i>      IconButton(</span><span class="z neu"><i>+</i>        icon: const Icon(Icons.delete),</span><span class="z neu"><i>+</i>        onPressed: () =&gt; remove(),</span><span class="z neu"><i>+</i>      ),</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> – im
+<code>itemBuilder</code> bekommt jedes <code>ToDoItem</code> seine
+Löschfunktion:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>      itemBuilder: (context, i) {</span><span class="z weg"><i>−</i>        return ToDoItem(todos[i]);</span><span class="z neu"><i>+</i>        return ToDoItem(todos[i], () =&gt; deleteItem(i));</span><span class="z rahmen"><i></i>      },</span></code></pre></li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li>Der Mülleimer löscht <strong>genau sein</strong> ToDo.</li>
+<li><code>ToDoItem</code> bleibt <strong>Stateless</strong>: Gelöscht
+wird im State der Liste. Die Löschfunktion bekommt das Item als zweiten
+Konstruktor-Parameter (<code>VoidCallback</code>).</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Das Problem:</strong> Der Mülleimer sitzt im
 <code>ToDoItem</code>. Die Liste <code>todos</code> liegt aber im State
 von <code>ToDoList</code>. Ein Stateless Widget hat kein
@@ -1468,7 +1632,7 @@ Genau das ist Schritt 4.</p>
 in das Stateful Widget. Das Stateless Widget bekommt nur „einen Knopf“,
 mit dem es die Funktion auslösen kann.</p>
 </blockquote>
-
+</div>
       <details class="loesung" data-loesung="7" hidden><summary>🔓 Musterlösung Level 7</summary></details>
     </div>
     <aside class="lp-seite">
@@ -1518,31 +1682,48 @@ mit dem es die Funktion auslösen kann.</p>
 <p><strong>Sie ändern:</strong> <code>lib/todo_list.dart</code>,
 <code>lib/todo_item.dart</code> · <strong>Skript:</strong> Beispiel
 2d</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
+<p>Gehen Sie in der Reihenfolge 1 → 6 vor. Nach Schritt 1 sind alle
+Stellen rot unterstrichen, die noch mit der Liste arbeiten – genau die
+ändern Sie in den Schritten danach.</p>
 <ol type="1">
-<li><code>Map&lt;String, bool&gt; todos = {};</code> statt der
-Liste.</li>
-<li><code>addItem</code>: <code>todos[item] = false;</code> ·
-<code>deleteItem(String key)</code>:
-<code>todos.remove(key);</code></li>
-<li>Neu: <code>checkBoxDone(String key)</code> – in
-<code>setState</code>
-<code>todos.update(key, (bool done) =&gt; !done);</code></li>
-<li><code>todo_item.dart</code>: Felder <code>final bool done;</code>
-und <code>final VoidCallback checkBoxDone;</code>, Konstruktor
-<code>(this.title, this.done, this.remove, this.checkBoxDone, {super.key})</code>.</li>
-<li>Die Checkbox: <code>value: done</code>,
-<code>onChanged: (value) =&gt; checkBoxDone()</code>.</li>
-<li><code>itemBuilder</code>:
-<pre class="dart"><code>var key = todos.keys.elementAt(i);
-return ToDoItem(
-  key,                         // Titel
-  todos.values.elementAt(i),   // Checkboxstatus
-  () =&gt; deleteItem(key),       // Löschfunktion
-  () =&gt; checkBoxDone(key),     // Checkboxfunktion
-);</code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> – die
+Liste durch eine Map <strong>ersetzen</strong>:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>class _ToDoListState extends State&lt;ToDoList&gt; {</span><span class="z weg"><i>−</i>  List&lt;String&gt; todos = [];</span><span class="z neu"><i>+</i>  Map&lt;String, bool&gt; todos = {};</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> –
+<code>addItem</code> und <code>deleteItem</code> arbeiten jetzt mit der
+Map:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>void addItem(String item) {</span><span class="z rahmen"><i></i>  setState(() {</span><span class="z weg"><i>−</i>    todos.add(item);</span><span class="z neu"><i>+</i>    todos[item] = false;</span><span class="z rahmen"><i></i>  });</span><span class="z rahmen"><i></i>  Navigator.of(context).pop();</span><span class="z rahmen"><i></i>}</span><span class="z rahmen"><i></i>&#8203;</span><span class="z weg"><i>−</i>void deleteItem(int i) {</span><span class="z neu"><i>+</i>void deleteItem(String key) {</span><span class="z rahmen"><i></i>  setState(() {</span><span class="z weg"><i>−</i>    todos.removeAt(i);</span><span class="z neu"><i>+</i>    todos.remove(key);</span><span class="z rahmen"><i></i>  });</span><span class="z rahmen"><i></i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> – neue
+Methode <code>checkBoxDone</code> direkt <strong>unter</strong>
+<code>deleteItem</code> einfügen:
+<pre class="rahmen-code"><code><span class="z neu"><i>+</i>void checkBoxDone(String key) {</span><span class="z neu"><i>+</i>  setState(() {</span><span class="z neu"><i>+</i>    todos.update(key, (bool done) =&gt; !done);</span><span class="z neu"><i>+</i>  });</span><span class="z neu"><i>+</i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_item.dart</code> – zwei
+Felder <strong>hinzufügen</strong>, Konstruktor
+<strong>ersetzen</strong>:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>  final String title;</span><span class="z neu"><i>+</i>  final bool done;</span><span class="z rahmen"><i></i>  final VoidCallback remove;</span><span class="z neu"><i>+</i>  final VoidCallback checkBoxDone;</span><span class="z rahmen"><i></i>&#8203;</span><span class="z weg"><i>−</i>  const ToDoItem(this.title, this.remove, {super.key});</span><span class="z neu"><i>+</i>  const ToDoItem(this.title, this.done, this.remove, this.checkBoxDone,</span><span class="z neu"><i>+</i>      {super.key});</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_item.dart</code> – die
+Checkbox wird aktiv (das <code>const</code> muss weg):
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>    children: [</span><span class="z weg"><i>−</i>      const Checkbox(value: false, onChanged: null),</span><span class="z neu"><i>+</i>      Checkbox(</span><span class="z neu"><i>+</i>        value: done,</span><span class="z neu"><i>+</i>        onChanged: (value) =&gt; checkBoxDone(),</span><span class="z neu"><i>+</i>      ),</span><span class="z rahmen"><i></i>      Expanded(child: Text(title)),</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/todo_list.dart</code> – im
+<code>itemBuilder</code> die eine <code>return</code>-Zeile
+<strong>ersetzen</strong>:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>      itemBuilder: (context, i) {</span><span class="z weg"><i>−</i>        return ToDoItem(todos[i], () =&gt; deleteItem(i));</span><span class="z neu"><i>+</i>        var key = todos.keys.elementAt(i);</span><span class="z neu"><i>+</i>        return ToDoItem(</span><span class="z neu"><i>+</i>          key, // Titel</span><span class="z neu"><i>+</i>          todos.values.elementAt(i), // Checkboxstatus</span><span class="z neu"><i>+</i>          () =&gt; deleteItem(key), // Löschfunktion</span><span class="z neu"><i>+</i>          () =&gt; checkBoxDone(key), // Checkboxfunktion</span><span class="z neu"><i>+</i>        );</span><span class="z rahmen"><i></i>      },</span></code></pre></li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li>Jedes ToDo hat einen Erledigt-Status. Die Checkbox zeigt ihn und
+schaltet ihn beim Antippen um.</li>
+<li>Die Daten liegen als <code>Map&lt;String, bool&gt;</code> vor (Titel
+→ erledigt).</li>
+<li><code>ToDoItem(title, done, remove, checkBoxDone)</code> – weiterhin
+Stateless.</li>
+<li>Hinzufügen und Löschen funktionieren weiter.</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Warum eine Map?</strong> Zu jedem ToDo gehören jetzt
 <strong>zwei</strong> Informationen: Titel und Haken. Eine
 <code>List&lt;String&gt;</code> kann pro Platz nur einen Wert speichern.
@@ -1613,7 +1794,7 @@ was Sie anpassen müssen.</p>
 
 <p><strong>Denkfrage:</strong> Was passiert, wenn Sie zweimal
 „Einkaufen“ eintragen? Warum? (→ <code>docs/bonus.md</code>)</p>
-
+</div>
       <details class="loesung" data-loesung="8" hidden><summary>🔓 Musterlösung Level 8</summary></details>
     </div>
     <aside class="lp-seite">
@@ -1664,21 +1845,37 @@ Daten bleiben lokal in der App – es gibt keine Datenbank.</p>
 <p><strong>Sie ändern:</strong> <code>lib/main.dart</code>,
 <code>lib/my_login.dart</code> · <strong>Skript:</strong> Beispiel 1 +
 Beispiel 2</p>
-<div class="auftrags-kasten"><h3 id="auftrag">Auftrag</h3>
+<div class="auftrags-kasten nur-begleitet"><h3 id="auftrag">Auftrag</h3>
 <ol type="1">
-<li><code>lib/main.dart</code>: Starten Sie wieder
-<code>MyFirstApp</code> (die App mit der Login-Maske) statt
-<code>ToDoApp</code>.</li>
-<li><code>lib/my_login.dart</code>: Importieren Sie
-<code>todo_list.dart</code>.</li>
-<li>Der Login-Button bekommt eine Aufgabe: Statt der leeren Funktion
-<code>() {}</code> öffnet er mit
-<code>Navigator.of(context).push(...)</code> die <code>ToDoList</code>
-als neue Seite.</li>
-<li>Probieren Sie aus: einloggen, ToDos anlegen, mit dem Zurück-Pfeil
-zur Login-Maske, wieder einloggen.</li>
+<li><strong>✏️ Ändern</strong> <code>lib/main.dart</code> – die App
+startet wieder mit der Login-Maske. Zwei Zeilen
+<strong>ersetzen</strong>:
+<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> <span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · <span class="lg neu">+ grün</span> neu eintippen · <span class="lg weg">− rot</span> löschen · <span class="lg rahmen">…</span> unveränderter Code dazwischen</p><pre class="rahmen-code"><code><span class="z rahmen"><i></i>import &#39;package:flutter/material.dart&#39;;</span><span class="z weg"><i>−</i>import &#39;todo_app.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;my_first_app.dart&#39;;</span><span class="z rahmen"><i></i>&#8203;</span><span class="z rahmen"><i></i>void main() {</span><span class="z weg"><i>−</i>  runApp(const ToDoApp());</span><span class="z neu"><i>+</i>  runApp(const MyFirstApp());</span><span class="z rahmen"><i></i>}</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/my_login.dart</code> – die
+ToDo-Liste importieren (oben, unter dem ersten Import):
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>import &#39;package:flutter/material.dart&#39;;</span><span class="z neu"><i>+</i>import &#39;todo_list.dart&#39;;</span></code></pre></li>
+<li><strong>✏️ Ändern</strong> <code>lib/my_login.dart</code> – ganz
+unten in <code>build</code> steht der <code>TextButton</code>. Seine
+leere Funktion <code>() {}</code> wird <strong>ersetzt</strong> durch
+eine Funktion, die die <code>ToDoList</code> öffnet:
+<pre class="rahmen-code"><code><span class="z rahmen"><i></i>      TextButton(</span><span class="z weg"><i>−</i>        onPressed: _canLogin ? () {} : null,</span><span class="z neu"><i>+</i>        onPressed: _canLogin</span><span class="z neu"><i>+</i>            ? () {</span><span class="z neu"><i>+</i>                Navigator.of(context).push(</span><span class="z neu"><i>+</i>                  MaterialPageRoute(</span><span class="z neu"><i>+</i>                    builder: (context) =&gt; const ToDoList(),</span><span class="z neu"><i>+</i>                  ),</span><span class="z neu"><i>+</i>                );</span><span class="z neu"><i>+</i>              }</span><span class="z neu"><i>+</i>            : null,</span><span class="z rahmen"><i></i>        child: const Text(&#39;Login&#39;),</span><span class="z rahmen"><i></i>      ),</span></code></pre></li>
+<li><strong>▶️ Ausprobieren:</strong> einloggen, ToDos anlegen, mit dem
+Zurück-Pfeil zur Login-Maske, wieder einloggen.</li>
 </ol>
-</div><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
+</div><div class="auftrags-kasten profi-kasten nur-profi"><h3 id="profi-auftrag">Profi-Auftrag</h3>
+<ul>
+<li>Die App startet mit der Login-Maske (<code>MyFirstApp</code>).</li>
+<li>„Login“ öffnet die <code>ToDoList</code> als <strong>neue
+Seite</strong>. Der Zurück-Pfeil in der AppBar führt zur Login-Maske
+zurück.</li>
+<li>Keine Datenbank: Alle Daten bleiben lokal im State.</li>
+<li>Lesen Sie danach den <em>Ausblick</em>: Warum wird als Nächstes eine
+Datenbank nötig?</li>
+</ul>
+<p><em>Hängen Sie fest? Schalten Sie oben auf <strong>🧭
+Begleitet</strong> um – dort steht jeder Schritt mit
+Code-Rahmen.</em></p>
+</div><div class="erklaert"><h3 id="erklärt--was-passiert-hier">Erklärt – was passiert hier?</h3>
 <p><strong>Der Navigator – ein Stapel von Seiten.</strong> Jede
 <code>MaterialApp</code> hat einen <code>Navigator</code>. Er verwaltet
 die Seiten wie einen Stapel Karten: Sichtbar ist immer die oberste.</p>
@@ -1747,7 +1944,7 @@ verwendet? Dann wird die Login-Seite ersetzt statt überdeckt – es gibt
 nichts mehr, wohin man zurück kann.</p>
 </details>
 
-<h3 id="ausblick--warum-als-nächstes-eine-datenbank">Ausblick – warum
+</div><h3 id="ausblick--warum-als-nächstes-eine-datenbank">Ausblick – warum
 als Nächstes eine Datenbank?</h3>
 <p>Ihre App funktioniert – aber nur, solange sie läuft. Probieren Sie es
 aus und Sie stoßen auf genau die Grenzen, die eine Datenbank löst:</p>
@@ -2129,12 +2326,30 @@ offen)“.</li>
       </form></div>
   </section>
 
-  <footer class="druckfuss"><small>Flutter-Einführung LF11 · Version 2.1.1 vom 14.11.2026 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
+  <footer class="druckfuss"><small>Flutter-Einführung LF11 · Version 2.3.0 vom 16.11.2026 · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
   <form method="dialog"><button class="primaer">Schließen</button></form></dialog>
 <script>var LP_KEY = "flutter-lernpfad-lf11";
 document.documentElement.classList.add("js");
+(function(){
+  var MKEY = "flutter-lernpfad-lf11-modus", wurzel = document.documentElement;
+  function setze(m){
+    wurzel.classList.toggle("modus-profi", m === "profi");
+    document.querySelectorAll(".pfad-wahl button, .pfad-karte").forEach(function(b){
+      var an = b.getAttribute("data-modus") === m;
+      b.setAttribute("aria-pressed", an ? "true" : "false"); b.classList.toggle("gewaehlt", an);
+    });
+  }
+  var m = "begleitet"; try { m = localStorage.getItem(MKEY) || m; } catch (e) {}
+  setze(m);
+  document.addEventListener("click", function(ev){
+    var b = ev.target.closest("[data-modus]");
+    if (b) { var neu = b.getAttribute("data-modus"); setze(neu); try { localStorage.setItem(MKEY, neu); } catch (e) {} return; }
+    var h = ev.target.closest(".erklaert > h3");
+    if (h && wurzel.classList.contains("modus-profi")) h.parentNode.classList.toggle("offen");
+  });
+})();
 (function(){
   var KEY = "flutter-lernpfad-lf11", stand = {};
   try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
@@ -2523,7 +2738,7 @@ document.documentElement.classList.add("js");
   });
 })();
 </script>
-<script>var GEHEIM = {"salt": "q+ewCTVz45i9Ublnuo9nVw==", "iv": "ZMNj2ubDUzaGOIdTD5cP+A==", "iter": 600000, "daten": "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"}; var MARKER = "LOESUNG-OK\n";
+<script>var GEHEIM = {"salt": "yjAw227/mwRRlRylBPpt3g==", "iv": "Q1lAOBAk+6uQUd3Dwi/jFA==", "iter": 600000, "daten": "b40dM1N5DssXsntQenVv+25OBznl4HyU59Uvg7Ol755cnzlo/BpFFL5pJAMbEQnHa93CJHNkA95s6KKQ2JXHzlGpPTa+p7YQGJasks+tdDnODQMFTu+mIS6Vfj6ukoDuDX9R3tsQ2PG8ErcmQQKz2M21mYoBB0jbs3nvt708pL2xTnTdEZwFKQsR78UWdqj5F3CTkJUqlA4kCviTb6KkEAXXiPqWEbPfSPkqN78HgflmExxz+eM7wnjogb3bduyn8zx+eIP/yQqlzH0zqda7uYYRQz6olVP3wfPW4eAsidMJ+xqdM2b3yQ0QszAZq5yDNfgnECd61UelG4XqA4SYpxLzG/hzJSgvgZjhRsytXG+n3YEo/zmhM6I9RgM3Lh2FcknksKRuFKmK92qKwp8P0nbx8RLkYUJFi2jcL+zVNeXDn4C3jV4jSIplYKrEOYA5Fmhdca6snJy2C/k0byE6Q0ddJG+2MVnrGLsOkGT5mJjJmlQEWn4IT8ZOpR+GjOCnViC0LbSmh/JffndySKTQZMvEkR1W5R84CUg7eP4JvNWXAbx4lRswivccx83OJXGYkYvaKyMIY8Mco42Z7txfMJLI/pwK4prhWUunselsAaGAACPH4PaZvEbVAqP6Ws40LzO4vXkOQEp629AVfQ2LkWnrotIOgounVxVqe2wR20mpdsLAsxouSwQAO6fMJNip8Hp/+a/dIUdCpdE+rBQrkNQ73x7xsisBa/kskXVP0FNZU8MLkvnwE1baeIi7NZbw9US87AD+uCynuAKPqnrMJeRvKthUI0G5qQkbkV7j9aBQq+Vp+sbm54OTlcpTv/viY1DZgWChnwoEaxtcLLtkzq+lfV9bd6JlzpWUM//+W3/Ld/vclc0ue2gskQZ0YpfaJL4KF0sD27P8GcB5D+kWu+3Nbd6SjMODjV9p9EXFsOgRaONPsMVBMnUzoB+DnBg+AuopW9jPF9j2jJ4ceHgxffimLxqGwZlmhniJKgDybTnkwNz81juw3AlDqd8p438Aqwtu8132GAhUK+2pZ/iT77bT7bXVFBKWhKi7ZMed0g043UmzAcbHYD07nUyQugKUsaQbSf78y+dYC9n7QaXH0v32+wDkjQm8h+m9NfXOXhpoxNjtaSQO7wUC5FUZ5zPkERvt/wM85RwEUoEmSKTi1vDu0fBJkN0wL34xFt8RlXptnih3MR96qH+ciwF9TPBB+mMj+BK2LNlbLdKBQciTd486hdod+GSHcbqK6GcAGMO5Cbh+09U9m+Cqx4VzCop40L/Vgc4bWA+AaJD75vayz9PTaCneU0v/DnRHTVS7ZXsNaxTpjfhyBQiWsnFK9GZAX+67TxRAS3Y27sQokOhrNpFTCwXRXgwzeTfQL92cYoggti0pV0PxyIH6XDsZkSBdOgZA+7YK0aFQdd1AhEbgsX3qZmRORCHTLTN2kvSW/bQSYx4t1UdWWwfuMVfnx+r9cpPcL0CBVisYMv6Ys3KTowPurq0QE0rYC+bjn00QKt5oz7sTnW0WzvTNxHaFOIk6SNz8p1aM97PnHfnI98/eWPPnLuBOZYzvsJ57/th0pikTkNvEE6HkuWSLxKeDl90zIMaj4d03x+vEJe78CkXfs+3aLK5hPPVg1vuwPXohY9JPuq1sBmIYwQxukfS/AeNVj3/wwhTpjJLSVFIIgpn0OcmqflKgzNaIgpu0ZxAMnr02ighSETB+rqPbbad2OfoBO9ZatA3AR82NG/vtvc52uOBBw+fMzuHWMFjxZxWEZ+VGBcos37DcC4AsiydsyZKtE27coVYDAg9+h4ek16h6/IeCCFgU/TJt0ajBZ4T0ex54evHvUcYDYzRAVnl5H9n+JYCIH5q6l1Zj91/rghcBxqWCyQReFIuSeZLGMCXwLfD9PgmeB/Dmx5fWD5fTfDW9++F3+afOqfAfTy7GJnlmOZKyJg0ZRrcR2WcC1yOMzj0tAX3d/VwLGvmasMsuvSpquwDLBOmTp2+s/RvLxSZcZjHUHUT1+dKwJKwSVMF281Y8BIR/oEZFnzOKo7To3+es56jXl/zbV0RYVYgxsMlhOQJ0RgueZp46dp5MSUWjSuNixQlKkhfBqL0NyWwdgEWjDnPvu/xXR1pO9/5VLxp06BKTqZjlbIOqHpasznX+7ZyoQBbfO3kj2InLFvP44gfN8BQfvKvOfBNNXGyA00PgyTJEESCnNQ+X1KkMrf1gkMGwBP7UBxv0mcftgTriHwPvH2orlLvT2usswn59bzPEUT4jLCeEpZjtcgStyhENL2xb0/u2J+f7saDamMQ5AJMh6ku6E1Rw18OUiGvLHZ9a5kyk33X+v8Q1hiEY/M/0XWBMYNWA7c/CJBPmJbqMJD1gM5g2hxajznbqzmQOKWz2Ubhy0kUKDr47v2zC0Z1XIpN/jibuxD914s9xhpudKhbhiKV2mqynLDcCHwUECYV2AjslUBIJGgwarJ2z9M/YLZWWUmAPepWgZEzl7LBhpx9xNPs4yV67NtD2CM/PxgL1GE+PXLe0XA88nd6HmW7i1DWfTrMHuKFH+VeicJhmWlujDYjwcEq9dzw5QEwDBV6NUBKPHWiZPONcVEkldOrWmfslo9oeftOTBcjE0UO4NzAF+O+aAwfuhp/x0qO+1FCOLx/1F62Oa6X/tSUw9OqT9g+xjced3Q6c+h1YZbwwGQqfvxCyD4C4NREdbmvxyB9KgYxST8yLdM+7objghnw3xzpG1jYZTgie+aHR2v66ppe16F4/gnKVBntlkD9AZt6ugqfyqM9hYVa1hQev77MDfGpQOH2BDYR0lLyJaholo+/RfwxYTgQysQHqg8IF/CJySxwb2EPW33sF+W3mMKlZwkQoUu+N9GQwBXBeOysKSalp7Xc4/19nLpjsQ1xylpd68dRMEjqS3Wb8ukUQs2n9eAQ6dwbWPkeKva+iSE3kiwHNo8j38x5i21ASVL/Ixh+JDiNyY+tGBI6oASqDzHrMKYo59bZM3iBXsVfDJ/r+o0hoaiDhTvnsg08ys/g2GQ45WQ3sGgC599A7/iz4B4BbkLaab6ZAa4Fu7FovaQezNjISFBTK7cc0FHz3V+ZhM7sA4tOQLS0ERyR3Rl3jULETQ8imSCV9ZLP+ro6ATU6VojpW/9Jrss9l59kYBydUfNYiKrgj2uga2+MJHv0Gu8G8XQJRfzvXrrCFJOl/FyNOHvH4U2dtHrnF8BHYZLTI+LfZ8Iu1y/asHgBkKoFsDAKrD/bA1qXCjpYpXWJnDF+OGipz8YujKoYIHkTNLFSGBUHeSXTPKyFGxS5vCgMEk5f+No0xuFOo+OvYoA/zxouUxwR6NgV7Zccp7zGz4J79RETDF1SM8wrIEWgtK610PCtRRgqKP+NQWZQj6KDWnpW9IjWUgi7y+U1nyNQFggGt84L0Kgcf1F+APVpnFh1yILiuvay1tr5TjyHAtl3W+Y5WTLnoJ/ULeMGq4CAlY9dG8Ylk3Olk74PMiV/96Zup1Lu9neBjohWsNZgGshA6s6TrhfTL3QWYpweH9AM7o0zRN/yN6PtZNg024aFjjadolEzCZKKoyxkY8+uo2VG2bOxO4YJxbL4VxXpKXAKtpbicc9HvuktwzKiwsaw9L5MvTVxblkSQ5aFAdRB03+GeDc3QyQDXYL7R4oIcAPt0D8BNqTe7+O3iC1IvwL5mCpo6ihiVnfFJpQjgGYxf2JOtVsBsf0+JtmyFBtHKHiY5nHSHUctA7RcCIL17qfCaEEkUSgXuRuzQ02MkrPw3bbtLjjuR8+M0p9Av/pdsVSt8JFNJunLQWU5bEvTY9WBuSGvkIfKANnqq+nF6od6I9WotlrV408WnIZ5H92BamVDeoQyeRTizKChFcuTRAUB8gZA3L7pVgs1qvK7egl+5qLt2X5SgYMVXrUboG8lL6vA704WFT8e92xGoR7AbUcL+Lp2LBtYnYrLG3mylCyV3mMqiPWgxL4bmk3X9nOD5xq5cTgN5gBcJZxQSWOQDE5tt0STsEJzUe8VupncMsdvIyh6nF8qPGRdAPZDd3V+6FgzjPk6sDtAPCU56R6HgNs524CxitaW02hgnuvQRrE3SrkZOmKjd0AKr++RLd4frJIDz/7gRVauj7mNbsTdYRWzUF2NVJMhgdATWppAwKLwb74vCLuwusyN843hQLHotXOfih67qFGLjvIH4Uuo/FW7UUdqw2hi/LhIQaya2fNwOTHTkRsaRJv7mPwPZjNb5kwkDscv39sscSP9WZoCm/e4jtO/Dv1EzpzUcs6aCYY77995On3Zb9bcVm4xKchHhqfVpU3n5M1731XpPNC+ImBEvCEHLSSCB2NhUw3OsXy5sH+vUuN+SXRzEvIUGHGGxQDxnzY2jCDJoSYAQ2jP/uSoWVpXaevMbiJvr7f/yYW0AiixQa1ykahFAs4gGzVpP6wU/p0TnLrDBGysZCLK4xjBowhsIDAU/nMbomK3aPynb0gqu08AYWhX4Vj/piQPkrTvFw36Ndq94yY3/013mM34RQUdDW+cTCTaiDv0FXOxyd9NC1gDdevCJngrrcPHz8m2tnGgf2ja8SGUPrI5MGFleZwPpWzP93IFWacNNfkdDKeIDZHL4IGqDQ/yyYpuPb2KGOq1eM4ZS2AkXqzRifZkvER8RbfXlly9kgBPDtOmipN1xc863XRGXe1zkvVCq7zvj7jEu9ZtGAH5yT3GGhHBqgPbnSryGDr3sz7rgCQ7SD0K454ckS2r0qNo3n/cHctKql/Pbo517mROfy+91sRJdvdUE9XGIUiuDk3UK9zVNHkwN/yx7EpOO60d9V+sMucEuz95i/itJyNwZh3ILnj0Y8ZqqQoF9rK6H/8guchRzNihoz9rnFgM60tNdNC2oJLeqnxLma6hLeouoBYMAV5A0aQko5pXA3p8BkVJV0ZBcexEGGixdj8+jTUEcmeGMuYcOqDSuJ2BcCA5x7MR1EvRGNnTBQlrSujIuqiPgnTJKWBkfpJFZoioPvTYemH2d9KIEhuyjY0uIIgHsfdpKz204HtJOSqI0qEHsYTPx3wExtU3Us2cZL6sKTXjL3SJ0Brb3PYerX6M+RNuOxNGu/i+VStjztpbkve2gcAwBUGXIQhqwpXG4ce5dMUGA3JBDYMlheCOTsmKGLQHTq3TZweqByrYbkYI2mxMlqfbV2Ai9DCvU1/KVL86oufL7kdzPooC+KAaRdNfTWqaWibfgodXUOBvcgM0hRkCq2lcIKfoighcc1ZZquoP6R5uja7eAR7eZ/Z0xy6W9VC3NEUTuFyhm9R9ACZKbyrQdZOEVcjUFJypHNNFBcc18lHuctChFK6n15lRMdvZlwzFLyhIoFQlRHVfe3PgwuSneLS0c/sFFSdzyhcL2e3bB8buofM9bWJcuRD0earkHE+dA1j2be4K0RFXNSOkRe/d7ms2ae+5b6DAFvsaqVavGtPD90iDFw04i9frxhXTBu2Q5nohK5PB+6Du8VAkVy6iN1/S8Dj+nenNvSq804DDsyKFfU7t5t5Fk0O1vSmrel+zCHcEtW5uhI4F78Gb7/WA21lrjA0SK5bdKVoS4HLhjbeCmzfDHqXosOnqmd7HAvhWBgAZMENTN47p+oKEFSWotrSDbPy8uy/Qo/GZHnJzfWXIOcjHBhS7+hy2KcniF8jsc6vLY7FnHCZTfQjzlu5bjiKtKlQM94HScHTy44quO8v7wL6mZPDlHhYHsMfPC4rXlWaceVUBFkrZ2AJOFIDNLbZ76JmVr8TiawJlTfhK2ODda6zKlha3xaMfUe8POYQJLPS82UX2h7mYUZRlUVtND+a9lpQgTBjktWbMD61zaQ27r0NDGNfDRWQV+n1AQ1e6vCauq8TH1Q97lpniHSoQhSkLDEhyJUPD2O/6PLEwVYeAJux715fuyrSdDJ/0KaIeSHvG5YSq4CM8fpjVPIvdGNpwswFz0GFx8MXkHaNOusKe8uxXGwVOAxuvrAKmSWT0GB0kAo4RD2kPlZqVYelsSel5naDDQIVquFM/asZfJed8DGZ5Ziv4XffA81trkTanV9/I00KDno1Pqqrk33ukvsWjlwP0pG2HAwgZxQw8BA2SWhmvKy0kV5Y5a9gphwLz/TjaRqTpcHTBHzNqH+aon68DdsWwmocIUT1DSqOYCj27qAa2YDzOpaUbCNXkYuew/2IgG/e8E7f3hbTLEZ4hZlvsMket0j/Py8an3tesTthAoy0xhwVjcwp4CzZljXVORmb0NvIPhDEu9O3L8ED9C875NhKCD3SP2PWLQBK/hRAb2o0KH3/ndQM3Osi2TQ9yfbRJMh2sCUeMd54ssuEZCJIbjekGaet66cHR8cDii/fYcv12TvFCeFNU8Lz0q1G0yjpWohetazK5MZAisVkTTrI+BSROHrFdBTOAUgEFLHZXqoO0SziXOVQALCL9Nu0Fe4O0HNhZpvBpplgBjnHXVTmF3qPaKQhxl1zcQuTDYJW4KkDoZPHRj5iaVbzYdCmdgFmDuUaOgnTUmjmVskWuOrew9ANRWriVOvrHCJ0ZaNn3iBeafG/hC1UN/0lcFXcCGeSx33iN6z48v7JFDDE5GndsCdVd5gojm5sqt3v8tTVo0C4qcYnZlKqd8IUdpJw/mh0302VRpV6e40ChXv+YcJ0kQAehHFZ+IqSsfAkisO5HyWO4ItCymTmh+mfeS3W1N8x/vVqDbgWeOludhJ4TlzvWc5KoYpp4dETJG3obDeeQ5ghhMT+9OOkIxRtcrmaMm/MTyEIveVulvE/qwcVMs7+tGjiQITVZDD161FbnfZZxI2Lf8Y/eIfoMlDNnawDMGgjZBxc5AYJZDrpvN0aMhEU9hTm/GJG2s0pMHdnIIX5Qg8ZauVq/8gCnmEH5bdGyAPruUv2FZdsoNvMLZL2I1XIt/498BYb1p/xIQWrUBhfNdyajJZb+jKn+wnj7yYNufrq3H/JUdbw3VgRC5t9oqdsYK5tOxqSftZh7l7jD5PDvqMqX/KhKy7nPJox6Hv1HMsrNjt+48oJhH2qKY5MHwxUNmnzJfvA8LtlmHGdxnCbTDlDA4mq5u7Vy7rs1J29kThMAM0ety3/7jOkltdWpJRAkMxCGm4VDz+UhQ+CPMhtFj9WyvaE/2s0YxOk15TLM0SNhMI6CIyBfoS/16KD9Xo/Dai1a2s8Ou9vJf55GRHtTelRnw6m26FmZwb+OrJnd0LYDwEqnh9PEz3ue/TXh5JXqcAl+6hJnSm++4G9sO+Dfv2UKZ5gfy60edDwGD+N0BFXCHYDB30OPSK2O5fimTZW3z87oHJGmPm3+HK3RGv43Mv8CkH4FL0SyiPoS8IXJxtF7byj8Z0bJURIZ1y3SnCcgjIjSSAfSwUynjfUUrBb7ANNMJbJpf/5Qku/EiB+dWLDfzii+uYaRoHTaW6ZlXnaGlI334tkTve4N5tCFkVb7/7L/4HgZ7rhDvPDjEtl4P+OFuWjofAadlYeQ7WAqsiPOn510Ai7zRat1l0gGZ9elvE31Qf8xLKF2oj20+0roXKD32quNmAsowzXfa6eqz6wl8LRT6dUu6y3TnUit9fBjM7tDmHeNQxPEnuRdxd52kAdEvRtbJNEqHPEhN8GltILhvwCvSWA9awAjjtQBjuD1dlwl2HslQwjYcsuIGRGPw4CiHQI1BPZxjrVzKwOfIPI7PhrN1SC9m+2kPdSXTFSrB3NtWB2k60MS78s38KH7x0kF1BtQ+JvlbFLF+sQ17kjS7Qmewv+95oBTWVi8AqCH2a92u7V5ZjlUBFTJUANwP6LQQHXcPgaSEu/BZQpd/9yhNXL+rgKy17lgwYr7+KlPvzDcD+qeDubL3UXK355PE2oR3OyqLjhgYA1NH9fNtAE4X6NV/jcyvFupHhvFP8h2bAMjxi/vajuNBdwo4n+o5O6VGeIgU2g5uwGPF6KMpl9KvSPFAUP9OdDSXJMb5BiY6XnozIjgorjtY/j+ZX7qNKO23XtrBNZZwezbtaGtJ7rRzdC6cufVjyIbciVKeop3IBsDpe7MO7twy3JVOasyT9Rh1/ydxhwJARasbbeUoXG4wWWO1dQOc0HY7pYWoPniio0tKjcTSKe+JeLxdAIz78DogTcVYFyYZlawDhs0IIjYNsISfPg67An/iJx78vIfNBbNPyHvEbWsy8P4bKHabFnCTafeTKrNIzrFrfxFBB5O7YyqN/mCjq33xbx8gL0fPuX4rG/oshevrvaOkrrR7eWBNkcTtdOv4S+v7UFlWjc1D7cqHqNNDibMxz88SFhSezNfLj3bdFZcnkH3TpjZ2ZRoKfWYv1dKZhsiB6RMCsQY9z49LFSAP1yEsq831av9FXYc3W+Qx1WSGkuJVlXl4cfZzyTcq+cNCWKCJoDokd5aEnK99AkkFt68ncS3f2YBB99XHM7VJYxl7dRbxdZ78PWYugYbE/y2OC6SdRAedYBVtQBT4mjSih4RUkOMeuwPb0j6WR2glBYmA6IBTra+ou0fItxNsJb0x4uUUoOY7nm0DHbY212NLG9VWj7hV/Xnc/RQIYmpC21UVhM0727NjMKbHca9lbLlTb71xIvLUKudl6BJx2b6WuWXAyETI+rTHCEOGrhAGr2Da+UOFePAx0zeCR8SEpBA5i6u0PrSqOC3N/Ab8jaa2Ay1icng9KPk5tliNVpJrVQK0im6xXaTMxKa5NV5f9RzhloGj3KnCmrKfelrgZShU59liWKRQDgUtH+B7206VxufVsYUbHXwLm2u41HaT3kv747NmG4iRwqc5S6dPyXpGYPZKtHyglc27aqkqb8wqp51c6LzGHZOeeC9ZboOtRFlnKhwegxbxRHDfItWDZwrUBJngRQVLMoTstg0Woy87uEuHLoa7rA5iOoIDMCmCF+EIytO1cTRN1LDMTbxu5xOlkApbyGadMxVDO3gWr5plIXnRx5Yexpz+agP/iGrg1wcAI5s8gmUqYTRF1kVo0PO/cidUgjX6QcaqP+pln7VJKVet4G6DoxXk153N9w2TUODo5Wm87zbBzMS3j5VaxROCPq8ZcHKgxm8d32EkH0jBSFf9Uu7b3vTX69s+Z4MLvV4Eqny1aqQlp48aVtt+nUbp3K9Hw8DYepUak3kWc/EHNdbwjCcF/S6OfgZeSDn+B6Lq1i9MIzszkwgZr3SeVerYaXprK+WDmJ7npR/OltupGziNI3GU8usWsWG/Ghsy/au1rutCgi2pLS2vCs4XKTpZ9Q91483GFxzN+JqU4Uq9+0zEU1sKbARkdsaZo8C9FQEsHvneSsaNUhycHii1lXpkhtEzQww0KiS2xODoN2LITq8WRjumnn1HwIRSjFRJTb0zVrt6EY9AndOKkOnvejS7vTqhBHzIkN/xmA1XtFRVIPNxryXTRA8fWAGCTfZiudAGjTJjTDbL5ZUErb3SbBFRBoxocPVEtJIlipP+RV7c02ZIy2eR8nH6NIMeCjAgILPEDzAHvcQygnCKFi9mHOOAudzmFfPibdxf51jN60kNvOa3dT4lB/8U8qA0Qn8rkvzVbVnV9/oD8p15QspwlXXkM48FIakltm+t8JiMgwxCB8ayOzIrAxEBnDMTyX3ZTwKcoIg1voYC5AfnJ06ITaw+08mwbg9MduAS/C85XhzyguqgskWVbogO9Mwh6UQWFpNJ+vxAIyQTmpY+Bl/PFFyePu8chmhu6KSMN8LEkJexEfRSn6hgIoR4udsdQaRcGdH0a7sw/fDzUPWFR6M9urEpXT6YL4PsN9MDXiR+K6FDnNJkKfFDJYO0UjutvYbxfaFdfwx/ySs7lLhaTnquapQe+4Hrf0mcVFFUlxgeE7JfN9gUKf/Ot+SiFA9TROh9jnTOCSfJVCY8V8jviZla1bxGpXFdU5xPRgVN6cZqQ8Ypgdxt3ClRixPamtI03cldVt7DBsJ6h4gBp2Ihhek/4RGcmrHG1mDKuyESfRLrYfTfvbLCqqMtaZzUIteUOoq48gAMFMu0YoSEZNcBqYKLxchL+GJAyA+dv0mTfizIaoWgp3EePocU+O/+tNGVm3D39xPjnCxpSTANvg923/g58ysA7kGXe7YawwGAvBa5enRzVWXDVzO6/Gm3ywNi41lGIdQih4QmR17hVLXIhe0ZVwoLWLfdnFAP7jtqQz5k6o7mvdw81zmjtZzFAEEU5ole88w4tjguAJmj5A0WXUYGm1FprF+iQOEjb416IQ433K3qzMb/2hYMT82JvHRqCE/KAGJg312tQTKdQyCnaWbhyUO12Ec3Nrgr9YVjRxFWhQbsHiW7wxVIh3z1oswzYWuiDeFZOuxvffqmPebtwkwrVKTaSAoP+8Vw1XrVt7Gs2H5NnV0Zagyu6YeCg6Si/AniF7bv9E4BWNRwNW2DzSfZAn5reTUKPWgVAde0uLYs6mHZuw/Gxp8GSM11WLcbe8aOIa850fq+HIxZqFVMegIgMBXshSa4plvZufevaXVGySqiEBQYspTY8j36tPzZJbVOXEnM+EdqcyYEFccmQRFVwIvY7NQeD9PGanHwYIOuTkvEjDak0cKOfn053ywObg2K4jBhe4/LbXafRR31XhRc3DxoG3TDYGPU5yQ+K8HoL2XWgpSAgwL7Alyck9BW/t80Y0NaG6eAPAT/efCahWSJzgjiDe2H4k5rRdFW5i/ndDA1b4T3lEqslcd9hzwp+IxO+QDQrQsnSYRwsAqHD8hxtHTtr7oWuAlH81TRVEX/GnNsMYIDiiyxEFY6OJiH+f+I/D4/dh8HsQPlOJCzsKYKQlI2PjUpqY6cc+N6jED3DSeJA5elnt9VZQC5zXhHjoOLbX0OC8m7Um6VVyVMhbyS9F2FlNFkXM+2LALHa2LCl/jgMwyiHMJ7QFMlY2FBSEPhSCg3dRnjqEeMQuBZtkNLqUi1RRfHUT3ebBKDXSnpOu6C5rMQH1dobm4vOowNO5RU0ZzXVPrMQ+LlHBQJr7C8I58066mpPcx7hLqfBTsEzX0U8kamuqaVPyblKZG1xRONgl3GaYkYqJX9nmstm8j1wHiG4PlccPECvOocRvj9pZiOio6g+hRPubJQJ4sSc9znfs/rXKTxIP6spg0ZgxMef0sILBPOlRWhJUNCL4oy+hUB7skHx3t4viFsDteRJmVPO4QjfYEQl2xPJ94oYEOaUD2AMaRh/llfgsyZc0DU/JXz2teSz6/fGPXc2DZayZXJNlsnBPLYoKyqxEbtv0+wedXo6QidOdJUlWWbFTlG+qOIXNGhiIlqrqAHSHtvxZWgF4uc3GSpg6zd6N5M5YtUKTUxcB7vaFS2OWJXnnOxW16TISAPfjlLGu34uxPJCPi1/AWQ/wb20H5bivaiggse34GJT5C9aTDnKVzquNyu1tkF7vfElgI024eA5IvBdXt5hdLIjKXbZuHns7S6RBA/6anBSITuItNKKbBWhN/H0IyJfh6D3miuiZUyoFSnAPxZNL2MJ+gEQJcrDRyYTI4vmTFPookucuGHUIa082/0AnTIyawLVQ/4Vvjbul8xPeeWedSGkKpU1Ad656/w50oEQ98KMmN7ajRRCNA5FAsOiL7bKJ6b23n9/1bjZ8e/xIw7mSfgU6ZU8YCuGyxFa78z6BcjgGFCxvzuA+QR2NGyAiMjX/7js9E7XRRZSxM9buEDMQBLTY4ab2ULs7kFnytMqHTVh2tBRK4AVGBlqyf/2pQChRwojb8R48BTRXo1H52VXan/499y9D2x4EHXhkYwyhezCdG21+nGM17gLXcRt7z0axVyLgj+wGnhS71Jugq/OEy0mZI4CpyPNEkxrLQ8HjWVHDVqniNsHNylRi6cgh0EJgwVX0qvvzh5O8HGDr5h1PhNEG5aW+sP5EpEUCsUa6l75VwrOopTCt0D2tD6fv+5e5TKXbEnLQ/RwUINJs6pcC2YRMIgOboHtostoKHkj103MncKulxwgAJmu4aL1r78VdXgbbj/2QV1da8s7y/ijxetVUWH+O9lMM8BHwp15R/fC4s8gnNl2YH2AwxBEjDWtqcNjDVMTrQRD3Jr3mZNMrMCnNDe95AdX3S7OQ9Gej3gflkZ4exYnqs9xQcTlQcVoU+QQvzggx60Ftv6ETVXcEd4HM0u5Nwkp1Qwo/c+EIq5wYfSqarcOONhfXxGVq5mx535CBW9fux/yvUQ/P7DGMk1ACsPIreTYtALGHMg3lxUAzPly5JCyPzsltAmjiL41OqAT4YE9+bvr/ffL2TTw+FK2OvrKMGGoCickXbz5pfnMxjrejmvOMvM83f62yGtz7Kl6FKn586s6v6vXNFFfQ79Bw/ExBXtPkVX93OSRwK/TAtMDE05LAFCxl443lwX5S4PxcFzJtHzqlVlsxo5lkVguvmLcM7FJhaEfY957EzlfDYo7nOE/7KWsL6EmHQcKSKjuIuaajedGVty+mwaLVzir+/IRjTULYquS2QLRG5yX8xCwDDb8So+qO8dKaVPM5ANAmk14Uy1kBJHQt8vXLiIRtSCiCDQxjL2Lxizo630uNsUR270yi9q5xn0pDof6hO5y+b0Hy5f2ADzv5rwdtUyQgnBilEnokDSRBmHv92IFmO1zHHPLkELdnDZYzA31bNHVcSZS2eU6rlx8ISuVUVL936AL+brh8eIM7xk4v4Ay5daszDDiS3/EUdSMeYQqioMDXKqSkPYqM/WBxqpEbzBKP/ZK0diHzbWBAi9RG7aC6ONlMs3kd0dT3z5Gvzq+xlF98jTeC9EJb37Lte5kHowBcX0mzJFTbazKkY7a+xYfvihf8QS5dvzJsWjGoIt157oAL3L9hZBEyBzZmDE4b9iU+ZAvsWM5QZQ3fZ0+PCyTq4pkhCYS35QfnHrh8h0vyQWbtroOzQpiIsitBN3/ECmn2F3hHuLnpl89YWl3HkMrkH0lZdx/29PD6eRuX0gqdHuyeHaFnRuqSKVhphAquKRuWxxn1V4gC8I3EoDRkpRzTPuNtCEl4Al9xdwdPYKY0eJyULt5Yy7d7a4XasNrL9oXrb40UTo2K0IPCTAeRiQCv8iD9r7WR58ydTAtdigfuj8TggnttEGpWWkC9RFrJtHreZRNB5tvMPU13f69179fgUvpK5xfwhsVDmbc/MRkw6o5u32Jy6itvPt5+vnr7uil75SuFYwCiXfJaUe9By3BhgC4VF77j0Z+ZoODAJWkpoHU4X3ZF1vryudLvXnQ8XlmBrapqHiOXSB0PZOsx1O1PSCn1sBebL5N2k0ndRrq6OkrrbX4e7J8UeonOzGfu+9lQlUZYsYcsibwAO5VmLdqUXdJKZgrceF3j0h/DuDdlOnGzNx9i3lSbCs3j301OhNhnPaZ0dIsTx6sWrkymWWHfaKeburBAWvStp06g+5ww6yL0jyMjzWsbSZPjrn1fYHeeYfCvHRnzdPBc+mu+vEKcNBJOMV9/SKuRAan1WaDPYpvxUOO1AoKrhrlfjOuT0C8/nyvFa4/naApoWCS3LxxdZr8J2GtJ4LcFuly0z3RfDwomZavBIUo9HIcUzgc6NQVa2ZS4qECw8VhWq7GBrODlKW5ojMqUnu7I0ji9VKSCPWnS4eUB6aM5ml72wW4RRdHoWWx9IIiTA33U1nE7u4Ci53wBDjsZb4B+wZNFO90WVfLdk8GegYcU1bDw4+UU/AJZczcPr4WJyAP1TJi5OXvomuHS3l1H3OCsJ3nmK3srRMZrZPisV85jJPvsB+/viFano+p2JWThzQCZy2z8xfS7CtmjbSUJYiISnmpkvuJpZt7OuMarw6dobJWbL4A2LnVaU3PfU0Dl9ElPB/LTrHUa9+CFmPeFSKdEKbFfaj+X67ow2qscoxWQKZWyyxWbZs4Ruin0s7FIR1vhDZnGTSPykWirs1drUnQ/piYBia5j7ffYFCeRRK38ijvmYf6lVrfSrRYglZ/8Lhgp/NDQNIhc4tS9b5DWocwzaR2uBlpD74OTAjZSHPD4DMaAksNpj68qDkLYPyNupla38m4aF70sTV5HwSXSnVjFp8RaZ2LN1Xf2humLdyUBaxobA4rp0Fwxt7GmGCLJtCjjB4xKgIwhzyl0G0WfyuOCVZDRbUEJ3WEfn+XPxzXrBNPti/z/yubN3UpdXDUKrramoivDYrBLmJ0mXa12fOk9PMqa0jfkFW/x0o4GtykhXK21MBeFAcWQDLY1+HeV6vtYQABHAJXKr1BgZp2vkY0lEKCfC1liB6LRLIg0n2NuTFAqfGwChtouIkZhn/yDt8grfwGc4zDakKMSCidRE7CCvrAfz/MErYHzl/pq/XKLfR9THQ81eDl73kCjD+Gp4UMkPOtLETCes+SVNRxNoFIcp1Shrm21WqP9qVAZjhM2ZfisR2f7zAjqVDdSI5CBrkik2He3vTvwlZtRGL+M6CaqVxtU//+d9FYNYBREagEvizYe6SCJw2lT9Dw4fUkvhJx8CFSRMgwbB+4L5hbJZsdzles0NOyRPJv32Nzi7Qo0iuy3n1/HQC5+sE4Kygq0OZGVmxry21CpvvDwWSiWshguOuI2yi1h2UdSlK/sdEKPB5/xZziQtESfVy+BgVDnQeVbaNVt6G5ceFRoRIUK/Geh5m09QQ/9wtFdpRthq/99zvMf7zsedgML2mkCwI8r9tm0UxisvzDbSRWZC0MTlc51hMPVddiAxIs5HvqpDxxKtPfSOWGnwSsIdxplY1LzNP7QSKG4G2ISqziTX7eK5BK/HLepvLlq+e167Hn8JqReRMj4ydBiMdY5nBIOPLa0/mJfN8DTU25A/Ufa2WawTq0w80UDJiHnOYD6MkxZnNt/f49LdF6IJth08SkqkCFunSTqH8dfJ3iCTucUpByUJGQDETtZTnMXJNhsOO0DR8hIvoyuaHeFFRGst1pbOcfXR6+xXwyD0QiR0WcgfUFGNPYcm5jB60uS3ie4uVsVh/r5FiLul+rjbVJ7LoeLXAcsX3b05wuHTbVtj1JvbMvf3xso1vcp3b3gVEkKJQxVGII7Mu4hDIK+3l13Ug5R0QOjHMFrxGMKsKSkUKEm4NFwkvRT74Uft1rPJVYTDzudx9lLmxR2GfPgWEb/fm8tp9Nx/hyqp4ZuSleWp7NszstKMufraY5K4gFtFPMQE8+oVLWFg1ew31pwWVZNlqJmmwN9slmlub0g90/bB5YeThohrr3Whn0YdFJ2xNlP6qdqs+rtJvyyBf5XJqFnN4CQ/aDWJrpFRS55C/dLrX86Aykmj3tad59l8X5E1L6JCneeIb+vWB/8ztkCZFxr/4f38r3tUb4yzlyhXguNrF5qLfFW/yqH/862Yh0cR9mygB3PvYEgNKxMixX+SgXyJgrs8+JZpsQbNyxRmBujP94L8TksPSveKv/EoHUzNwiCPczHOstkOvS8pfQpoiOEq9WTRktpRsnrFNKVH+4UjRc3zFm+bT5iD7b6vNqcA4YZsBL+mFGjA58oR63q92Ow1Y1pMDeEugnyr9HZPXolmcoDOOZT3P2Lt3ms6BIB07u0Qe4ge0fTSSZO/6vxUVw2hqw9VM7G0uEG68l/MjWBFkqXcR5Mnzal4kM08FKT0EkbR1HaWNBFxropNAhOPReYAJdywN/XeKDZt7opOQy5wt85NjCKv7Pu2bKNBTbE9MBxSLQx3II+y77qqGclbw9bdbBbhaw7/NxHJpihLhvyux150xao/lR333dE096ZlitxNIz2+jo/Ly90EA6y+ohiPZaZCNPMJablB9qaLnDkYEdqYYD7w6htGxgpyLiZUiuSVoeyKdSUkkznn1WaUSQXZYWfse4K5wj6YggVYLCqrN8+mT9i83+oQZvZ5xqoEZV0prIHQWeYX/rbfJxHaK3weLqL15qGnbSJz/1wtUjh7Kwajxtdv0eHMbyC7Cql/o0LoG0dKXotSi02xjOOj4gui/BAzBOubE76HQq4M8RQLivkCnMC1QTWRhtm+w5PgMzRecjg9wvKxIlyywcvBV57HOw1+/U5lJqn+I9BHtquCGGYx7EQucV04SHVq8veCMABPjoNGE9GMmcahbPpqJ0wqYTSG9Mr3F0vuQ/fMG46/UN4iKjLhfvhu5e+54UgjzGa/YoaB0zOTMxSy196OeR3luNv5DUjIyRbMdQQ+ikjjEraHnJCiXVOU6RZp3fLiyok5Wvv0KOS7lpM5NOXVxecbWOOmz7jsHQqzLIsApun4hAyf11V/VZY81u6M37ogtMUnBjX3b5N+RsxuSvno3lj1fS0U8GI53H1SQ4B0a//OBUeop4xmbLJ49wISBdg6NUz+5Tly5OVT7g0Xlr2W2OBOIC7b281ffV8KrxSwAXpFv6waJrP2y5bNGQcXKaEg4Cvp0l4ogtFSCiiPQa0bU5eD/oHxUl12+77F5JVBeFo4GQTCKkM1xbMCZxIZsmiI9gWvmuAkZPPr9Kr9Sblat6fBCu/1OhdebiBS3TDPYjkx4QfpsoOb9c2lnltFJOZPhHE5l/kS+ctKFJa4pS02LUBirm2zabtd9GT9VjO2FKhe05ewQd3vg9BItHXE7gkMHz8WAQWou3x/dB3jfV94BxBiDzWbnyLG8NQJhP95FMiaHsZTVf+Qmnl6uGwx201FlC0i+u7lV/kiPmaL3sreJuPVcfCrlqC0J7GGYeOWFKjE4ZsFe4hl5sAtKv0irnSzIng+zr8V0oXUE9LdOK9FYAOTy1ldUU+aTBuESrNiTnRecuoPQ4GnSci25xMLAgU53ai5hhn0ziiNDi+3UWQg/WiikWX9z0YiJWd93d5dd49VLWDwsvHsxkFPb0WHlB8Sj7/ibCUgb8yycD0/zjCmH6LDVdFQqDtQKlVs42YYQd1t+OQqMAMkWEghFFnEQiufelftHoCE1otlQBBYx6MHwPPcT6e1mEKBsQgGjcILmz2+JtNI7WMViXR4aX+C8tJbelgF3wnzxwVuKGpQ0ezU/w1IihsmmK9xVGjWggkwjUDUejI+KBl66d+xJMosKEGCW1ystw3HLyE69xLfT8snWgVilng1QN9RZG6DBr8q5N01iWDVDzdbBavuZeYl15xkpx5VewsUiJlfr6HKKKtCzX/+HUmctlvlf/iG6DckVZ+FPSfa/YqecJQNFs+d6SJjKmuDjfHy+mVIJkwXJhkKYH4/ucMqZAIvXMW+E5xRt3CT7tpi7ArPAadJJFIguJAdVRW6QsXismBvpkh569crDlyjBx1FOj3SzvDEVIW1kbCptDWFNYIcP3FxUz7CB/ZnpSPpQTWNdTK+s3qEKkFcQfC/fOec45EVnWUkxGkUD+U8hqHu+xz24+nJyhqO6ck32rw8ko+V5DTMQNx4INNjLDQvsIXYf+mAlElArMPBW9d4vjqenRetiTsY3BtUUTWG90TUPv4i5t2n8ZfNbNUuY6vtxhSIy9fkhINE3bn49EjjvXrERKaAP1f1DZ4sHdOXLBOZk4aH3JwbxRLwnmVWadnQ5esG+44IBYIbt9+B9AoCSmC6U512dLT69Pv9vGv8pn6GAkQVWQm0kTZ6tiwNgXWhfZ9wr4VQob9DPU0gggeySrMCUadJ0zLZMjUpT9ZEGUw/g0pV+9wqIOO7QvNm1U7+IeNIthQJntAtC7pnbkjIVSj4uKZX3bhzDkcSSJHzoSGx8NZjp+s4FY5cChYJ/HpGP9qSOtDRxGYfwUiqbMY0isfHkc64xwLyFxAGESYPpXZc5HanRfB2XRisU8DR1Y7MUBTeBg3iSkSaglrLtH2TbUWSjnFOvCYnzSm5/SZe00ZJA+ums28Yc9xVr+lfkrX0CUVzMFnEGOqwK67bK4G6tqz3ntDrvCSpFLSA6saET0LdvMTSXP3+qJi1qV8kvr5UqTIkbQ71QpSm4xjMJNNoS3Q3iLqu0yR9Nu84Dw+vjEkNf3AMxL1e9bcl8c+pj35g/H4LnXIhT21hk+rKV6E9F37sXo84Z8z0SDUP49e9dLTGnr8FeMn+QZFV5GKJ0f1Gt/ImHIyskgGmpNtX8QfD+lVAocOC4D2hdy/FY6qQNW3QECwNREX/FJ707+CC2Wmlc6a5j7UJ2JFzIO23Kf5jOeGI/egDDgEP/s4ElROHiYBHcCdseHcmgqCUXKpnNRqWIOYw4S0gxNNG13WKWF1Wik8SNC1IgULsXqiUMDexP4RxUbWyR/g4dxsACrUJkRjV0sqXRiayPkF9bMM6F2yuInRk2JCCiRqh0UwoPyHAGOT5uK8W1fd0iL+i8bU66bZau37xfP4C1OlpPZeLhQ6JBse68cTWqAwZTFCg37mLyKBql39XMkp7bBD+7da01rcMlWCn17nNTtbX2hiz1kciMdhOaZ+nT9OrECiEZzDcnrJ4M9uxh5Gv0FMV3WMsuPmk1+VJ6ZY/XNyiAT9OxKsfI3kBfOQABFpBvPkHIg7pynSDresE1sDTvd6w24c78O0iLEUOpCycvUW/aosGNYTv3TodAgV7YrooMnT44iKigSWb9fkkaHfDFYJJvaay1dUmxGLha+cfg92eeB9nuoQjfGIJOsRs3x1i06FM3yZaFuQtrmE0PIlAmKbpUWIfu0TYqTI+G9JL5Y0EHP94z9gJMOq40mG019XCEKyGABzq5vheUzWiODn4dkyOC2mfID//SU64JJ3K5hqzWK6RC10keUy+oOjusN8fBNeHEr3rFULaAY/AjPODU3RS9Hd753A1EDb/Vc41LQR1K1QxYsZYSpU2QyS3ea8t7ABkYtSV5oL8ZcBo5UrpH+78eygzorCiEsMibtD23+vBGoYQmMyF1jzhfuPpXdCoUmWP9BGAezFtxKbRSeKeNkUhv4w3rtMNBRrCJx2z6BFmx+qmuzIp2a9IwRaYII+iuXxQv2rGhbT9j46rFbLT9sakq3SP1xv30acmwa6f0rwPvILtueFUJd8ed09UuiIP3c+IZFn1WNY56A+jBOGWOEyRN0jTQ/4TgQvLM7qqndKLbhNEmPC3CJYCgszkSRFHIK/n3OvmBPpY2HUkqDwGj9QSXsE9Mmp2mQZQP01ilnW/J2J9JAgax9DykmeaRq6wGMQmYKm3dpjqlzXPZKxwMViwDA0Ij5kaFbAKjW+AanH7Earxo1FkrNeDG3usgiK2CopVawosZ/9R7YNkXnN/5HXAzrWs4qvccC33TYzdEVnqPw/AYwzXXbf3FDJ2oZ+d0k+jFuXmuY0OtRA5wGNEOfZPrsSDWutNqVeKZC9HtVriURfoCgdhXu5JhnAOCcCm1WCy+YphD/wziyLfJgC8P88Z9mPZqh8+4XWsRQC8ZzBkPWc4gP+PbIwTDaX84YUZjCQYm2sOkl73KwjOs9VXCoTOSi7AewZFEKQIq/onafLIA8qobUnzhwqbRbtGOhVP6cKCMmovadulyvCecfekip5VNCe1w05siJ/Li3UgkehBbezSVqjOcViNpCgq0s5UIw5v+Q4NoblVIY6z8amEWKbjKunAGbPzG+2ljfGzoMJtXbxhHqQu5a1iro1WziZR2GFXm2q8hCVvnS+Vzo8JUsPQdyAkAKmcjRN2GfmhGEQDtdIU4K/9oLeikoZS9mxkynvFk4qJIrfPKOXN5SWff72yvvBwy2QxsTA/Mqy51VNhS+1Eeg9iRKfesFiLWt/VMbUBrXFhpvQrkKe0HRFzfyGh5Ws/kRsReEsxSVUveviVI7yY5wl9ikux+IOMQGWPi3+KMquCZSr8JmWhlNrCP1olSxpO1ajDgReFpLO3HC9y0bRIjkIlVpUfK3jjm7UGnlmkZL5P7li6w1Cf90931BA9Tic3C6BTFPU5zEblugEWLiWlPAcRoSgiq5rodOu1RUhegPwgzewSVyhgKV3Q3sXX1pRIC9EqXUlOjvMMc77u52tL9k6oFxk9b1a6dFG5wKdHrbPnggIYiBh8E3ClYu9uXrvTlldkEI088cjgmj0a2miupMvGnJCv52Z5/trcQoX+Rbg5RqdSuKiLvHgNgEq6kDtDdKoz9qkO7ituWqkcB8srmzuKq0wjv8NDMCUOOMy5Iy9deWmPaHrOUIM4K1NTb2lkpQVKJ/0UOoOq+6mHfrPvafHB7ryaP5txf1hNdWGttop2c6KHJTw95cYgrFVROH5QMqzG6AK5zf/9kuZq3PYkUXlL2V2hKNBfXa9JDmmiAcux4mzY+/ofA8INFyoc2E1l4AUL1tpXOhAjMGI2HKufxjY9lHDHOmG65qc23X5WzcC2Z8S2NjOcrQSWrozJ2jswKoVxWurMlw3h/8w1uaekIs+GDQF+5ueMtHZBsBnlaeToryoBBddgJsSkU9DDokHkH3IZXVRHwOK1vijyQaXP3tVvN4R5TJ8Z2IbqJLuVG1enTRVfMdjuutU2LeP134TrMD9SVAOY/wATnaF8ph/TwLDNlQPH2BVHEGILNkWkzG1aTmewYHX44EdQQib8jNk83AEHH4/8+9hiS+s37GalTvr8y9V7XSfit/4cf5sj9tBUEphmXV7Q6f6Um79GNOWLbC2J/hN1r5No8iyWyZev8pi/t56MtnudNWNx5xGaGG5xepSeeAeV6eoemsyE0OwZnAWkHsjFp9/97xl0BBWOHiR29fv3WihZfKL3WL6xKStAHUzpwYL69f+MxiQ7mOvIwti8cmi+TN7iwzIWJXqNuT003LLNANbPR/Q6fkqr22waATN2+VPGvpbxgqZSYdQobI5ZwisMw71WYSkGoS4yqzds1cLRES8gBSHhAyU3udJG9oug3bfkDsYPC8R3pTgtBCse8f7f10DfQpJY8QXSI2y6HXqXO8hUz2/TeihwfxyrbzC9fydZmiqStFc5QxB867mprf2ub3XOtjEPf8gijtlI3WvTnxlBNfFQJWbZlS90mukgXiVpbrKHrGYQNoV3sVHdAiL+BFRrV3JhgJealCFJIBUrLIS64JJrr1P8yFXfiIraaYaDiGyajjFZCUsO8UR08vHXbE5jQ5pZwScPX57Gdvkk2/swhcGb+zq3cpNEWGZ1r6y6dcBZ0jkPZY/pAJD8kfDRsv1zlztLPJRJui1z+rS0YHvnqtQEhn5WBU3AvPCjinl7COlbxnM7eQ9D2XlzKojuwfAUi3PeTQLDrZWeZXwfJsbIOSRvduxAY/fcMGkcNKGYYkyuk5Ev+1OXxFVoCspHNe5wKnYzTEy5d+WXGdVEUcvDILnIqt5DO7YPUqi5HYaiRoflb8N5unE81Za2srN21OLgGxFCx+BDeP/ofIIobWOiFLcY1rWc3jPJ8I/WMBxau1P7E9RglblOFenlciDrPPQMhIf9iDwHSRDwgC/aKJwI5Fymd7Fszo53nmiw04TbuZqIq/CWU7fzDej37aY/nzsstNaRygSZfrlODKzn2rxWhfmu1zdJoUPFwOt/Y7UtOigx6JIOT0c8WAIosKQltV90TzF3uM0tG/5D2hcpPymxleI6x4CfmYdYc5OOScWDmufksKShsILbPUuRTV7UEwCqBUBSSKSEQGQHT1LH1aEOn7uJHseYwhomydgSU7rMI/s5+x6ak4d1CLqe4xdRla4Vkj+n689zhc9ogPRiv76vEe8nT0Gk/mVZX5i2f8EilsqoQkIr0Kykbf0aaFAFGCjJ+JOqbRg5zioBCAmsNx5U4FJ6opmLlMLU9rpzDitgXM36aAspV7SaqJmLIfsyLouQ86+HO1SFJs845XpOZwiTyHLGq5VYcWCOOWolgksSmy0WEGbuGhftWabKenMw54DNg//aPe18VI7MU3reTzj7Cle4GMH+Z90lAdvz+p8rpiUvlxpFYD7zczzMMLGSRJzYvaaxACIh6LvD8/dTesICWQOjU/Hk3p5eM5y06pVjKBWWJ5BWbMAqTGxfQ+n2O+UFhT1KHPL+uGdPyaL99rIrSttiAIYP8o3ixXIKQgJ4uUQf2W1qI5NZG7S0K5nisNGNCSe0MlP0CcAfFL1Wc4reAu1DgdGkTjDaYhijVzNxlgfxMTojFSTGPI+ifX0QYnic0YWA3VZnNbyqnTcm1pDQb+NDZr5WJxRhLOIDBc7VjtcriLtTKoUskFmtXiFnhUe9WmjzGjKRs1ma06shJLZ4mvR1rNzk5Y7W7XkOhz5xjAP7V0tuaiY0f5v4EBBVHk3RNOKDEAueiwY1B5/L3+CeIPoqYHHiE4qiHsp+TgUMlsztpK7+bmP7yEfnhmw8+bsCDPU1u1aRG3tWc9WuRnrE8oFCvLPPpgBhAzeBEw0yOXkA4C2dwuPlf42Cf5iozvSYynO7xhKLEXZL/PLYIK6fWtmydTWCdzQdzS0BhmHTBrvWLTehggMqfYlsgQxYi9s5fO1r/JZhT5wTc8AAN2YflK+4XuLp4+9Z8j0Vjw8ctTxMome7RtUff10WBp7JMbK7j5/OQKafvGPD/o83vI1k4+9rcTq2VINmEOa/FDynMPeFE4DGJWUXs2yP3KLjlAcVlMl7okUto/WeEk1akKhjKyTjHe1T6OqBkShBOhGC+9xacKkONrCHeP5j/OYqNq8L96yI6zDpoK5M22gSbEl9dLZHYR6y+HgrySGlkR9Q7ibFm6bWqKIo555JLP+LAME6dzI9XXxkCYWFqjJVMMtmZtJl/1V8rJEtGNm5M+zcDGfJp/ZYpOB5BlG/K8FVZy/AYUkKuZ8f6e2fmGERrcUKXgbuxhc6CLxi21Y9hG8Q3bc37SBmkG3EoJ6sU6je9jp05GpPfnlhns6FpWIPyrTSaytvcX0cj+cZy2gEZcGP6jxkQvq53MMIzbWgpevGwupMYqKwDNgFmE96NrkzZ2Mbia7awcW2DkxRQUkrhYsvNsYlLnTxEm803DO8cB3oNb8kLj+Y9WUIGaaVdn5m+5pIjR8P5zkMHZL0Gqs/LZS44WI/th4SuenA+W8P8Ox1okcArHn+elVpi9xbahWBltvy0h6jcx5S2NOv5rOYoBF8du628ECAP6pVkt6HcalokfSGNzeGJkAWMRRlyaMUnWnEpw/IsvgmsqM06c0G1qt3LuWlCLnE7/RwUP7e2e9MgcUU1ItIC2vJGpaTiQSqUV27GdgRu8dGIQ8edyYNRcIKaPpXIihXK0aVYChtBDlihXQNDiYPFdf1j9p1vIoeiSLzTbZqzKpP9/UpFrmTLl4GfLk4z+DKOPuO59LhiFF6vkoc4AQwy4Oi31gz7/YfN1ybyFHlJvynD3glgjjdpn7sDCHOzhinSZHRGGjp0z2O2Ld2rw0hAL41Q2OqufGEhnbJ+ELQ9QwMolSDrTW+7uQHRUn/Ys+zb6n1SZdQYjYBAXuQSq7Mn0rmITS32egvvB3gp2T0ylzjH6SNrAyVTZGDOGz4otP58AriWSLO0mg8qHwlfXKhVSjXIT5EvAWNi0wT9mWQD1MQIhJ0RmHVK/3kR8twNMsa19bL+aZRcwOi1v5euiWgHbyq358Vlv8x5FAg+mHBE+A11Jn6SQwRRwvi0vjiGMolsmiXi662cF/0Pj7QZiYrnEzRxb2nxnu9NCA7BwJoRgYRHMiSPQCXkQ8PD8n3whdsMokgK4FZysMdjf/AkZKyKQGeU2pDy+meR7HqLq9rtlZPzgdQjqyRGNuGuAKVL7M2s0ivKTsuPN1b0gPc3GmnJYsrSPXCW9+a/6lWkJtoQmQdW0yiXtXwzenrXRdY0tcAGOsM4fz3rVi8Ybmjdzscbz5kxtK5naa3vVmqjARW8UYJJhG9Jh3tLm2+FPd6J29BFQVKHYw9gkguuCJtMCQIcpdXjLBhUQtjWNdaqrVbgI97b2W9oIK/FY3a8pHR4L1lgB9/5H8aePK7A5ob4MfhRLNLPdye0xvz2jLjNb269z43ndkGIRxNDaMPbLVBiIsZ85H9l1saZ+6FFXTzj7MqcGuwf6MGqse8bYSjgs3XTiwuX9P1ES8YB/oIqq3Hw34jrQsh6wcPoaUZojN6U1gfv+tzhMODZYRxHoKq1PO5TS1MPw6KZgDM8unwBT01nx3szaL98LK008jNGr65BFquinelrzLM15sm3bB+RokUK1jSHBxORllvGZbhE4lo35e/f6KPW2EM4Yxe3QEJMYp+A+FL+3eKGgiWa8JUAmxDJ9fUMM21iupUjXU2h05pX0KzqXui7Lmzsvwcq6ji6eiVhGEsL5uupF9vr/W/jqwy5WGjNQKtSQG7B0DiXQEn9itOqQ2342n6BcU4="}; var MARKER = "LOESUNG-OK\n";
 (function(){
   if (typeof GEHEIM === "undefined" || !GEHEIM) return;
   var b = function(s){ return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); };

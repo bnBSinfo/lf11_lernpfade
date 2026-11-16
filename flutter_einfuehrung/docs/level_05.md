@@ -9,17 +9,76 @@ Die fertige App braucht: Liste von ToDos, Checkbox zum Abhaken, Löschbutton,
 Button zum Hinzufügen. Wir beginnen mit **einem** Listenelement.
 
 ## Auftrag
-1. Legen Sie `lib/todo_item.dart` an mit dem Stateless Widget `ToDoItem`. Es bekommt seinen Titel über den
-   Konstruktor: Feld `final String title;`, Konstruktor `const ToDoItem(this.title, {super.key});`.
-   Bauen Sie in `build` eine `Row` mit
-   - `Checkbox(value: false, onChanged: null)` – noch inaktiv
+1. **📄 Neue Datei** `lib/todo_item.dart` mit dem Stateless Widget `ToDoItem` (`stless` + Tab). Den Titel bekommt es
+   über den Konstruktor:
+   ```diff
+   + import 'package:flutter/material.dart';
+   +
+   + class ToDoItem extends StatelessWidget {
+   +   final String title;
+   +
+   +   const ToDoItem(this.title, {super.key});
+   +
+   +   @override
+   +   Widget build(BuildContext context) {
+   +     return Row(
+   +       children: [
+   +         // hier die drei Widgets, siehe unten
+   +       ],
+   +     );
+   +   }
+   + }
+   ```
+   In die `children` der `Row` kommen:
+   - `const Checkbox(value: false, onChanged: null)` – noch inaktiv
    - `Expanded(child: Text(title))`
-   - `IconButton(icon: Icon(Icons.delete), onPressed: null)` – noch inaktiv
-2. Legen Sie `lib/todo_app.dart` an mit dem Stateless Widget `ToDoApp`, das zur Vorschau drei Einträge zeigt:
-   `MaterialApp` → `home: Scaffold` mit `appBar: AppBar(title: Text('ToDo-Element (Vorschau)'))` und
-   `body: ListView(children: [ToDoItem('Einkaufen'), ToDoItem('Hausaufgaben LF11'), ToDoItem('Sport')])`.
-3. `lib/main.dart`: Starten Sie jetzt `ToDoApp()` statt `MyFirstApp()` (Import nicht vergessen).
-   Ihre Login-App bleibt im Projekt – Sie können jederzeit zurückschalten.
+   - `const IconButton(icon: Icon(Icons.delete), onPressed: null)` – noch inaktiv
+2. **📄 Neue Datei** `lib/todo_app.dart` mit dem Stateless Widget `ToDoApp`. Es zeigt zur Vorschau drei Einträge:
+   ```diff
+   + import 'package:flutter/material.dart';
+   + import 'todo_item.dart';
+   +
+   + class ToDoApp extends StatelessWidget {
+   +   const ToDoApp({super.key});
+   +
+   +   @override
+   +   Widget build(BuildContext context) {
+   +     return MaterialApp(
+   +       home: Scaffold(
+   +         appBar: AppBar(title: const Text('ToDo-Element (Vorschau)')),
+   +         body: ListView(
+   +           children: const [
+   +             ToDoItem('Einkaufen'),
+   +             ToDoItem('Hausaufgaben LF11'),
+   +             ToDoItem('Sport'),
+   +           ],
+   +         ),
+   +       ),
+   +     );
+   +   }
+   + }
+   ```
+3. **✏️ Ändern** `lib/main.dart` – zwei Zeilen **ersetzen**: Jetzt startet die `ToDoApp`.
+   ```diff
+     import 'package:flutter/material.dart';
+   - import 'my_first_app.dart';
+   + import 'todo_app.dart';
+
+     void main() {
+   -   runApp(const MyFirstApp());
+   +   runApp(const ToDoApp());
+     }
+   ```
+   Die Dateien `my_first_app.dart` und `my_login.dart` **bleiben** im Projekt – nicht löschen, Sie brauchen sie in Level 9 wieder.
+
+## Profi-Auftrag
+- `lib/todo_item.dart`: Stateless Widget `ToDoItem`; der Titel kommt als **positionaler** Konstruktor-Parameter.
+  Eine Zeile zeigt: Checkbox (inaktiv) · Titel (füllt die Breite) · Mülleimer-Button (inaktiv).
+- `lib/todo_app.dart`: `ToDoApp` zeigt zur Vorschau drei `ToDoItem`s (darunter „Einkaufen“) in einer `ListView`,
+  AppBar „ToDo-Element (Vorschau)“.
+- `main.dart` startet `ToDoApp`. Die Login-Dateien bleiben im Projekt.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

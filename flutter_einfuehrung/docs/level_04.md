@@ -6,18 +6,69 @@ Oberfläche ändert: Der Login-Button wird erst aktiv, wenn beide Felder gefüll
 **Sie ändern:** `lib/my_login.dart` · **Skript:** Beispiel 1
 
 ## Auftrag
-1. Variablen im State: `String _username = '';`, `String _password = '';`,
-   `bool _canLogin = false;`
-2. Methode `_checkCanLogin()`: setzt **in `setState(() { … })`** `_canLogin` auf
-   `true`, wenn beide Strings nicht leer sind (`isNotEmpty`), sonst auf `false`.
-3. Zwei Methoden `_onChangedUsername(String username)` und
-   `_onChangedPassword(String password)`: Wert speichern, dann `_checkCanLogin()`.
-4. `build`: `Center` → `SizedBox(width: 300)` → `Column(mainAxisSize: MainAxisSize.min)`
-   mit den `children`:
+Sie arbeiten nur in `lib/my_login.dart`, und zwar in der **zweiten Klasse** `_MyLoginState`. Die erste Klasse `MyLogin` bleibt unverändert.
+
+**✏️ Ändern** `lib/my_login.dart` – so sieht der Rahmen aus:
+```diff
+  class _MyLoginState extends State<MyLogin> {
++   String _username = '';
++   String _password = '';
++   bool _canLogin = false;
++
++   void _checkCanLogin() {
++     // Schritt 2
++   }
++
++   void _onChangedUsername(String username) {
++     // Schritt 3
++   }
++
++   void _onChangedPassword(String password) {
++     // Schritt 3
++   }
++
+    @override
+    Widget build(BuildContext context) {
+-     return const Center(
+-       child: Text('Willkommen im Stateful Widget'),
+-     );
++     return Center(
++       child: SizedBox(
++         width: 300,
++         child: Column(
++           mainAxisSize: MainAxisSize.min,
++           children: [
++             // Schritt 4
++           ],
++         ),
++       ),
++     );
+    }
+  }
+```
+
+Füllen Sie dann die Stellen mit den Kommentaren (Kommentare danach löschen):
+
+1. Die drei Variablen stehen oben im State – sie sind das „Gedächtnis“ der Login-Maske.
+2. `_checkCanLogin()`: setzt **in `setState(() { … })`** `_canLogin` auf `true`, wenn beide Strings nicht leer sind
+   (`isNotEmpty`), sonst auf `false`.
+3. `_onChangedUsername` / `_onChangedPassword`: den übergebenen Wert in `_username` bzw. `_password` speichern,
+   dann `_checkCanLogin()` aufrufen.
+4. In die `children` der `Column`, untereinander:
    - `Text('Willkommen')`
    - `TextField` mit `onChanged: _onChangedUsername` und `labelText: 'Benutzername'`
    - `TextField` mit `onChanged: _onChangedPassword`, `obscureText: true`, `labelText: 'Passwort'`
    - `TextButton` mit `onPressed: _canLogin ? () {} : null` und `child: Text('Login')`
+
+## Profi-Auftrag
+`MyLogin` wird zur Login-Maske:
+
+- zentriert, höchstens 300 Pixel breit: Überschrift „Willkommen“, Textfeld „Benutzername“, Textfeld „Passwort“ (Eingabe verdeckt), Button „Login“.
+- Der Button ist **nur aktiv, wenn beide Felder ausgefüllt sind** – und wird wieder grau, wenn ein Feld geleert wird.
+- Der Zustand liegt im State, die Oberfläche aktualisiert sich über `setState`.
+- Der Button selbst macht vorerst nichts.
+
+*Hängen Sie fest? Schalten Sie oben auf **🧭 Begleitet** um – dort steht jeder Schritt mit Code-Rahmen.*
 
 ## Erklärt – was passiert hier?
 

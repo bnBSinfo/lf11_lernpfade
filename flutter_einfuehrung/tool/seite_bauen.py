@@ -233,9 +233,36 @@ def md_zu_html(pfad: pathlib.Path) -> str:
     out = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", "--no-highlight"],
                          input=text, capture_output=True, text=True, check=True).stdout
     out = out.replace("<h2", "<h3").replace("</h2>", "</h3>")
-    # Arbeitsauftrag (Abschnitt "Auftrag" bis zur nächsten Überschrift) in einen hellroten Kasten
-    return re.sub(r'(<h3 id="auftrag">.*?)(?=<h3 |\Z)',
-                  r'<div class="auftrags-kasten">\1</div>', out, count=1, flags=re.S)
+    # ```diff-Blöcke: grau = Rahmen (steht schon da), grün + = neu tippen, rot - = löschen
+    out = re.sub(r'<pre class="diff"><code>(.*?)</code></pre>', rahmen_code, out, flags=re.S)
+    legende = ('<p class="rahmen-legende"><b>So lesen Sie die Code-Kästen:</b> '
+               '<span class="lg rahmen">grau</span> steht schon in Ihrer Datei – nur zur Orientierung, wo Sie sind · '
+               '<span class="lg neu">+ grün</span> neu eintippen · '
+               '<span class="lg weg">− rot</span> löschen · '
+               '<span class="lg rahmen">…</span> unveränderter Code dazwischen</p>')
+    out = out.replace('<pre class="rahmen-code">', legende + '<pre class="rahmen-code">', 1)
+    # Abschnitte bis zur nächsten Überschrift einpacken:
+    #   Auftrag (begleiteter Pfad) und Profi-Auftrag je im hellroten Kasten, Erklärt zum Einklappen im Profipfad
+    for kopf, klasse in (('<h3 id="auftrag">', "auftrags-kasten nur-begleitet"),
+                         ('<h3 id="profi-auftrag">', "auftrags-kasten profi-kasten nur-profi"),
+                         ('<h3 id="erkl', "erklaert")):
+        out = re.sub(r'(' + re.escape(kopf) + r'.*?)(?=<h3 |\Z)',
+                     lambda m: f'<div class="{klasse}">{m.group(1)}</div>', out, count=1, flags=re.S)
+    return out
+
+
+def rahmen_code(m) -> str:
+    zeilen = []
+    for z in m.group(1).split("\n"):
+        if z[:1] == "+" and z[1:2] in (" ", ""):
+            art, zeichen = "neu", "+"
+        elif z[:1] == "-" and z[1:2] in (" ", ""):
+            art, zeichen = "weg", "−"
+        else:
+            art, zeichen = "rahmen", ""
+        inhalt = z[2:] if len(z) >= 2 else ""
+        zeilen.append(f'<span class="z {art}"><i>{zeichen}</i>{inhalt or "&#8203;"}</span>')
+    return '<pre class="rahmen-code"><code>' + "".join(zeilen) + "</code></pre>"
 
 
 def baum_html(knoten) -> str:
@@ -303,7 +330,7 @@ BAUKASTEN = {
 def level_ansicht(nr: int, d: dict) -> str:
     g_titel, g_html = GRAFIK[d["grafik"]]
     bk = d.get("baukasten")
-    baukasten = (f'<div class="card"><h3>{BAUKASTEN[bk]}</h3><p class="klein">Schalten Sie Teile ein und aus und '
+    baukasten = (f'<div class="card nur-begleitet"><h3>{BAUKASTEN[bk]}</h3><p class="klein">Schalten Sie Teile ein und aus und '
                  f'beobachten Sie Handy und Code. Fahren Sie mit der Maus über einen Bereich – im Handy und im Code '
                  f'leuchtet dieselbe Stelle auf.</p><div class="baukasten" data-baukasten="{bk}"></div></div>') if bk else ""
     wissen = ('<p class="wissen-link"><a class="knopf" href="#wissen">📘 Ausführlich erklärt: Aufbau von Stateless &amp; '
@@ -422,6 +449,34 @@ a{color:var(--accent)}
 .auftrags-kasten h3{color:#b42318;margin-top:.6rem}
 .auftrags-kasten h3::before{content:"✏️ "}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
+pre.rahmen-code{padding:10px 0;line-height:1.45}
+.modus-profi .nur-begleitet{display:none!important}
+html:not(.modus-profi) .nur-profi{display:none!important}
+.profi-kasten h3::before{content:"🚀 "!important}
+.modus-profi .erklaert{border:1px dashed var(--line);border-radius:12px;padding:0 14px;margin:12px 0}
+.modus-profi .erklaert>h3{cursor:pointer;user-select:none}
+.modus-profi .erklaert>h3::after{content:" ▸ bei Bedarf einblenden";font-size:.8rem;font-weight:500;color:#6b7280}
+.modus-profi .erklaert.offen>h3::after{content:" ▾ ausblenden"}
+.modus-profi .erklaert:not(.offen)>:not(h3){display:none}
+.pfad-wahl{display:flex;gap:4px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px;flex:none}
+.pfad-wahl button{border:0;background:none;border-radius:999px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer;color:#fff}
+.pfad-wahl button.gewaehlt{background:#fff;color:#b42318}
+.pfad-karten{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
+.pfad-karte{text-align:left;font:inherit;color:inherit;background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.pfad-karte.gewaehlt{border-color:#d9534f;background:#fdecec}
+.pk-titel{font-weight:800;font-size:1.15rem}.pk-unter{font-weight:600;color:#b42318}
+.pk-liste{font-size:.92rem;line-height:1.6}.pk-fuer{font-size:.85rem;color:#6b7280}
+@media (max-width:620px){.pfad-karten{grid-template-columns:minmax(0,1fr)}}
+pre.rahmen-code .z{display:block;padding:0 14px 0 0;white-space:pre}
+pre.rahmen-code .z i{display:inline-block;width:26px;text-align:center;font-style:normal;font-weight:700}
+pre.rahmen-code .z.rahmen{color:#7f8aa0}
+pre.rahmen-code .z.neu{background:rgba(34,197,94,.22);color:#eafff1}
+pre.rahmen-code .z.neu i{color:#4ade80}
+pre.rahmen-code .z.weg{background:rgba(239,68,68,.22);color:#ffd9d9;text-decoration:line-through;text-decoration-color:rgba(255,160,160,.8)}
+pre.rahmen-code .z.weg i{color:#f87171;text-decoration:none}
+.rahmen-legende{font-size:.88rem;background:#fff;border:1px solid #f3b4b4;border-radius:10px;padding:8px 12px;line-height:1.9}
+.rahmen-legende .lg{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:.82rem;border-radius:5px;padding:0 6px;background:#1a2130}
+.rahmen-legende .lg.rahmen{color:#9aa4b8}.rahmen-legende .lg.neu{color:#4ade80;background:#173a2a}.rahmen-legende .lg.weg{color:#f87171;background:#3d1c22;text-decoration:line-through}
 .ausschnitt{margin-top:8px;text-align:left}
 .ausschnitt-titel{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
 .ausschnitt-bild{display:block;width:100%;background-repeat:no-repeat;border:2px solid #f59e0b;border-radius:10px;background-color:#fef7ff}
@@ -597,6 +652,24 @@ details.loesung{margin-top:14px;border-color:var(--ok)}
 JS = r"""
 document.documentElement.classList.add("js");
 (function(){
+  var MKEY = "flutter-lernpfad-lf11-modus", wurzel = document.documentElement;
+  function setze(m){
+    wurzel.classList.toggle("modus-profi", m === "profi");
+    document.querySelectorAll(".pfad-wahl button, .pfad-karte").forEach(function(b){
+      var an = b.getAttribute("data-modus") === m;
+      b.setAttribute("aria-pressed", an ? "true" : "false"); b.classList.toggle("gewaehlt", an);
+    });
+  }
+  var m = "begleitet"; try { m = localStorage.getItem(MKEY) || m; } catch (e) {}
+  setze(m);
+  document.addEventListener("click", function(ev){
+    var b = ev.target.closest("[data-modus]");
+    if (b) { var neu = b.getAttribute("data-modus"); setze(neu); try { localStorage.setItem(MKEY, neu); } catch (e) {} return; }
+    var h = ev.target.closest(".erklaert > h3");
+    if (h && wurzel.classList.contains("modus-profi")) h.parentNode.classList.toggle("offen");
+  });
+})();
+(function(){
   var KEY = "flutter-lernpfad-lf11", stand = {};
   try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
   var ansichten = document.querySelectorAll(".ansicht");
@@ -730,6 +803,10 @@ def main() -> None:
       <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
+    <div class="pfad-wahl" role="group" aria-label="Lernpfad wählen">
+      <button type="button" data-modus="begleitet" aria-pressed="true">🧭 Begleitet</button>
+      <button type="button" data-modus="profi" aria-pressed="false">🚀 Profi</button>
+    </div>
   </header>
 
   <section class="ansicht" id="start">
@@ -738,13 +815,33 @@ def main() -> None:
       (Android Studio oder VS Code) – mit eigenem Flutter-Projekt und Emulator, genau wie im Betrieb.
       Es gibt <b>keine Vorlagen zum Herunterladen</b>: Sie legen das Projekt selbst an und tippen jede Zeile.
       Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Widget-Baum, Hilfen und Selbstkontrolle.</div></div>
+    <div class="card"><h2>Wählen Sie Ihren Pfad</h2>
+      <p>Beide Pfade bauen <b>dieselbe App</b> mit denselben Leveln und derselben Selbstkontrolle. Sie können jederzeit
+      oben im Seitenkopf umschalten – auch mitten in einem Level.</p>
+      <div class="pfad-karten">
+        <button type="button" class="pfad-karte" data-modus="begleitet">
+          <span class="pk-titel">🧭 Begleiteter Pfad</span>
+          <span class="pk-unter">mit sehr viel Unterstützung</span>
+          <span class="pk-liste">✔ jeder Schritt einzeln: neue Datei, ändern oder löschen<br>
+          ✔ Code-Rahmen zeigen genau die Stelle in der Datei<br>✔ Erklärungen, Tipps und interaktive Baukästen</span>
+          <span class="pk-fuer">Für alle, die Flutter zum ersten Mal sehen.</span>
+        </button>
+        <button type="button" class="pfad-karte" data-modus="profi">
+          <span class="pk-titel">🚀 Profipfad</span>
+          <span class="pk-unter">nur Anforderungen – den Weg finden Sie selbst</span>
+          <span class="pk-liste">✔ je Level eine knappe Liste: Was muss die App können?<br>
+          ✔ kein Code vorgegeben, Erklärungen nur auf Klick<br>✔ Zielbild und Widget-Baum als Spezifikation</span>
+          <span class="pk-fuer">Für alle, die schon programmieren und selbstständig arbeiten wollen.</span>
+        </button>
+      </div>
+    </div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
         <div><h3>1 · Projekt anlegen</h3>
           <p>In Level 1 legen Sie mit <code>flutter create meine_app</code> Ihr eigenes Projekt an.
           Diese eine App bauen Sie in allen Leveln weiter aus.</p></div>
         <div><h3>2 · Auftrag lesen</h3>
-          <p>Der rote Kasten sagt, was zu tun ist. <i>Erklärt</i> sagt, warum. Zielbild und Widget-Baum zeigen, wo Sie hinwollen.</p></div>
+          <p>Der rote Kasten sagt, was zu tun ist – im begleiteten Pfad Schritt für Schritt, im Profipfad als Anforderungsliste. <i>Erklärt</i> sagt, warum. Zielbild und Widget-Baum zeigen, wo Sie hinwollen.</p></div>
         <div><h3>3 · Abtippen</h3>
           <p>Code wird <b>abgetippt</b> – Kopieren ist auf dieser Seite gesperrt. Wer tippt, liest jede Zeile und lernt die
           Fehlermeldungen der IDE kennen. Nach Änderungen: <b>Hot Reload</b>.</p></div>

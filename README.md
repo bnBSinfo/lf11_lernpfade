@@ -5,7 +5,7 @@ Jede Seite ist eine einzige HTML-Datei und lässt sich so auch in mebis hochlade
 
 | Lernpfad | Seite | Ordner |
 |---|---|---|
-| 1 · Flutter-Einführung (8 Level) | https://bnbsinfo.github.io/lf11_lernpfade/flutter/ | `flutter_einfuehrung/` |
+| 1 · Flutter-Einführung (9 Level, begleitet oder Profi) | https://bnbsinfo.github.io/lf11_lernpfade/flutter/ | `flutter_einfuehrung/` |
 | 2 · Pi-Server & REST-API (9 Level) | https://bnbsinfo.github.io/lf11_lernpfade/rest/ | `rest/` |
 | 3 · Flutter-Datenbankanbindung | https://bnbsinfo.github.io/lf11_lernpfade/datenbank/ | `flutter_datenbank/` |
 
