@@ -484,21 +484,29 @@ pre.rahmen-code{padding:10px 0;line-height:1.45}
 @media print{
   @page{size:A4;margin:14mm 12mm}
   html,body{background:#fff!important}
-  body{font-size:10.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:10pt;line-height:1.4;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .kopf,.druck-kopf,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
   html.druck-wissen .ansicht:not(#wissen){display:none!important}
-  html.druck-wissen #wissen{display:flex!important}
+  html.druck-wissen #wissen,#wissen{display:block!important}
+  #wissen>*{margin:0 0 4mm}
+  #wissen .card{display:block;padding:3mm 4mm!important;border-radius:6px!important}
   .app{max-width:none!important;padding:0!important}
   .card{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid-page;page-break-inside:avoid}
-  #wissen .card{break-inside:auto;page-break-inside:auto}
+  #wissen .card{break-inside:avoid;page-break-inside:avoid}
+  #wissen .card:has(.anatomie){break-inside:auto;page-break-inside:auto}
+  #wissen .anatomie{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)!important;gap:4mm!important;break-inside:avoid;page-break-inside:avoid}
+  #wissen .anatomie pre{font-size:7.6pt;line-height:1.45;white-space:pre!important;overflow:visible}
+  #wissen .anatomie ol,#wissen .anatomie li,#wissen .anatomie p{font-size:8.8pt}
+  #wissen .zwei,#wissen .vergleich-bild{gap:3mm!important}
+  #wissen table{font-size:8.8pt}
   #wissen h2,#wissen h3,#wissen h4{break-after:avoid;page-break-after:avoid;color:#000}
+  #wissen #w-stateless,#wissen #w-stateful{break-before:page;page-break-before:always}
   #wissen pre,#wissen table,#wissen .kasten,#wissen .schritt-box,#wissen .station{break-inside:avoid;page-break-inside:avoid}
-  #wissen pre{background:#f5f6f8!important;color:#111!important;border:1px solid #bbb;white-space:pre-wrap}
+  #wissen pre{background:#f5f6f8!important;color:#111!important;border:1px solid #bbb;white-space:pre-wrap;font-size:8.2pt;padding:2.5mm 3mm!important}
   #wissen pre *{color:#111!important}
   #wissen a{color:#000;text-decoration:none}
   .druck-fuss{display:block;font-size:8.5pt;color:#555;text-align:center;margin-top:8px}
   html.druck-wissen .druckfuss,:root:has(#wissen:target) .druckfuss{display:none!important}
-  #wissen .card:has(.anatomie){break-before:page;page-break-before:always}
 }
 .spr-einfach .sprache-standard{display:none!important}
 html:not(.spr-einfach) .sprache-einfach{display:none!important}
