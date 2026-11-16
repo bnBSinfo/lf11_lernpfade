@@ -476,13 +476,16 @@ a{color:var(--accent)}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
 pre.rahmen-code{padding:10px 0;line-height:1.45}
 .modus-profi .nur-begleitet{display:none!important}
-.druck-leiste{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.druck-kopf{display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.6);background:#fff;color:#1e3a8a;
+  border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
+.druck-kopf:hover{background:#e0e7ff}
+:root:has(#wissen:not([hidden])) .druck-kopf{display:inline-flex}
 .druck-fuss{display:none}
 @media print{
   @page{size:A4;margin:14mm 12mm}
   html,body{background:#fff!important}
   body{font-size:10.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .kopf,.druck-leiste,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
+  .kopf,.druck-kopf,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
   html.druck-wissen .ansicht:not(#wissen){display:none!important}
   html.druck-wissen #wissen{display:flex!important}
   .app{max-width:none!important;padding:0!important}
@@ -880,6 +883,7 @@ def main() -> None:
       <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
       <button type="button" data-sprache="einfach" aria-pressed="false">Sprache einfach</button>
     </div>
+    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Wissen drucken</button>
   </header>
 
   <section class="ansicht" id="start">
@@ -931,7 +935,6 @@ def main() -> None:
   </section>
 {ansichten}
   <section class="ansicht" id="wissen">
-    <div class="druck-leiste"><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><span class="klein">Druckt nur diese Wissen-Seite (auch als PDF speichern).</span></div>
 {(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8")}
     <p class="druck-fuss">Flutter-Einführung LF11 · Version {VERSION} · Stand {STAND} · bnbsinfo.github.io/lf11_lernpfade/flutter/</p>
     <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><a class="knopf primaer" href="#level-1">Zu Level 1 ▶</a></div>
