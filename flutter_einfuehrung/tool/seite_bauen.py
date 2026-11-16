@@ -878,7 +878,7 @@ def main() -> None:
     <div class="pfad-wahl sprach-wahl" role="group" aria-label="Sprache wählen">
       <span aria-hidden="true">🌐</span>
       <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
-      <button type="button" data-sprache="einfach" aria-pressed="false">Einfach</button>
+      <button type="button" data-sprache="einfach" aria-pressed="false">Sprache einfach</button>
     </div>
   </header>
 
