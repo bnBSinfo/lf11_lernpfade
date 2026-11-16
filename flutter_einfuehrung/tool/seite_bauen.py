@@ -21,6 +21,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import lernpfad_bausteine as bausteine  # noqa: E402
 from kontrolle import KONTROLLE  # noqa: E402
+from woerter import WOERTER, LEVEL_WOERTER  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
@@ -228,8 +229,24 @@ Die ToDos liegen nur lokal im State der Liste – keine Datenbank, nach dem Zur�
 }
 
 # ---------------------------------------------------------------- Bausteine
-def md_zu_html(pfad: pathlib.Path) -> str:
+CODEBLOCK = re.compile(r'^([ \t]*)(```\w*\n.*?^\1```)[ \t]*$', re.M | re.S)
+
+
+def code_einsetzen(text: str, quelle: pathlib.Path) -> str:
+    """Ersetzt {{code N}} durch den N-ten Code-Block der Standardfassung (gleicher Code in beiden Sprachstufen)."""
+    bloecke = [(m.group(1), m.group(2)) for m in CODEBLOCK.finditer(quelle.read_text(encoding="utf-8"))]
+
+    def ersetze(m):
+        einzug, (alt, block) = m.group(1), bloecke[int(m.group(2))]
+        zeilen = [z[len(alt):] if z.startswith(alt) else z for z in block.split("\n")]
+        return "\n".join((einzug + z) if z else z for z in zeilen)
+    return re.sub(r"^([ \t]*)\{\{code (\d+)\}\}[ \t]*$", ersetze, text, flags=re.M)
+
+
+def md_zu_html(pfad: pathlib.Path, code_quelle: pathlib.Path | None = None) -> str:
     text = re.sub(r"^# .*\n", "", pfad.read_text(encoding="utf-8"), count=1)
+    if code_quelle:
+        text = code_einsetzen(text, code_quelle)
     out = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", "--no-highlight"],
                          input=text, capture_output=True, text=True, check=True).stdout
     out = out.replace("<h2", "<h3").replace("</h2>", "</h3>")
@@ -327,6 +344,11 @@ BAUKASTEN = {
 }
 
 
+def woerter_html(nr: int) -> str:
+    return "".join(f"<dt>{e(w)}<small>{e(WOERTER[w][0])}</small></dt><dd>{e(WOERTER[w][1])}</dd>"
+                   for w in LEVEL_WOERTER[nr])
+
+
 def level_ansicht(nr: int, d: dict) -> str:
     g_titel, g_html = GRAFIK[d["grafik"]]
     bk = d.get("baukasten")
@@ -345,7 +367,9 @@ def level_ansicht(nr: int, d: dict) -> str:
     <div><h2>Level {nr} – {e(d['titel'])}</h2><p class="stich">{e(d['stich'])}</p></div>
   </div>
   <div class="level-raster">
-    <div class="card lp-auftrag">{md_zu_html(DOCS / f"level_0{nr}.md")}
+    <div class="card lp-auftrag"><div class="sprache-standard">{md_zu_html(DOCS / f"level_0{nr}.md")}</div>
+      <div class="sprache-einfach">{md_zu_html(DOCS / "einfach" / f"level_0{nr}.md", DOCS / f"level_0{nr}.md")}
+        <div class="woerter"><h3>📖 Wichtige Wörter</h3><dl>{woerter_html(nr)}</dl></div></div>
       <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
     </div>
     <aside class="lp-seite">
@@ -451,6 +475,14 @@ a{color:var(--accent)}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
 pre.rahmen-code{padding:10px 0;line-height:1.45}
 .modus-profi .nur-begleitet{display:none!important}
+.spr-einfach .sprache-standard{display:none!important}
+html:not(.spr-einfach) .sprache-einfach{display:none!important}
+.sprach-wahl{align-items:center;padding-left:10px}
+.woerter{margin-top:16px;border-top:2px solid var(--line);padding-top:6px}
+.woerter dl{display:grid;grid-template-columns:minmax(0,14rem) minmax(0,1fr);gap:6px 14px;margin:8px 0}
+.woerter dt{font-weight:700}.woerter dt small{display:block;font-weight:400;color:#6b7280;font-size:.82rem}
+.woerter dd{margin:0}
+@media (max-width:620px){.woerter dl{grid-template-columns:minmax(0,1fr)}.woerter dd{margin-bottom:8px}}
 html:not(.modus-profi) .nur-profi{display:none!important}
 .profi-kasten h3::before{content:"🚀 "!important}
 .modus-profi .erklaert{border:1px dashed var(--line);border-radius:12px;padding:0 14px;margin:12px 0}
@@ -662,7 +694,19 @@ document.documentElement.classList.add("js");
   }
   var m = "begleitet"; try { m = localStorage.getItem(MKEY) || m; } catch (e) {}
   setze(m);
+  var SKEY = "flutter-lernpfad-lf11-sprache";
+  function sprache(s){
+    wurzel.classList.toggle("spr-einfach", s === "einfach");
+    document.querySelectorAll("[data-sprache]").forEach(function(b){
+      var an = b.getAttribute("data-sprache") === s;
+      b.setAttribute("aria-pressed", an ? "true" : "false"); b.classList.toggle("gewaehlt", an);
+    });
+  }
+  var sp = "standard"; try { sp = localStorage.getItem(SKEY) || sp; } catch (e) {}
+  sprache(sp);
   document.addEventListener("click", function(ev){
+    var sb = ev.target.closest("[data-sprache]");
+    if (sb) { var ns = sb.getAttribute("data-sprache"); sprache(ns); try { localStorage.setItem(SKEY, ns); } catch (e) {} return; }
     var b = ev.target.closest("[data-modus]");
     if (b) { var neu = b.getAttribute("data-modus"); setze(neu); try { localStorage.setItem(MKEY, neu); } catch (e) {} return; }
     var h = ev.target.closest(".erklaert > h3");
@@ -806,6 +850,11 @@ def main() -> None:
     <div class="pfad-wahl" role="group" aria-label="Lernpfad wählen">
       <button type="button" data-modus="begleitet" aria-pressed="true">🧭 Begleitet</button>
       <button type="button" data-modus="profi" aria-pressed="false">🚀 Profi</button>
+    </div>
+    <div class="pfad-wahl sprach-wahl" role="group" aria-label="Sprache wählen">
+      <span aria-hidden="true">🌐</span>
+      <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
+      <button type="button" data-sprache="einfach" aria-pressed="false">Einfach</button>
     </div>
   </header>
 
