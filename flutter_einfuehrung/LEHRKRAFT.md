@@ -10,7 +10,7 @@ Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlö
 - Umschalten im Seitenkopf oder auf der Startseite; die Wahl merkt sich der Browser.
 
 ## Einfache Sprache (wie in LF3)
-- Schalter **🌐 Standard | Sprache einfach** im Seitenkopf, unabhängig vom Pfad; die Wahl merkt sich der Browser.
+- Schalter **Standard | Sprache einfach** im Seitenkopf, unabhängig vom Pfad; die Wahl merkt sich der Browser.
 - Zweite Fassung aller Level-Texte in `docs/einfach/level_0X.md` (Ziel, Auftrag, Profi-Auftrag, Erklärt, Tipps,
   Merke, Ausblick): kurze Sätze, eine Information pro Satz, Anrede „du“, Zahlen als Ziffern, Fachbegriffe bleiben gleich.
 - Code wird nicht doppelt gepflegt: `{{code N}}` setzt beim Bauen den N-ten Code-Block der Standardfassung ein.

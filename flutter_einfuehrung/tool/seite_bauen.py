@@ -476,6 +476,10 @@ a{color:var(--accent)}
 .auftrags-kasten :not(pre)>code{background:#fff;color:#1a2130}
 pre.rahmen-code{padding:10px 0;line-height:1.45}
 .modus-profi .nur-begleitet{display:none!important}
+.schalter-zeile{flex-basis:100%;min-width:0;display:flex;flex-wrap:nowrap;align-items:center;gap:6px}
+.schalter-zeile .pfad-wahl{padding:3px}.schalter-zeile .sprach-wahl{padding-left:3px}
+.schalter-zeile .pfad-wahl button,.schalter-zeile .druck-kopf{padding:5px 9px;white-space:nowrap;font-size:.92rem}
+@media (max-width:540px){.schalter-zeile{flex-wrap:wrap}}
 .druck-kopf{display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.6);background:#fff;color:#1e3a8a;
   border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
 .druck-kopf:hover{background:#e0e7ff}
@@ -882,16 +886,17 @@ def main() -> None:
       <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
+    <div class="schalter-zeile">
     <div class="pfad-wahl" role="group" aria-label="Lernpfad wählen">
       <button type="button" data-modus="begleitet" aria-pressed="true">🧭 Begleitet</button>
       <button type="button" data-modus="profi" aria-pressed="false">🚀 Profi</button>
     </div>
     <div class="pfad-wahl sprach-wahl" role="group" aria-label="Sprache wählen">
-      <span aria-hidden="true">🌐</span>
       <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
       <button type="button" data-sprache="einfach" aria-pressed="false">Sprache einfach</button>
     </div>
-    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Wissen drucken</button>
+    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Drucken</button>
+    </div>
   </header>
 
   <section class="ansicht" id="start">
