@@ -7,14 +7,14 @@
 ## Auftrag
 1. **📄 Neue Datei** `lib/todo_list.dart`. Darin steht das **Stateful Widget** `ToDoList`. Tipp: `stful` + Tab. So sieht der Rahmen aus:
    {{code 0}}
-2. `addItem(String item)`: Schreibe `setState`. Darin: `todos.add(item)`. Danach, nach `setState`: `Navigator.of(context).pop();`. Das schließt den Dialog.
-3. `newEntry()`: Rufe `showDialog` auf. Er zeigt einen `AlertDialog`. Sein `content` ist `TextField(onSubmitted: addItem)`.
-4. Im `Scaffold` ersetzt du den Kommentar durch 3 Teile:
-   - `appBar: AppBar(title: Text('ToDo Liste'))`
-   - `body: ListView.builder(itemCount: todos.length, itemBuilder: …)`. Für jedes `i` baut er `ToDoItem(todos[i])`.
-   - `floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))`
-5. **✏️ Ändern** `lib/todo_app.dart`. Die Probe aus Level 5 brauchst du nicht mehr. Ersetze den Import. Ersetze den ganzen Inhalt von `build`.
+2. **✏️ Ändern** `addItem(String item)`: Lösche den Kommentar. Tippe die grünen Zeilen ein. `Navigator.of(context).pop();` schließt den Dialog.
    {{code 1}}
+3. **✏️ Ändern** `newEntry()`: Lösche den Kommentar. Tippe die grünen Zeilen ein. `showDialog` zeigt einen `AlertDialog` mit einem `TextField`.
+   {{code 2}}
+4. **✏️ Ändern** Im `Scaffold`: Lösche den Kommentar. Tippe die 3 Teile ein: `appBar`, `body` mit dem `ListView.builder` und `floatingActionButton`. Der `ListView.builder` baut für jedes `i` ein `ToDoItem(todos[i])`.
+   {{code 3}}
+5. **✏️ Ändern** `lib/todo_app.dart`. Die Probe aus Level 5 brauchst du nicht mehr. Ersetze den Import. Ersetze den ganzen Inhalt von `build`.
+   {{code 4}}
 
 ## Profi-Auftrag
 - `lib/todo_list.dart`: Stateful Widget `ToDoList`. Die Titel liegen als Liste im State.
@@ -30,7 +30,7 @@
 
 **`ListView.builder` baut eine Liste aus Daten:**
 
-{{code 2}}
+{{code 5}}
 
 Du schreibst nicht jedes `ToDoItem` selbst. Du sagst nur 2 Dinge: Wie viele gibt es? Wie baut man 1 Eintrag? Hat `todos` 2 Einträge? Dann ruft Flutter `itemBuilder` 2-mal auf: mit `i = 0` und `i = 1`.
 
@@ -46,12 +46,12 @@ Du schreibst nicht jedes `ToDoItem` selbst. Du sagst nur 2 Dinge: Wie viele gibt
 
 <details><summary>Tipp 1 – showDialog</summary>
 
-{{code 3}}
+{{code 6}}
 </details>
 
 <details><summary>Tipp 2 – ListView.builder</summary>
 
-{{code 4}}
+{{code 7}}
 </details>
 
 > **Merke:** `onPressed: newEntry` hat keine Klammern. So gibst du die Methode weiter. Mit Klammern läuft sie sofort.

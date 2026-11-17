@@ -37,15 +37,53 @@ Neue Einträge kommen über einen Dialog hinzu.
    +   }
    + }
    ```
-2. `addItem(String item)`: in `setState` `todos.add(item)`, danach (außerhalb von `setState`)
-   `Navigator.of(context).pop();` – das schließt den Dialog.
-3. `newEntry()`: `showDialog` mit einem `AlertDialog`, dessen `content` ein
-   `TextField(onSubmitted: addItem)` ist.
-4. Im `Scaffold` (statt des Kommentars):
-   - `appBar: AppBar(title: Text('ToDo Liste'))`
-   - `body: ListView.builder(itemCount: todos.length, itemBuilder: …)` – baut für
-     jeden Index `i` ein `ToDoItem(todos[i])`
-   - `floatingActionButton: FloatingActionButton(onPressed: newEntry, child: Icon(Icons.add))`
+2. **✏️ Ändern** `addItem(String item)`: in `setState` `todos.add(item)`, danach (außerhalb von `setState`)
+   `Navigator.of(context).pop();` – das schließt den Dialog. Der Kommentar `// Schritt 2` fliegt raus:
+   ```diff
+     void addItem(String item) {
+   -   // Schritt 2
+   +   setState(() {
+   +     todos.add(item);
+   +   });
+   +   Navigator.of(context).pop();
+     }
+   ```
+3. **✏️ Ändern** `newEntry()`: `showDialog` mit einem `AlertDialog`, dessen `content` ein
+   `TextField(onSubmitted: addItem)` ist:
+   ```diff
+     void newEntry() {
+   -   // Schritt 3
+   +   showDialog<AlertDialog>(
+   +     context: context,
+   +     builder: (BuildContext context) {
+   +       return AlertDialog(
+   +         content: TextField(
+   +           autofocus: true,
+   +           onSubmitted: addItem,
+   +         ),
+   +       );
+   +     },
+   +   );
+     }
+   ```
+4. **✏️ Ändern** Im `Scaffold` (statt des Kommentars) `appBar`, `body` mit dem `ListView.builder` und
+   `floatingActionButton`. Der `ListView.builder` baut für jeden Index `i` ein `ToDoItem(todos[i])`:
+   ```diff
+       return Scaffold(
+   -     // Schritt 4
+   +     appBar: AppBar(title: const Text('ToDo Liste')),
+   +     body: ListView.builder(
+   +       itemCount: todos.length,
+   +       itemBuilder: (context, i) {
+   +         return ToDoItem(todos[i]);
+   +       },
+   +     ),
+   +     floatingActionButton: FloatingActionButton(
+   +       onPressed: newEntry,
+   +       child: const Icon(Icons.add),
+   +     ),
+       );
+   ```
 5. **✏️ Ändern** `lib/todo_app.dart` – die Vorschau aus Level 5 hat ausgedient. Import und den **ganzen**
    Inhalt von `build` **ersetzen**:
    ```diff
