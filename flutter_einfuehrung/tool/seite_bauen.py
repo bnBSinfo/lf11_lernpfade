@@ -483,7 +483,21 @@ def passwort_holen() -> str:
 
 CSS = """
 .app{max-width:1280px}
-.kopf{padding:20px 22px}
+.kopf{padding:20px 22px;position:relative}
+.kopf{padding-right:140px}
+.kopf-handy{position:absolute;right:28px;top:50%;margin:0;width:84px;aspect-ratio:9/17.5;transform:translateY(-50%) rotate(6deg);
+  background:#11131c;border-radius:13px;padding:4px;box-shadow:0 10px 24px rgba(0,0,0,.35),0 0 0 2px rgba(255,255,255,.25)}
+.kh-app{position:relative;display:flex;flex-direction:column;gap:5px;width:100%;height:100%;border-radius:10px;background:#fdf8ff;overflow:hidden}
+.kh-leiste{background:#6750a4;color:#fff;font:700 8px/1 system-ui,sans-serif;padding:13px 6px 6px}
+.kh-zeile{display:flex;align-items:center;gap:4px;padding:0 6px}
+.kh-zeile i{flex:none;width:7px;height:7px;border:1.5px solid #6750a4;border-radius:2px}
+.kh-zeile.an i{background:#6750a4}
+.kh-zeile b{height:4px;border-radius:2px;background:#9a93ad}
+.kh-zeile.an b{background:#cbc5d8}
+.kh-zeile u{margin-left:auto;width:5px;height:6px;border-radius:1px;background:#4b4560}
+.kh-plus{position:absolute;right:6px;bottom:7px;width:18px;height:18px;border-radius:6px;background:#e8def8;color:#21005d;font:700 13px/18px system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.kh-kerbe{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:20px;height:4px;border-radius:3px;background:#11131c;z-index:1}
+@media (max-width:700px){.kopf{padding-right:16px}.kopf-handy{display:none}}
 .kopf a.chip{text-decoration:none}
 .kopf a.chip.ok{background:rgba(255,255,255,.95);color:var(--ok);border-color:#fff}
 .kopf a.chip.aktiv{outline:2px solid #fff;outline-offset:1px;font-weight:700}
@@ -961,6 +975,7 @@ def main() -> None:
 <body data-thema="technik">
 <div class="app">
   <header class="card kopf">
+    <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span><span class="kh-zeile an"><i></i><b style="width:62%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:48%"></b><u></u></span><span class="kh-zeile an"><i></i><b style="width:70%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:40%"></b><u></u></span><span class="kh-plus">+</span></span></figure>
     <div class="titel">
       <h1>Flutter-Einführung <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
