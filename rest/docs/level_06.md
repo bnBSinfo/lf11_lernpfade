@@ -5,7 +5,7 @@
 **Sie schreiben:** `flutterdb.sql` auf dem Pi · **Skript:** SQL-Datenbank und User einrichten
 
 ## Auftrag
-Schreiben Sie auf dem Pi (per SSH, als root) ein SQL-Skript, das alles auf einmal anlegt:
+**📄 Neue Datei** `~/flutterdb.sql` – schreiben Sie auf dem Pi (per SSH, als root) ein SQL-Skript, das alles auf einmal anlegt:
 ```bash
 cd ~
 nano flutterdb.sql
@@ -34,6 +34,12 @@ Speichern (Strg+O, Enter), beenden (Strg+X) und ausführen:
 mysql < flutterdb.sql
 mysql -e "USE flutterDB; SHOW TABLES; SELECT * FROM ToDoTB;"
 ```
+
+## Profi-Auftrag
+- Ein Skript `~/flutterdb.sql`, das bei jedem Lauf alles sauber neu anlegt: Datenbank `flutterDB` (`utf8mb4`) und Benutzer `'flutterUser'@'localhost'` (`Pa$$w0rd`) mit allen Rechten – aber nur auf flutterDB.
+- `flutterTB`: `id` (INT, AUTO_INCREMENT, PRIMARY KEY), `name` und `passwordLogin` (je bis 20 Zeichen, Pflicht) – Benutzer `berno` und `stoll`, Passwort jeweils `Pa$$w0rd`.
+- `ToDoTB`: `id` wie oben, `name` (bis 100 Zeichen, Pflicht), `checkbox` (BOOLEAN, Pflicht, Standard falsch) – *Pi einrichten* (abgehakt) und *API testen* (offen).
+- `mysql < flutterdb.sql` läuft fehlerfrei; `SHOW TABLES` zeigt beide Tabellen.
 
 ## Erklärt – was passiert hier?
 

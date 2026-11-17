@@ -5,17 +5,24 @@
 **Skript:** PHP-MyAdmin installieren (Pakete), PHP-Info-Datei erstellen
 
 ## Auftrag
-1. Installieren Sie PHP mit Apache-Modul und MySQL-Anbindung:
+1. **⌨️ Terminal** Installieren Sie PHP mit Apache-Modul und MySQL-Anbindung:
    ```bash
    apt install -y php libapache2-mod-php php-mysql
    systemctl restart apache2
    ```
-2. Legen Sie die Datei `info.php` an:
+2. **📄 Neue Datei** `/var/www/html/info.php` – öffnen Sie sie mit nano:
    ```bash
    nano /var/www/html/info.php
    ```
-   Inhalt: `<?php phpinfo(); ?>` – speichern mit **Strg+O**, Enter, beenden mit **Strg+X**.
-3. Rufen Sie `http://<IP>/info.php` im Browser auf und suchen Sie (Strg+F) nach **mysqli**.
+   Tippen Sie diese eine Zeile ein, speichern Sie mit **Strg+O**, Enter, und beenden Sie mit **Strg+X**:
+   ```diff
+   + <?php phpinfo(); ?>
+   ```
+3. **🌐 Browser** Rufen Sie `http://<IP>/info.php` im Browser auf und suchen Sie (Strg+F) nach **mysqli**.
+
+## Profi-Auftrag
+- Apache führt `.php`-Dateien aus, und PHP kann MySQL ansprechen (Erweiterung *mysqli*).
+- `http://<IP>/info.php` zeigt die PHP-Infoseite mit dem Abschnitt `mysqli`.
 
 ## Erklärt – was passiert hier?
 

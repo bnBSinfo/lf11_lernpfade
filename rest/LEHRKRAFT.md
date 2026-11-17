@@ -7,6 +7,13 @@ Aufgebaut nach dem Muster der **Flutter-Einführung**: Level mit Auftrag, Erklä
 Denkfrage, Zielbild, Server-Stack, Datenfluss, Selbstkontrolle, verschlüsselte Musterlösungen.
 Grundlage: `04__AP_LF11_BN_STO_RASP_DB_REST.docx`.
 
+## Aufbau einer Level-Seite (wie Flutter-Einführung und Datenbankanbindung)
+
+- **Vier Reiter je Level:** 🎯 Ziel (Zielbild, Server-Stack) · 🛠️ Auftrag (Auftrag bzw. Profi-Auftrag, Tipps, Wörter, Musterlösung) · 💡 Hintergrund (Erklärt, Merke, Denkfrage, Datenfluss) · ✅ Prüfen (Selbstkontrolle). Die Wissen-Seite hat einen Reiter je Abschnitt und einen Druckknopf.
+- **Zwei Pfade** (Schalter im Seitenkopf): 🧭 *Begleitet* zeigt jeden Schritt mit Kennzeichnung (⌨️ Terminal, 🌐 Browser, 📄 Neue Datei, ✏️ Ändern …); 🚀 *Profi* nur die Anforderungen (`## Profi-Auftrag`).
+- **Code-Rahmen** (```` ```diff ````): grau = steht schon da, grün = neu tippen, rot = löschen. Nur dort, wo eine Datei geändert wird (`info.php`, `$config` in `api.php`); Shell-Befehle bleiben normale Codeblöcke.
+- **Sprache einfach** (wie LF3): zweite Fassung aller Level-Texte und der Selbstkontrolle, Fachwörter gepunktet unterstrichen mit Erklärung beim Darüberfahren. Wissen und Bonus gibt es nur in Standardsprache.
+
 ## Grundsatz: alles wird getippt
 - Es gibt **keine Starter-Dateien und kein Projekt zum Importieren**. SQL (Level 6) und PHP (Level 7) schreiben die
   Schüler mit `nano` auf dem Pi, in Level 9 legen sie mit `dart create todo_client` ein eigenes Projekt an.
@@ -31,10 +38,12 @@ Datei in den mebis-Kurs legen.
 ## Aufbau des Repos
 | Ordner / Datei | Inhalt |
 |---|---|
-| `docs/level_0X.md`, `docs/bonus.md` | Auftrag, Erklärung, Tipps, Merke, Denkfrage |
+| `docs/level_0X.md`, `docs/bonus.md` | Auftrag, Profi-Auftrag, Erklärung, Tipps, Merke, Denkfrage |
+| `docs/einfach/level_0X.md` | dieselben Level in einfacher Sprache; `{{code N}}` holt den N-ten Codeblock (ab 0) aus der Standardfassung |
 | `docs/downloads/api.php` | php-crud-api v2.16.7 (MIT, Lizenz daneben) |
-| `tool/seite_bauen.py` | baut die Seite (braucht pandoc und openssl) |
-| `tool/kontrolle.py` | Checklisten und Kontrollfragen je Level |
+| `tool/seite_bauen.py` | baut die Seite (braucht pandoc und openssl); Stil, Reiter, Code-Rahmen, Schalter und Mouseover kommen aus `../flutter_einfuehrung/tool/seite_bauen.py` |
+| `tool/kontrolle.py`, `tool/kontrolle_einfach.py` | Checklisten und Kontrollfragen je Level (Standard / einfache Sprache) |
+| `tool/woerter.py` | Fachwörter mit Erklärung in einfacher Sprache (Kasten „Wichtige Wörter“ und Mouseover) |
 | `tool/lernpfad_bausteine.py` | Selbstkontrolle, Kopiersperre, Einbetten – identisch in der Flutter-Einführung |
 | `tool/datenfluss.py`, `tool/wissen.html`, `tool/rest_baukasten.js` | Grafik, Wissen-Seite, REST-Baukasten |
 | `loesungen/` | Musterlösungen: `server/sql/flutterdb.sql`, `server/php/benutzer.php`, `lib/todo_api.dart`, `bin/todo_client.dart` |

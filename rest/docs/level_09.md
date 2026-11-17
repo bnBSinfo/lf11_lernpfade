@@ -5,13 +5,13 @@
 **Sie schreiben:** ein neues Dart-Projekt `todo_client` auf dem PC
 
 ## Auftrag
-1. Legen Sie auf dem PC ein neues Projekt an und fügen Sie das Paket `http` hinzu:
+1. **⌨️ Terminal (PC)** Legen Sie auf dem PC ein neues Projekt an und fügen Sie das Paket `http` hinzu:
    ```bash
    dart create todo_client
    cd todo_client
    dart pub add http
    ```
-2. Legen Sie die Datei `lib/todo_api.dart` an. Sie enthält:
+2. **📄 Neue Datei** `lib/todo_api.dart`. Sie enthält:
    - eine Klasse **`ToDo`** mit den Feldern `id` (int), `name` (String), `checkbox` (bool) und einem Konstruktor **`ToDo.fromJson(Map<String, dynamic> json)`**. Achtung: `checkbox` kann je nach Server `true`/`false` **oder** `1`/`0` sein.
    - eine Klasse **`TodoApi`**, die im Konstruktor die IP bekommt und daraus die Adresse `http://<IP>/php-crud-api/api.php/records/ToDoTB` baut, mit den Methoden:
 
@@ -23,7 +23,7 @@
    | `Future<void> loeschen(int id)` | `DELETE` auf `…/ToDoTB/<id>` | – |
 
    Jede Methode prüft den Statuscode und wirft bei allem außer 200 eine `Exception` mit Code und Antworttext.
-3. Ersetzen Sie den Inhalt von `bin/todo_client.dart` durch ein Hauptprogramm, das so aufgerufen wird:
+3. **✏️ Ändern** Ersetzen Sie den Inhalt von `bin/todo_client.dart` durch ein Hauptprogramm, das so aufgerufen wird:
    ```bash
    dart run bin/todo_client.dart 10.36.13.76                      # alle ToDos anzeigen
    dart run bin/todo_client.dart 10.36.13.76 neu "Milch kaufen"
@@ -31,6 +31,11 @@
    dart run bin/todo_client.dart 10.36.13.76 weg 3                # ToDo 3 löschen
    ```
    Nach jedem Befehl zeigt es die Liste an, z. B. `[x] 1: Pi einrichten`. Fehler (z. B. Pi aus) fängt es mit `try`/`catch` ab und gibt eine kurze Meldung aus.
+
+## Profi-Auftrag
+- Dart-Projekt `todo_client` mit dem Paket `http`.
+- `lib/todo_api.dart`: Klasse `ToDo` (`id`, `name`, `checkbox`; `ToDo.fromJson` verträgt `true`/`false` **und** `1`/`0`) und Klasse `TodoApi(ip)` mit `alle()`, `anlegen(name)` → neue id, `abhaken(id, checkbox)`, `loeschen(id)`. Statuscode ungleich 200 → `Exception` mit Code und Antworttext.
+- `bin/todo_client.dart`: `dart run bin/todo_client.dart <IP> [neu "Text" | ab <id> | weg <id>]` – danach die Liste im Format `[x] 1: Pi einrichten`. Fehler (Pi aus) erscheinen als kurze Meldung, nicht als Stacktrace.
 
 ## Erklärt – was passiert hier?
 

@@ -4,7 +4,7 @@
 Aufruf im Projektordner:  python3 tool/seite_bauen.py   (braucht pandoc und openssl)
 Passwort für die Musterlösungen: Eingabe oder Umgebungsvariable LOESUNG_PASSWORT.
 Vorschau ohne Lösungen:   python3 tool/seite_bauen.py --ohne-loesungen
-Stil: docs/css/stil.css (Lernpaket-Kompass, Welt "technik") + tool/seite.css (wie Flutter-Einführung).
+Stil und Bausteine (Reiter, Code-Rahmen, Schalter, Sprache einfach) kommen aus flutter_einfuehrung/tool/seite_bauen.py.
 """
 import base64
 import datetime as _dt
@@ -19,10 +19,24 @@ import secrets
 import subprocess
 import sys
 
+import importlib.util
+
+# Bausteine der Flutter-Einführung übernehmen (Reiter, Code-Rahmen, Schalter, Sprache einfach, Druck):
+# so bleiben alle drei Lernpfade gleich aufgebaut. Danach deren gleichnamige Module wieder vergessen.
+_EB_TOOL = pathlib.Path(__file__).resolve().parent.parent.parent / "flutter_einfuehrung" / "tool"
+_spec = importlib.util.spec_from_file_location("einfuehrung_seite", _EB_TOOL / "seite_bauen.py")
+EB = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(EB)
+for _m in ("kontrolle", "kontrolle_einfach", "woerter", "lernpfad_bausteine"):
+    sys.modules.pop(_m, None)
+sys.path[:] = [x for x in sys.path if pathlib.Path(x or ".").resolve() != _EB_TOOL]
+
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from datenfluss import CSS as DATENFLUSS_CSS, datenfluss_svg  # noqa: E402
 import lernpfad_bausteine as bausteine  # noqa: E402
 from kontrolle import KONTROLLE  # noqa: E402
+from kontrolle_einfach import KONTROLLE_EINFACH  # noqa: E402
+from woerter import WOERTER, LEVEL_WOERTER  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
@@ -86,14 +100,14 @@ ANZAHL = len(LEVEL)
 
 
 # ---------------------------------------------------------------- Bausteine
-def md_zu_html(pfad: pathlib.Path) -> str:
-    text = re.sub(r"^# .*\n", "", pfad.read_text(encoding="utf-8"), count=1)
-    out = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", "--no-highlight"],
-                         input=text, capture_output=True, text=True, check=True).stdout
-    out = out.replace("<h2", "<h3").replace("</h2>", "</h3>")
-    out = out.replace("<img ", '<img loading="lazy" ')
-    return re.sub(r'(<h3 id="auftrag">.*?)(?=<h3 |\Z)',
-                  r'<div class="auftrags-kasten">\1</div>', out, count=1, flags=re.S)
+def md_zu_html(pfad: pathlib.Path, code_quelle: pathlib.Path | None = None) -> str:
+    """Wie in der Flutter-Einführung: Auftrag/Profi-Auftrag/Erklärt einpacken, ```diff als Code-Rahmen."""
+    return EB.md_zu_html(pfad, code_quelle).replace("<img ", '<img loading="lazy" ')
+
+
+def woerter_html(nr: int) -> str:
+    return "".join(f"<dt>{e(w)}<small>{e(WOERTER[w][0])}</small></dt><dd>{e(WOERTER[w][1])}</dd>"
+                   for w in LEVEL_WOERTER[nr])
 
 
 def kette(schritte):
@@ -129,28 +143,48 @@ def level_ansicht(nr: int, d: dict) -> str:
                      f'<figcaption>{e(t)}</figcaption></figure>' for b, t in d.get("bilder", []))
     zurueck = f'<a class="knopf" href="#level-{nr-1}">◀ Level {nr-1}</a>' if nr > 1 else '<a class="knopf" href="#start">◀ Start</a>'
     weiter = f'<a class="knopf primaer" href="#level-{nr+1}">Level {nr+1} ▶</a>' if nr < ANZAHL else '<a class="knopf primaer" href="#bonus">Bonus ▶</a>'
+    std, std_hg = EB.hintergrund_abtrennen(md_zu_html(DOCS / f"level_0{nr}.md"))
+    ein, ein_hg = EB.hintergrund_abtrennen(md_zu_html(DOCS / "einfach" / f"level_0{nr}.md", DOCS / f"level_0{nr}.md"))
     return f"""
 <section class="ansicht level" id="level-{nr}" data-level="{nr}">
   <div class="card level-kopf">
     <span class="nummer" aria-hidden="true">{nr}</span>
     <div><h2>Level {nr} – {e(d['titel'])}</h2><p class="stich">{e(d['stich'])}</p></div>
   </div>
-  <div class="level-raster">
-    <div class="card lp-auftrag">{md_zu_html(DOCS / f"level_0{nr}.md")}
-      <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
-    </div>
-    <aside class="lp-seite">
+  <nav class="schritt-reiter" role="tablist" aria-label="Teile von Level {nr}">
+    <button type="button" role="tab" data-schritt="ziel">🎯 Ziel</button>
+    <button type="button" role="tab" data-schritt="auftrag">🛠️ Auftrag</button>
+    <button type="button" role="tab" data-schritt="hintergrund">💡 Hintergrund</button>
+    <button type="button" role="tab" data-schritt="pruefen">✅ Prüfen</button>
+  </nav>
+  <div class="schritt" data-schritt="ziel" role="tabpanel">
+    <div class="ziel-raster">
       <div class="card ziel"><h3>So soll es aussehen</h3>{ziele}{bilder}</div>
       <div class="card"><h3>Ihr Server-Stack</h3>{stack_html(nr)}
         <p class="legende"><span class="knoten da"><b>schon da</b></span><span class="knoten neu"><b>neu</b></span>
         <span class="knoten spaeter"><b>kommt noch</b></span></p></div>
-    </aside>
+    </div>
+    <p class="schritt-weiter"><button type="button" class="knopf primaer" data-geh="auftrag">Weiter: 🛠️ Auftrag ▶</button></p>
   </div>
-  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr])}
-  <div class="card grafik"><h3>Wo sind wir im Datenfluss?</h3>{datenfluss_svg(nr)}
-    <p class="legende"><span class="knoten neu"><b>neu / im Einsatz in diesem Level</b></span><span class="knoten da"><b>schon da</b></span>
-    <span class="knoten spaeter"><b>kommt noch</b></span></p>
-    <h3>Schritt für Schritt</h3>{kette(d['kette'])}</div>
+  <div class="schritt" data-schritt="auftrag" role="tabpanel">
+    <div class="card lp-auftrag"><div class="sprache-standard">{std}</div>
+      <div class="sprache-einfach">{ein}
+        <div class="woerter"><h3>📖 Wichtige Wörter</h3><dl>{woerter_html(nr)}</dl></div></div>
+      <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
+    </div>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="ziel">◀ 🎯 Ziel</button><button type="button" class="knopf primaer" data-geh="hintergrund">Weiter: 💡 Hintergrund ▶</button></p>
+  </div>
+  <div class="schritt" data-schritt="hintergrund" role="tabpanel">
+    <div class="card lp-hintergrund"><div class="sprache-standard">{std_hg}</div><div class="sprache-einfach">{ein_hg}</div></div>
+    <div class="card grafik"><h3>Wo sind wir im Datenfluss?</h3>{datenfluss_svg(nr)}
+      <p class="legende"><span class="knoten neu"><b>neu / im Einsatz in diesem Level</b></span><span class="knoten da"><b>schon da</b></span>
+      <span class="knoten spaeter"><b>kommt noch</b></span></p>
+      <h3>Schritt für Schritt</h3>{kette(d['kette'])}</div>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="auftrag">◀ 🛠️ Auftrag</button><button type="button" class="knopf primaer" data-geh="pruefen">Weiter: ✅ Prüfen ▶</button></p>
+  </div>
+  <div class="schritt" data-schritt="pruefen" role="tabpanel">
+  {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr], KONTROLLE_EINFACH.get(nr))}
+  </div>
   <div class="card lp-fuss">
     {zurueck}
     <div class="pruefen"><button class="erledigt" data-level="{nr}" disabled>Level geschafft</button></div>
@@ -188,7 +222,9 @@ def passwort_holen() -> str:
 
 
 CSS_EXTRA = """
-.auftrags-kasten pre code{background:transparent}
+.auftrags-kasten pre:not(.rahmen-code) code{background:transparent}
+.ziel-raster .term,.ziel-raster .browser{font-size:.78rem}
+.kh-db{position:absolute;right:-12px;bottom:-8px;font-size:22px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
 .start-pi{display:flex;gap:24px;align-items:center}
 .start-pi img{width:300px;max-width:40%;height:auto;flex:none}
 .start-pi h2{margin-top:0}
@@ -217,45 +253,10 @@ CSS_EXTRA = """
 @media (max-width:760px){.rest-bk{grid-template-columns:minmax(0,1fr)}}
 """
 
-JS = r"""
-document.documentElement.classList.add("js");
-(function(){
-  var KEY = "rest-lernpfad-lf11", stand = {}, ANZAHL = %d;
-  try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
-  var ansichten = document.querySelectorAll(".ansicht");
-  function route(){
-    var ziel = document.getElementById((location.hash || "#start").slice(1));
-    var ansicht = ziel && ziel.closest(".ansicht");
-    if (!ansicht) { ansicht = document.getElementById("start"); ziel = null; }
-    var id = ansicht.id;
-    ansichten.forEach(function(a){ a.hidden = a.id !== id; });
-    document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
-    if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
-  }
-  function zeigen(){
-    var n = 0;
-    document.querySelectorAll(".level").forEach(function(s){
-      var nr = s.dataset.level, ok = !!stand[nr];
-      if (ok) n++;
-      s.classList.toggle("fertig", ok);
-      var b = s.querySelector("button.erledigt");
-      b.textContent = ok ? "✓ Geschafft (zurücksetzen)" : "Level geschafft";
-      b.setAttribute("aria-pressed", ok);
-      document.querySelectorAll('[data-ziel="level-' + nr + '"]').forEach(function(c){ c.classList.toggle("ok", ok); });
-    });
-    document.getElementById("zaehler").textContent = n + " / " + ANZAHL;
-  }
-  document.querySelectorAll("button.erledigt").forEach(function(b){
-    b.addEventListener("click", function(){
-      stand[b.dataset.level] = !stand[b.dataset.level];
-      try { localStorage.setItem(KEY, JSON.stringify(stand)); } catch (e) {}
-      zeigen();
-    });
-  });
-  window.addEventListener("hashchange", route);
-  route(); zeigen();
-})();
-""" % ANZAHL
+# Navigation, Reiter, Pfad- und Sprachschalter, Drucken: aus der Flutter-Einführung (eigener Speicher-Schlüssel)
+JS = EB.JS.replace('"flutter-lernpfad-lf11"', '"rest-lernpfad-lf11"').replace('n + " / 9"', f'n + " / {ANZAHL}"')
+assert '"rest-lernpfad-lf11"' in JS
+
 
 JS_LOESUNG = r"""
 (function(){
@@ -302,7 +303,7 @@ JS_LOESUNG = r"""
 def main() -> None:
     ohne = "--ohne-loesungen" in sys.argv
     geheim = "null" if ohne else loesungen_verschluesseln(passwort_holen())
-    css = (ROOT / "tool" / "seite.css").read_text(encoding="utf-8") + CSS_EXTRA + DATENFLUSS_CSS + bausteine.CSS
+    css = EB.CSS + CSS_EXTRA + DATENFLUSS_CSS + bausteine.CSS
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
             + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
             + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: REST">📘 Wissen</a>'
@@ -313,6 +314,10 @@ def main() -> None:
         f'<a href="#level-{n}" data-ziel="level-{n}"><b>{n} · {e(d["titel"])}</b><span class="klein">{e(d["stich"])}</span>'
         f'<span class="fertig-marke">✓ geschafft</span></a>' for n, d in LEVEL.items())
     ansichten = "".join(level_ansicht(n, d) for n, d in LEVEL.items())
+    zeilen = "".join(f'<span class="kh-zeile{" an" if an else ""}"><i></i><b style="width:{w}%"></b><u></u></span>'
+                     for an, w in ((1, 62), (0, 48), (1, 70), (0, 40)))
+    wissen = EB.wissen_reiter((ROOT / "tool" / "wissen.html").read_text(encoding="utf-8").replace("<!--DATENFLUSS-->", datenfluss_svg()))
+    begriffe = json.dumps({w: v[1] for w, v in WOERTER.items()}, ensure_ascii=False)
     seite = f"""<!doctype html>
 <html lang="de">
 <head>
@@ -327,11 +332,23 @@ def main() -> None:
 <body data-thema="technik">
 <div class="app">
   <header class="card kopf">
+    <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span>{zeilen}<span class="kh-plus">+</span></span><span class="kh-db">🍓</span></figure>
     <div class="titel">
       <h1>{e(NAME)} <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 9 Leveln vom Raspberry Pi zum Datenbankserver, den Ihre App über REST anspricht.</div>
     </div>
     <nav class="fortschritt" aria-label="Level">{navi}</nav>
+    <div class="schalter-zeile">
+    <div class="pfad-wahl" role="group" aria-label="Lernpfad wählen">
+      <button type="button" data-modus="begleitet" aria-pressed="true">🧭 Begleitet</button>
+      <button type="button" data-modus="profi" aria-pressed="false">🚀 Profi</button>
+    </div>
+    <div class="pfad-wahl sprach-wahl" role="group" aria-label="Sprache wählen">
+      <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
+      <button type="button" data-sprache="einfach" aria-pressed="false">Sprache einfach</button>
+    </div>
+    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Drucken</button>
+    </div>
   </header>
 
   <section class="ansicht" id="start">
@@ -341,17 +358,37 @@ def main() -> None:
       <p><b>Gearbeitet wird am echten Raspberry Pi und in Ihrer eigenen Entwicklungsumgebung</b> – Terminal, SSH, Webserver,
       Datenbank und Dart, genau wie im Betrieb. Es gibt <b>keine Vorlagen zum Herunterladen</b>: Jede Zeile tippen Sie selbst.</p>
       <p>Diese Seite ist Ihr Wegweiser: Auftrag, Zielbild, Datenfluss, Hilfen und Selbstkontrolle.</p></div></div>
+    <div class="card"><h2>Wählen Sie Ihren Pfad</h2>
+      <p>Beide Pfade bauen <b>denselben Server</b> mit denselben Leveln und derselben Selbstkontrolle. Sie können jederzeit
+      oben im Seitenkopf umschalten – auch mitten in einem Level.</p>
+      <div class="pfad-karten">
+        <button type="button" class="pfad-karte" data-modus="begleitet">
+          <span class="pk-titel">🧭 Begleiteter Pfad</span>
+          <span class="pk-unter">mit sehr viel Unterstützung</span>
+          <span class="pk-liste">✔ jeder Schritt einzeln: Terminal, Browser, neue Datei oder ändern<br>
+          ✔ Code-Rahmen zeigen genau die Stelle in der Datei<br>✔ Erklärungen und Tipps zu jedem Level</span>
+          <span class="pk-fuer">Für alle, die Linux, Webserver und Datenbanken zum ersten Mal einrichten.</span>
+        </button>
+        <button type="button" class="pfad-karte" data-modus="profi">
+          <span class="pk-titel">🚀 Profipfad</span>
+          <span class="pk-unter">nur Anforderungen – den Weg finden Sie selbst</span>
+          <span class="pk-liste">✔ je Level eine knappe Liste: Was muss der Server können?<br>
+          ✔ keine Befehle vorgegeben, Erklärungen nur auf Klick<br>✔ Zielbild und Server-Stack als Spezifikation</span>
+          <span class="pk-fuer">Für alle, die schon mit Linux und SQL gearbeitet haben.</span>
+        </button>
+      </div>
+    </div>
     <div class="card"><h2>So geht's</h2>
       <div class="start-raster">
         <div><h3>1 · Bereitlegen</h3>
           <p>Raspberry Pi mit SD-Karte, Netzteil und LAN-Kabel, dazu Ihr PC mit Terminal (ab Level 9 mit Dart).</p></div>
         <div><h3>2 · Auftrag lesen</h3>
-          <p>Der rote Kasten sagt, was zu tun ist. <i>Erklärt</i> sagt, warum. Die Tipps öffnen Sie nur, wenn Sie nicht weiterkommen.</p></div>
+          <p>Jedes Level hat vier Reiter: 🎯 Ziel, 🛠️ Auftrag, 💡 Hintergrund, ✅ Prüfen. Der rote Kasten sagt, was zu tun ist – Schritt für Schritt oder als Anforderungsliste. Die Tipps öffnen Sie nur, wenn Sie nicht weiterkommen.</p></div>
         <div><h3>3 · Abtippen</h3>
           <p>Befehle und Code werden <b>abgetippt</b> – Kopieren ist auf dieser Seite gesperrt. Wer tippt, liest jede Zeile
           und versteht die Fehlermeldungen.</p></div>
         <div><h3>4 · Selbstkontrolle</h3>
-          <p>Unter jedem Level: Haken setzen, was wirklich funktioniert, Kontrollfragen beantworten – dann ist das Level geschafft.</p></div>
+          <p>Im Reiter ✅ Prüfen: Haken setzen, was wirklich funktioniert, Kontrollfragen beantworten – dann ist das Level geschafft.</p></div>
       </div>
     </div>
     <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
@@ -362,8 +399,9 @@ def main() -> None:
   </section>
 {ansichten}
   <section class="ansicht" id="wissen">
-{(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8").replace("<!--DATENFLUSS-->", datenfluss_svg())}
-    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><a class="knopf primaer" href="#level-8">Zu Level 8 ▶</a></div>
+{wissen}
+    <p class="druck-fuss">{e(NAME)} LF11 · Version {VERSION} · Stand {STAND} · bnbsinfo.github.io/lf11_lernpfade/rest/</p>
+    <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><a class="knopf primaer" href="#level-8">Zu Level 8 ▶</a></div>
   </section>
 
   <section class="ansicht" id="bonus">
@@ -388,9 +426,12 @@ def main() -> None:
 
   <footer class="druckfuss"><small>{e(NAME)} LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
+<dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>
+  <form method="dialog"><button class="primaer">Schließen</button></form></dialog>
 <script>var LP_KEY = "rest-lernpfad-lf11";{JS}</script>
 <script>{bausteine.JS}</script>
 <script>{(ROOT / "tool" / "rest_baukasten.js").read_text(encoding="utf-8")}</script>
+<script>var BEGRIFFE = {begriffe};{(EB.ROOT / "tool" / "begriffe.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
 </body>
 </html>

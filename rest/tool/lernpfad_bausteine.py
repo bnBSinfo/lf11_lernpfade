@@ -16,24 +16,40 @@ import re
 e = html.escape
 
 
-def selbstkontrolle_html(nr: int, daten: dict) -> str:
+def zwei(standard: str, einfach: str | None) -> str:
+    """Text in beiden Sprachstufen; der Sprachschalter blendet eine davon aus."""
+    if einfach is None:
+        return standard
+    return f'<span class="sprache-standard">{standard}</span><span class="sprache-einfach">{einfach}</span>'
+
+
+def selbstkontrolle_html(nr: int, daten: dict, einfach: dict | None = None) -> str:
+    ec = einfach["check"] if einfach else [None] * len(daten["check"])
+    ef = einfach["fragen"] if einfach else [(None, [(None, None)] * len(a)) for _, a in daten["fragen"]]
+    ic = lambda t: inline_code(t) if t is not None else None
     checks = "".join(
-        f'<li><label><input type="checkbox" data-sk="{nr}-c{i}"> {inline_code(t)}</label></li>'
-        for i, t in enumerate(daten["check"]))
+        f'<li><label><input type="checkbox" data-sk="{nr}-c{i}"> {zwei(inline_code(t), ic(te))}</label></li>'
+        for i, (t, te) in enumerate(zip(daten["check"], ec)))
     fragen = []
-    for i, (frage, antworten) in enumerate(daten["fragen"]):
+    for i, ((frage, antworten), (frage_e, antworten_e)) in enumerate(zip(daten["fragen"], ef)):
         opts = "".join(
             f'<li><label><input type="radio" name="sk-{nr}-{i}" value="{j}" data-richtig="{1 if ok else 0}" '
-            f'data-feedback="{e(fb)}"> {inline_code(a)}</label></li>'
-            for j, (a, ok, fb) in enumerate(antworten))
-        fragen.append(f'<div class="sk-frage" data-sk-frage="{nr}-{i}"><p><b>{i + 1}.</b> {inline_code(frage)}</p>'
+            f'data-feedback="{e(fb)}"' + (f' data-feedback-einfach="{e(fbe)}"' if fbe else "") +
+            f'> {zwei(inline_code(a), ic(ae))}</label></li>'
+            for j, ((a, ok, fb), (ae, fbe)) in enumerate(zip(antworten, antworten_e)))
+        fragen.append(f'<div class="sk-frage" data-sk-frage="{nr}-{i}"><p><b>{i + 1}.</b> {zwei(inline_code(frage), ic(frage_e))}</p>'
                       f'<ul class="sk-optionen">{opts}</ul><p class="sk-feedback" role="status"></p></div>')
+    einl = zwei("Haken Sie nur ab, was bei Ihnen <b>wirklich</b> funktioniert. Beantworten Sie dann die Kontrollfragen –\n"
+                "  sind alle Haken gesetzt und alle Fragen richtig, ist das Level geschafft.",
+                "Setze nur einen Haken, wenn es bei dir <b>wirklich</b> geht. Dann beantworte die Fragen. "
+                "Alle Haken gesetzt und alle Fragen richtig? Dann hast du das Level geschafft." if einfach else None)
+    h_check = zwei("Das muss jetzt funktionieren", "Das muss jetzt gehen" if einfach else None)
+    h_fragen = zwei("Kontrollfragen", "Fragen" if einfach else None)
     return f"""<div class="card selbstkontrolle" data-sk-level="{nr}">
   <h3>✅ Selbstkontrolle</h3>
-  <p class="klein">Haken Sie nur ab, was bei Ihnen <b>wirklich</b> funktioniert. Beantworten Sie dann die Kontrollfragen –
-  sind alle Haken gesetzt und alle Fragen richtig, ist das Level geschafft.</p>
-  <h4>Das muss jetzt funktionieren</h4><ul class="sk-liste">{checks}</ul>
-  <h4>Kontrollfragen</h4>{"".join(fragen)}
+  <p class="klein">{einl}</p>
+  <h4>{h_check}</h4><ul class="sk-liste">{checks}</ul>
+  <h4>{h_fragen}</h4>{"".join(fragen)}
 </div>"""
 
 
@@ -98,7 +114,7 @@ JS = r"""
     var ok = gew.dataset.richtig === "1";
     if (zeigen !== false) {
       div.classList.add(ok ? "richtig" : "falsch");
-      fb.textContent = (ok ? "✓ Richtig. " : "✗ Noch nicht. ") + gew.dataset.feedback;
+      fb.textContent = (ok ? "✓ Richtig. " : "✗ Noch nicht. ") + ((document.documentElement.classList.contains("spr-einfach") && gew.dataset.feedbackEinfach) || gew.dataset.feedback);
     }
     return ok;
   }

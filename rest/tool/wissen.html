@@ -1,13 +1,23 @@
 <div class="card level-kopf"><span class="nummer" aria-hidden="true">📘</span>
   <div><h2>Wissen: REST</h2><p class="stich">HTTP-Methoden, Statuscodes, JSON – und wie man eine API ausprobiert</p></div></div>
 
-<div class="card grafik"><h3>Der Datenfluss im Überblick</h3>
+<nav class="card inhalt-navi" aria-label="Inhalt">
+  <a href="#w-fluss">1 · Datenfluss</a>
+  <a href="#w-rest">2 · REST-API</a>
+  <a href="#w-methoden">3 · Methoden</a>
+  <a href="#w-download">4 · Download</a>
+  <a href="#w-status">5 · Statuscodes</a>
+  <a href="#w-baukasten">6 · Baukasten</a>
+  <a href="#w-json">7 · JSON</a>
+</nav>
+
+<div class="card" id="w-fluss"><h3>Der Datenfluss im Überblick</h3>
   <p class="klein">Die App (oder der Browser) spricht nie direkt mit der Datenbank: Die Anfrage geht über das Netz an Apache,
   PHP übersetzt sie in SQL, MySQL liefert die Daten, und die Antwort kommt als JSON zurück. Verwaltet wird der Pi per SSH.</p>
   <!--DATENFLUSS-->
 </div>
 
-<div class="card"><h3>Was ist eine REST-API?</h3>
+<div class="card" id="w-rest"><h3>Was ist eine REST-API?</h3>
   <p>Eine App soll Daten vom Server lesen und ändern – aber <b>nicht</b> direkt in die Datenbank greifen
   (dann bräuchte jedes Handy das Datenbank-Passwort). Dazwischen sitzt eine <b>API</b>: ein Programm auf dem Server,
   das HTTP-Anfragen annimmt, mit der Datenbank spricht und JSON zurückgibt.</p>
@@ -21,7 +31,7 @@
   hat eine feste <b>Adresse</b>. Was passieren soll, sagt die <b>HTTP-Methode</b>.</p>
 </div>
 
-<div class="card"><h3>Methoden, Adressen, SQL</h3>
+<div class="card" id="w-methoden"><h3>Methoden, Adressen, SQL</h3>
   <table>
     <thead><tr><th>CRUD</th><th>Methode</th><th>Adresse (hinter …/api.php)</th><th>SQL</th><th>Antwort</th></tr></thead>
     <tbody>
@@ -35,7 +45,7 @@
   <p>Filtern und sortieren geht über Parameter: <code>/records/ToDoTB?filter=checkbox,eq,0&amp;order=name</code></p>
 </div>
 
-<div class="card"><h3>⬇ Download: die REST-API</h3>
+<div class="card" id="w-download"><h3>⬇ Download: die REST-API</h3>
   <p>Die <b>php-crud-api</b> ist eine einzige PHP-Datei. Sie macht aus jeder Tabelle einer MySQL-Datenbank automatisch eine REST-Schnittstelle.</p>
   <p><a class="knopf primaer" href="downloads/api.php">api.php herunterladen</a>
   <a class="knopf" href="downloads/LICENSE-php-crud-api.txt">Lizenz (MIT)</a></p>
@@ -45,7 +55,7 @@ cd /var/www/html/php-crud-api
 wget https://bnbsinfo.github.io/lf11_lernpfade/rest/downloads/api.php</code></pre>
 </div>
 
-<div class="card"><h3>Statuscodes – was der Server meldet</h3>
+<div class="card" id="w-status"><h3>Statuscodes – was der Server meldet</h3>
   <table>
     <thead><tr><th>Code</th><th>Bedeutung</th><th>typische Ursache bei uns</th></tr></thead>
     <tbody>
@@ -57,7 +67,7 @@ wget https://bnbsinfo.github.io/lf11_lernpfade/rest/downloads/api.php</code></pr
   </table>
 </div>
 
-<div class="card"><h3>REST-Baukasten – Anfragen zusammenstellen</h3>
+<div class="card" id="w-baukasten"><h3>REST-Baukasten – Anfragen zusammenstellen</h3>
   <p class="klein">Wählen Sie Methode, Tabelle und id. Rechts sehen Sie, wie dieselbe Anfrage im Browser, mit curl, in Dart und als SQL aussieht.</p>
   <div class="rest-bk">
     <form onsubmit="return false">
@@ -79,7 +89,7 @@ wget https://bnbsinfo.github.io/lf11_lernpfade/rest/downloads/api.php</code></pr
   </div>
 </div>
 
-<div class="card"><h3>JSON in 30 Sekunden</h3>
+<div class="card" id="w-json"><h3>JSON in 30 Sekunden</h3>
   <pre><code>{                              ← Objekt  → Dart: Map&lt;String, dynamic&gt;
   "records": [                 ← Liste   → Dart: List
     {"id": 1, "name": "Pi einrichten", "checkbox": true}

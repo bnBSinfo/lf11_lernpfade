@@ -5,7 +5,7 @@
 **Sie schreiben:** `/var/www/html/benutzer.php` auf dem Pi · **Skript:** Schnittstelle zur Datenbank erstellen
 
 ## Auftrag
-Legen Sie auf dem Pi die Datei an:
+**📄 Neue Datei** `/var/www/html/benutzer.php` – legen Sie sie auf dem Pi an:
 ```bash
 nano /var/www/html/benutzer.php
 ```
@@ -17,7 +17,12 @@ Das Programm soll – in dieser Reihenfolge:
 4. aus `flutterTB` **nur** `id` und `name` lesen, sortiert nach `id`,
 5. alle Zeilen als Liste holen und als JSON ausgeben.
 
-Öffnen Sie dann `http://<IP>/benutzer.php` im Browser – Firefox zeigt das JSON übersichtlich an.
+**🌐 Browser** Öffnen Sie dann `http://<IP>/benutzer.php` im Browser – Firefox zeigt das JSON übersichtlich an.
+
+## Profi-Auftrag
+- `http://<IP>/benutzer.php` liefert `id` und `name` aller Benutzer aus `flutterTB` als JSON-Liste, sortiert nach `id` – **ohne** Passwörter.
+- Der Content-Type ist JSON (utf-8). Die Verbindung läuft über `flutterUser`.
+- Klappt die Verbindung nicht: Statuscode 500 und `{"fehler": "Keine Verbindung zur Datenbank"}`.
 
 ## Erklärt – was passiert hier?
 

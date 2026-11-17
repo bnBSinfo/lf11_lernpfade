@@ -5,7 +5,7 @@
 **Skript:** Schnittstelle zur Datenbank erstellen (php-crud-api)
 
 ## Auftrag
-1. Laden Sie die API auf den Pi – sie besteht aus einer einzigen Datei `api.php`:
+1. **⌨️ Terminal (Pi)** Laden Sie die API auf den Pi – sie besteht aus einer einzigen Datei `api.php`:
    ```bash
    mkdir -p /var/www/html/php-crud-api
    cd /var/www/html/php-crud-api
@@ -13,16 +13,34 @@
    ```
    **⬇ Download:** [api.php](downloads/api.php) (php-crud-api v2.16.7, MIT-Lizenz) – liegt auch in Ihrem Projekt unter
    `docs/downloads/api.php` und kann mit `scp` auf den Pi kopiert werden.
-2. Tragen Sie in `php-crud-api/api.php` ganz unten bei `$config` die Zugangsdaten aus Level 6 ein:
+2. **✏️ Ändern** Tragen Sie in `php-crud-api/api.php` ganz unten bei `$config` die Zugangsdaten aus Level 6 ein:
    ```bash
    nano +99999 /var/www/html/php-crud-api/api.php
    ```
+   ```diff
+     $config = new Config([
+         // 'driver' => 'mysql',
+         // 'address' => 'localhost',
+         // 'port' => '3306',
+   -     'username' => 'php-crud-api',
+   -     'password' => 'php-crud-api',
+   -     'database' => 'php-crud-api',
+   +     'username' => 'flutterUser',
+   +     'password' => 'Pa$$w0rd',
+   +     'database' => 'flutterDB',
+     ]);
+   ```
    ![Zugangsdaten in api.php](bilder/api_config.png)
-3. Testen Sie im Browser:
+3. **🌐 Browser** Testen Sie im Browser:
    - `http://<IP>/php-crud-api/api.php/records/flutterTB`
    - `http://<IP>/php-crud-api/api.php/records/flutterTB/1`
    - `http://<IP>/php-crud-api/api.php/records/ToDoTB`
-4. Legen Sie vom PC aus mit `curl` ein ToDo an, haken Sie es ab und löschen Sie es wieder (siehe **📘 Wissen: REST**).
+4. **⌨️ Terminal (PC)** Legen Sie vom PC aus mit `curl` ein ToDo an, haken Sie es ab und löschen Sie es wieder (siehe **📘 Wissen: REST**).
+
+## Profi-Auftrag
+- Die php-crud-api ([api.php](downloads/api.php)) liegt unter `/var/www/html/php-crud-api/` und meldet sich als `flutterUser` an `flutterDB` an.
+- `…/api.php/records/flutterTB`, `…/records/flutterTB/1` und `…/records/ToDoTB` liefern JSON.
+- Vom PC aus legen Sie mit `curl` ein ToDo an, haken es ab und löschen es wieder.
 
 ## Erklärt – was passiert hier?
 

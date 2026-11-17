@@ -5,15 +5,19 @@
 **Skript:** Webserver installieren
 
 ## Auftrag
-1. Installieren Sie Apache:
+1. **⌨️ Terminal** Installieren Sie Apache:
    ```bash
    apt install -y apache2
    ```
-2. Öffnen Sie auf dem **PC** im Browser `http://<IP Ihres Pi>` – es erscheint die *Apache2 Ubuntu Default Page*.
-3. Finden Sie heraus, aus welcher Datei diese Seite kommt:
+2. **🌐 Browser** Öffnen Sie auf dem **PC** im Browser `http://<IP Ihres Pi>` – es erscheint die *Apache2 Ubuntu Default Page*.
+3. **⌨️ Terminal** Finden Sie heraus, aus welcher Datei diese Seite kommt:
    ```bash
    ls -l /var/www/html
    ```
+
+## Profi-Auftrag
+- Auf dem Pi läuft der Webserver Apache; `http://<IP>` zeigt vom PC aus die *Apache2 Ubuntu Default Page*.
+- Sie können sagen, aus welcher Datei auf dem Pi diese Seite kommt.
 
 ## Erklärt – was passiert hier?
 

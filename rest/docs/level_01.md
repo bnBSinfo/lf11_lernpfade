@@ -5,20 +5,25 @@
 **Skript:** Ubuntu – SD-Karte erstellen, Einrichten des Raspberry Pi
 
 ## Auftrag
-1. Erstellen Sie mit dem **Raspberry Pi Imager** eine SD-Karte mit *Ubuntu Desktop (64-bit, LTS)*.
-2. Starten Sie den Pi und legen Sie den Benutzer `administrator` mit dem Passwort `Pa$$w0rd` an.
-3. Stecken Sie das LAN-Kabel ins **pädagogische Netz**.
-4. Öffnen Sie das Terminal, werden Sie Administrator und bringen Sie das System auf den neuesten Stand:
+1. **🍓 Pi** Erstellen Sie mit dem **Raspberry Pi Imager** eine SD-Karte mit *Ubuntu Desktop (64-bit, LTS)*.
+2. **🍓 Pi** Starten Sie den Pi und legen Sie den Benutzer `administrator` mit dem Passwort `Pa$$w0rd` an.
+3. **🍓 Pi** Stecken Sie das LAN-Kabel ins **pädagogische Netz**.
+4. **⌨️ Terminal** Öffnen Sie das Terminal, werden Sie Administrator und bringen Sie das System auf den neuesten Stand:
    ```bash
    sudo -i
    apt update
    apt upgrade -y
    apt autoremove -y
    ```
-5. Lesen Sie die IP-Adresse aus und notieren Sie sie – Sie brauchen sie in jedem weiteren Level:
+5. **⌨️ Terminal** Lesen Sie die IP-Adresse aus und notieren Sie sie – Sie brauchen sie in jedem weiteren Level:
    ```bash
    hostname -I
    ```
+
+## Profi-Auftrag
+- Der Pi läuft mit *Ubuntu Desktop (64-bit, LTS)*, Benutzer `administrator` mit Passwort `Pa$$w0rd`, LAN im pädagogischen Netz.
+- Das System ist vollständig aktualisiert, nicht mehr benötigte Pakete sind entfernt.
+- Sie kennen die IP-Adresse des Pi, und der PC erreicht ihn mit `ping`.
 
 ## Erklärt – was passiert hier?
 

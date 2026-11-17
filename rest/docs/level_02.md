@@ -5,16 +5,20 @@
 **Skript:** SSH-Zugang einrichten, Zugriff auf den Pi
 
 ## Auftrag
-1. Installieren Sie auf dem Pi den SSH-Server und starten Sie ihn dauerhaft:
+1. **⌨️ Terminal (Pi)** Installieren Sie auf dem Pi den SSH-Server und starten Sie ihn dauerhaft:
    ```bash
    apt install -y openssh-server
    systemctl enable --now ssh
    ```
-2. Verbinden Sie sich vom **PC** aus – mit MobaXterm (*Session → SSH*, IP und Benutzer eintragen) oder im Terminal:
+2. **💻 PC** Verbinden Sie sich vom **PC** aus – mit MobaXterm (*Session → SSH*, IP und Benutzer eintragen) oder im Terminal:
    ```bash
    ssh administrator@10.36.13.76
    ```
-3. Bestätigen Sie beim ersten Mal den Fingerabdruck mit `yes`. Geben Sie im SSH-Fenster `hostname` ein – es antwortet der Pi.
+3. **💻 PC** Bestätigen Sie beim ersten Mal den Fingerabdruck mit `yes`. Geben Sie im SSH-Fenster `hostname` ein – es antwortet der Pi.
+
+## Profi-Auftrag
+- Auf dem Pi läuft ein SSH-Server, der bei jedem Hochfahren startet.
+- Sie melden sich vom PC aus als `administrator` per SSH an (Terminal oder MobaXterm); `hostname` beantwortet der Pi.
 
 ## Erklärt – was passiert hier?
 

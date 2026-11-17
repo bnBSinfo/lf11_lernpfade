@@ -5,19 +5,23 @@
 **Skript:** MySQL-Server installieren, PHP-MyAdmin installieren
 
 ## Auftrag
-1. Installieren Sie den Datenbankserver und testen Sie ihn:
+1. **⌨️ Terminal** Installieren Sie den Datenbankserver und testen Sie ihn:
    ```bash
    apt install -y mysql-server
    mysql -e "SELECT VERSION();"
    ```
-2. Installieren Sie phpMyAdmin samt fehlender PHP-Pakete:
+2. **⌨️ Terminal** Installieren Sie phpMyAdmin samt fehlender PHP-Pakete:
    ```bash
    apt install -y phpmyadmin php-mbstring php-zip php-gd php-curl
    ```
    - Webserver: **apache2** mit der **Leertaste** markieren (Sternchen!), dann mit **Tab** auf *Ok*
    - *dbconfig-common* einrichten: **Ja**
    - Passwort für phpMyAdmin: `Pa$$w0rd`
-3. `systemctl restart apache2` und im Browser `http://<IP>/phpmyadmin` öffnen.
+3. **🌐 Browser** `systemctl restart apache2` und im Browser `http://<IP>/phpmyadmin` öffnen.
+
+## Profi-Auftrag
+- Der MySQL-Server läuft und beantwortet `SELECT VERSION();`.
+- phpMyAdmin ist im Apache eingebunden: `http://<IP>/phpmyadmin` zeigt die Anmeldung (Passwort `Pa$$w0rd`). Achtung bei der Webserver-Auswahl: Leertaste!
 
 ## Erklärt – was passiert hier?
 
