@@ -847,7 +847,7 @@ document.documentElement.classList.add("js");
     document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
     if (ansicht.querySelector(".schritt")) {
       var s = ziel && ziel !== ansicht && ziel.closest(".schritt");
-      var gemerkt; try { gemerkt = sessionStorage.getItem("schritt-" + id); } catch (e) {}
+      var gemerkt; try { gemerkt = sessionStorage.getItem(KEY + "-schritt-" + id); } catch (e) {}
       schritt(ansicht, s ? s.dataset.schritt : (gemerkt || ansicht.querySelector(".schritt").dataset.schritt));
     }
     if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
@@ -855,7 +855,7 @@ document.documentElement.classList.add("js");
   function schritt(ansicht, name){
     ansicht.querySelectorAll(".schritt").forEach(function(p){ p.hidden = p.dataset.schritt !== name; });
     ansicht.querySelectorAll(".schritt-reiter button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.schritt === name); });
-    try { sessionStorage.setItem("schritt-" + ansicht.id, name); } catch (e) {}
+    try { sessionStorage.setItem(KEY + "-schritt-" + ansicht.id, name); } catch (e) {}
   }
   document.addEventListener("click", function(ev){
     var b = ev.target.closest(".schritt-reiter button, [data-geh]");
