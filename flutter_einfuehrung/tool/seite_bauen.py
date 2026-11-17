@@ -263,10 +263,25 @@ def md_zu_html(pfad: pathlib.Path, code_quelle: pathlib.Path | None = None) -> s
     #   Auftrag (begleiteter Pfad) und Profi-Auftrag je im hellroten Kasten, Erklärt zum Einklappen im Profipfad
     for kopf, klasse in (('<h3 id="auftrag">', "auftrags-kasten nur-begleitet"),
                          ('<h3 id="profi-auftrag">', "auftrags-kasten profi-kasten nur-profi"),
-                         ('<h3 id="erkl', "erklaert")):
+                         ('<h3 id="erkl', "erklaert"),
+                         ('<h3 id="ausblick', "ausblick")):
+        hg = klasse in ("erklaert", "ausblick")   # gehört in den Reiter „Hintergrund“
         out = re.sub(r'(' + re.escape(kopf) + r'.*?)(?=<h3 |\Z)',
-                     lambda m: f'<div class="{klasse}">{m.group(1)}</div>', out, count=1, flags=re.S)
+                     lambda m: ("<!--hg-->" if hg else "") + f'<div class="{klasse}">{m.group(1)}</div>'
+                     + ("<!--/hg-->" if hg else ""), out, count=1, flags=re.S)
     return out
+
+
+def hintergrund_abtrennen(html: str) -> tuple[str, str]:
+    """Trennt „Erklärt“ und „Ausblick“ vom Auftrag ab (für den Reiter „Hintergrund“)."""
+    hg = "".join(re.findall(r"<!--hg-->(.*?)<!--/hg-->", html, flags=re.S))
+    rest = re.sub(r"<!--hg-->.*?<!--/hg-->", "", html, flags=re.S)
+    # Tipps (aufklappbar) bleiben beim Auftrag – dort braucht man sie beim Tippen
+    tipps = re.findall(r"<details>.*?</details>", hg, flags=re.S)
+    hg = re.sub(r"<details>.*?</details>", "", hg, flags=re.S)
+    if tipps:
+        rest += '<div class="tipps"><h3>💡 Tipps, falls es hakt</h3>' + "".join(tipps) + "</div>"
+    return rest, hg
 
 
 def rahmen_code(m) -> str:
@@ -361,19 +376,22 @@ def level_ansicht(nr: int, d: dict) -> str:
     bilder = "".join(handy(b, t) for b, t in d["bilder"])
     zurueck = f'<a class="knopf" href="#level-{nr-1}">◀ Level {nr-1}</a>' if nr > 1 else '<a class="knopf" href="#start">◀ Start</a>'
     weiter = f'<a class="knopf primaer" href="#level-{nr+1}">Level {nr+1} ▶</a>' if nr < max(LEVEL) else '<a class="knopf primaer" href="#bonus">Bonus ▶</a>'
+    std, std_hg = hintergrund_abtrennen(md_zu_html(DOCS / f"level_0{nr}.md"))
+    ein, ein_hg = hintergrund_abtrennen(md_zu_html(DOCS / "einfach" / f"level_0{nr}.md", DOCS / f"level_0{nr}.md"))
     return f"""
 <section class="ansicht level" id="level-{nr}" data-level="{nr}">
   <div class="card level-kopf">
     <span class="nummer" aria-hidden="true">{nr}</span>
     <div><h2>Level {nr} – {e(d['titel'])}</h2><p class="stich">{e(d['stich'])}</p></div>
   </div>
-  <div class="level-raster">
-    <div class="card lp-auftrag"><div class="sprache-standard">{md_zu_html(DOCS / f"level_0{nr}.md")}</div>
-      <div class="sprache-einfach">{md_zu_html(DOCS / "einfach" / f"level_0{nr}.md", DOCS / f"level_0{nr}.md")}
-        <div class="woerter"><h3>📖 Wichtige Wörter</h3><dl>{woerter_html(nr)}</dl></div></div>
-      <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
-    </div>
-    <aside class="lp-seite">
+  <nav class="schritt-reiter" role="tablist" aria-label="Teile von Level {nr}">
+    <button type="button" role="tab" data-schritt="ziel">🎯 Ziel</button>
+    <button type="button" role="tab" data-schritt="auftrag">🛠️ Auftrag</button>
+    <button type="button" role="tab" data-schritt="hintergrund">💡 Hintergrund</button>
+    <button type="button" role="tab" data-schritt="pruefen">✅ Prüfen</button>
+  </nav>
+  <div class="schritt" data-schritt="ziel" role="tabpanel">
+    <div class="ziel-raster">
       <div class="card ziel"><h3>So soll es aussehen</h3><div class="handys">{bilder}</div></div>
       <div class="card"><h3>Widget-Baum</h3>
         <ul class="baum"><li>{baum_html(d['baum'])}</li></ul>
@@ -381,11 +399,26 @@ def level_ansicht(nr: int, d: dict) -> str:
         <span class="knoten stateful"><b>Stateful</b></span><span class="knoten state"><b>State</b></span>
         <span class="knoten neu"><b>neu</b></span></p>
       </div>
-    </aside>
+    </div>
+    {baukasten}
+    <p class="schritt-weiter"><button type="button" class="knopf primaer" data-geh="auftrag">Weiter: 🛠️ Auftrag ▶</button></p>
   </div>
-  {baukasten}
-  <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
+  <div class="schritt" data-schritt="auftrag" role="tabpanel">
+    <div class="card lp-auftrag"><div class="sprache-standard">{std}</div>
+      <div class="sprache-einfach">{ein}
+        <div class="woerter"><h3>📖 Wichtige Wörter</h3><dl>{woerter_html(nr)}</dl></div></div>
+      <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
+    </div>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="ziel">◀ 🎯 Ziel</button><button type="button" class="knopf primaer" data-geh="hintergrund">Weiter: 💡 Hintergrund ▶</button></p>
+  </div>
+  <div class="schritt" data-schritt="hintergrund" role="tabpanel">
+    <div class="card lp-hintergrund"><div class="sprache-standard">{std_hg}</div><div class="sprache-einfach">{ein_hg}</div></div>
+    <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="auftrag">◀ 🛠️ Auftrag</button><button type="button" class="knopf primaer" data-geh="pruefen">Weiter: ✅ Prüfen ▶</button></p>
+  </div>
+  <div class="schritt" data-schritt="pruefen" role="tabpanel">
   {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr], KONTROLLE_EINFACH.get(nr))}
+  </div>
   <div class="card lp-fuss">
     {zurueck}
     <div class="pruefen"><button class="erledigt" data-level="{nr}" disabled>Level geschafft</button></div>
@@ -451,9 +484,17 @@ a{color:var(--accent)}
   font-weight:800;font-size:1.5rem;background:var(--accent);color:#fff}
 .level.fertig .nummer{background:var(--ok)}
 .stich{margin:0;color:var(--muted)}
-.level-raster{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:12px;align-items:start}
-.lp-seite{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
-.lp-seite h3,.grafik h3{margin-top:0}
+.ziel-raster{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+.ziel-raster h3,.grafik h3{margin-top:0}
+.schritt-reiter{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:8px;margin:0 0 12px;
+  background:var(--karte,#fff);border-radius:14px;box-shadow:0 2px 8px rgba(20,30,60,.12)}
+.schritt-reiter button{flex:1 1 0;min-width:0;font:inherit;font-weight:600;padding:8px 10px;border-radius:10px;
+  border:2px solid transparent;background:#eef0f7;color:#2a3150;cursor:pointer;white-space:nowrap}
+.schritt-reiter button:hover{border-color:#b9c0dd}
+.schritt-reiter button[aria-selected="true"]{background:#2d2f8f;color:#fff}
+.schritt>*+*{margin-top:12px}
+.schritt-weiter{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.schritt-weiter .knopf:first-child:not(.primaer){margin-right:auto}
 .lp-auftrag{min-width:0}
 .handys{display:flex;gap:10px;justify-content:center}
 .handy{margin:0;flex:1;max-width:220px;min-width:0;text-align:center}
@@ -489,7 +530,8 @@ pre.rahmen-code{padding:10px 0;line-height:1.45}
   @page{size:A4;margin:14mm 12mm}
   html,body{background:#fff!important}
   body{font-size:10pt;line-height:1.4;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .kopf,.druck-kopf,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
+  .schritt-reiter,.schritt-weiter,.kopf,.druck-kopf,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
+  .level .schritt[hidden]{display:block!important}
   html.druck-wissen .ansicht:not(#wissen){display:none!important}
   html.druck-wissen #wissen,#wissen{display:block!important}
   #wissen>*{margin:0 0 4mm}
@@ -713,7 +755,8 @@ details.loesung{margin-top:14px;border-color:var(--ok)}
 .bk-info{padding:10px 12px;border-radius:12px;background:var(--accent-soft);font-size:.9rem;min-height:3.2em}
 @media (max-width:1100px){.baukasten{grid-template-columns:200px minmax(0,1fr)}.bk-rechts{grid-column:1/-1}}
 @media (max-width:620px){.baukasten{grid-template-columns:minmax(0,1fr)}.bk-handy{width:100%;max-width:250px;margin:auto}.anatomie{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:980px){.level-raster{grid-template-columns:1fr}.lp-seite{position:static;order:-1}}
+@media (max-width:980px){.ziel-raster{grid-template-columns:1fr}}
+@media (max-width:540px){.schritt-reiter button{flex-basis:calc(50% - 3px)}}
 @media (max-width:700px){.uebersicht{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:600px){table{display:block;overflow-x:auto;max-width:100%}p code,li code,td code{overflow-wrap:anywhere}.app{padding:10px}.kopf{padding:16px}}
 """
@@ -763,8 +806,26 @@ document.documentElement.classList.add("js");
     var id = ansicht.id;
     ansichten.forEach(function(a){ a.hidden = a.id !== id; });
     document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
+    if (ansicht.querySelector(".schritt")) {
+      var s = ziel && ziel !== ansicht && ziel.closest(".schritt");
+      var gemerkt; try { gemerkt = sessionStorage.getItem("schritt-" + id); } catch (e) {}
+      schritt(ansicht, s ? s.dataset.schritt : (gemerkt || "ziel"));
+    }
     if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
   }
+  function schritt(ansicht, name){
+    ansicht.querySelectorAll(".schritt").forEach(function(p){ p.hidden = p.dataset.schritt !== name; });
+    ansicht.querySelectorAll(".schritt-reiter button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.schritt === name); });
+    try { sessionStorage.setItem("schritt-" + ansicht.id, name); } catch (e) {}
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target.closest(".schritt-reiter button, [data-geh]");
+    if (!b) return;
+    var ansicht = b.closest(".ansicht");
+    schritt(ansicht, b.dataset.schritt || b.dataset.geh);
+    var r = ansicht.querySelector(".schritt-reiter");
+    if (r.getBoundingClientRect().top < 0 || b.dataset.geh) ansicht.querySelector(".level-kopf").scrollIntoView();
+  });
   function zeigen(){
     var n = 0;
     document.querySelectorAll(".level").forEach(function(s){

@@ -3,6 +3,13 @@
 Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlösungen, Tests, Werkzeuge). Die Schüler arbeiten mit der Lernpfad-Seite –
 über mebis oder https://bnbsinfo.github.io/lf11_lernpfade/flutter/.
 
+## Aufbau einer Level-Seite
+
+Jedes Level ist in vier Reiter geteilt, damit die Seite nicht zu voll wird:
+🎯 **Ziel** (Zielbild, Widget-Baum, Baukasten) · 🛠️ **Auftrag** (Auftrag bzw. Profi-Auftrag, Tipps, Wörter, Musterlösung) ·
+💡 **Hintergrund** (Erklärt, Grafik, in Level 9 der Ausblick) · ✅ **Prüfen** (Selbstkontrolle).
+Die Reiterleiste bleibt beim Scrollen oben stehen; die Seite merkt sich den zuletzt offenen Reiter. Beim Drucken erscheinen alle Teile.
+
 ## Zwei Pfade
 - **🧭 Begleitet:** Auftrag Schritt für Schritt mit Code-Rahmen (grau/grün/rot), Erklärungen, Tipps, Baukästen.
 - **🚀 Profi:** je Level nur eine Anforderungsliste (`## Profi-Auftrag` in `docs/level_0X.md`), Erklärungen

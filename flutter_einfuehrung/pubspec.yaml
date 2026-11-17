@@ -1,7 +1,7 @@
 name: flutter_lernpfad
 description: "Flutter-Einführung LF11 – in 9 Leveln zur eigenen App mit Login und ToDo-Liste."
 publish_to: 'none'
-version: 2.5.4+21
+version: 2.6.0+22
 
 environment:
   sdk: ^3.13.7
