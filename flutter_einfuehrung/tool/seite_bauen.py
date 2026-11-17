@@ -272,6 +272,24 @@ def md_zu_html(pfad: pathlib.Path, code_quelle: pathlib.Path | None = None) -> s
     return out
 
 
+def wissen_reiter(html: str) -> str:
+    """Wissen-Seite: Inhaltsverzeichnis wird zur Reiterleiste, je Abschnitt ein Reiter mit Zurück/Weiter."""
+    links = re.findall(r'<a href="#(w-[\w-]+)">(.*?)</a>', re.search(r"<nav class=\"card inhalt-navi\".*?</nav>", html, re.S).group(0))
+    reiter = ('<nav class="schritt-reiter viele" role="tablist" aria-label="Abschnitte">'
+              + "".join(f'<button type="button" role="tab" data-schritt="{i}">{t}</button>' for i, t in links) + "</nav>")
+    html = re.sub(r"<nav class=\"card inhalt-navi\".*?</nav>", reiter, html, flags=re.S)
+    teile = re.split(r'(?=<div class="card" id="w-)', html)
+    out = teile[0]
+    for n, teil in enumerate(teile[1:]):
+        wid = links[n][0]
+        zurueck = f'<button type="button" class="knopf" data-geh="{links[n-1][0]}">◀ {links[n-1][1]}</button>' if n else ""
+        weiter = (f'<button type="button" class="knopf primaer" data-geh="{links[n+1][0]}">Weiter: {links[n+1][1]} ▶</button>'
+                  if n + 1 < len(links) else "")
+        out += (f'<div class="schritt" data-schritt="{wid}" role="tabpanel">{teil}'
+                f'<p class="schritt-weiter">{zurueck}{weiter}</p></div>\n')
+    return out
+
+
 def hintergrund_abtrennen(html: str) -> tuple[str, str]:
     """Trennt „Erklärt“ und „Ausblick“ vom Auftrag ab (für den Reiter „Hintergrund“)."""
     hg = "".join(re.findall(r"<!--hg-->(.*?)<!--/hg-->", html, flags=re.S))
@@ -490,6 +508,7 @@ a{color:var(--accent)}
   background:var(--karte,#fff);border-radius:14px;box-shadow:0 2px 8px rgba(20,30,60,.12)}
 .schritt-reiter button{flex:1 1 0;min-width:0;font:inherit;font-weight:600;padding:8px 10px;border-radius:10px;
   border:2px solid transparent;background:#eef0f7;color:#2a3150;cursor:pointer;white-space:nowrap}
+.schritt-reiter.viele button{flex:1 1 auto;font-size:.9rem;padding:6px 10px}
 .schritt-reiter button:hover{border-color:#b9c0dd}
 .schritt-reiter button[aria-selected="true"]{background:#2d2f8f;color:#fff}
 .schritt>*+*{margin-top:12px}
@@ -531,7 +550,7 @@ pre.rahmen-code{padding:10px 0;line-height:1.45}
   html,body{background:#fff!important}
   body{font-size:10pt;line-height:1.4;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .schritt-reiter,.schritt-weiter,.kopf,.druck-kopf,.lp-fuss,.druck-knopf,.inhalt-navi,.pfad-wahl{display:none!important}
-  .level .schritt[hidden]{display:block!important}
+  .schritt[hidden]{display:block!important}
   html.druck-wissen .ansicht:not(#wissen){display:none!important}
   html.druck-wissen #wissen,#wissen{display:block!important}
   #wissen>*{margin:0 0 4mm}
@@ -756,7 +775,7 @@ details.loesung{margin-top:14px;border-color:var(--ok)}
 @media (max-width:1100px){.baukasten{grid-template-columns:200px minmax(0,1fr)}.bk-rechts{grid-column:1/-1}}
 @media (max-width:620px){.baukasten{grid-template-columns:minmax(0,1fr)}.bk-handy{width:100%;max-width:250px;margin:auto}.anatomie{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:980px){.ziel-raster{grid-template-columns:1fr}}
-@media (max-width:540px){.schritt-reiter button{flex-basis:calc(50% - 3px)}}
+@media (max-width:540px){.schritt-reiter button{flex-basis:calc(50% - 3px)}.schritt-reiter.viele button{white-space:normal}}
 @media (max-width:700px){.uebersicht{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:600px){table{display:block;overflow-x:auto;max-width:100%}p code,li code,td code{overflow-wrap:anywhere}.app{padding:10px}.kopf{padding:16px}}
 """
@@ -809,7 +828,7 @@ document.documentElement.classList.add("js");
     if (ansicht.querySelector(".schritt")) {
       var s = ziel && ziel !== ansicht && ziel.closest(".schritt");
       var gemerkt; try { gemerkt = sessionStorage.getItem("schritt-" + id); } catch (e) {}
-      schritt(ansicht, s ? s.dataset.schritt : (gemerkt || "ziel"));
+      schritt(ansicht, s ? s.dataset.schritt : (gemerkt || ansicht.querySelector(".schritt").dataset.schritt));
     }
     if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
   }
@@ -1009,7 +1028,7 @@ def main() -> None:
   </section>
 {ansichten}
   <section class="ansicht" id="wissen">
-{(ROOT / "tool" / "wissen.html").read_text(encoding="utf-8")}
+{wissen_reiter((ROOT / "tool" / "wissen.html").read_text(encoding="utf-8"))}
     <p class="druck-fuss">Flutter-Einführung LF11 · Version {VERSION} · Stand {STAND} · bnbsinfo.github.io/lf11_lernpfade/flutter/</p>
     <div class="card lp-fuss"><a class="knopf" href="#start">◀ Start</a><button type="button" class="knopf druck-knopf" data-drucken>🖨️ Wissen drucken</button><a class="knopf primaer" href="#level-1">Zu Level 1 ▶</a></div>
   </section>

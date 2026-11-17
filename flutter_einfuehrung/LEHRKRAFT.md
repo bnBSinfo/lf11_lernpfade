@@ -8,6 +8,7 @@ Dieses Repo ist **öffentlich** und enthält alle drei LF11-Lernpfade (Musterlö
 Jedes Level ist in vier Reiter geteilt, damit die Seite nicht zu voll wird:
 🎯 **Ziel** (Zielbild, Widget-Baum, Baukasten) · 🛠️ **Auftrag** (Auftrag bzw. Profi-Auftrag, Tipps, Wörter, Musterlösung) ·
 💡 **Hintergrund** (Erklärt, Grafik, in Level 9 der Ausblick) · ✅ **Prüfen** (Selbstkontrolle).
+Die Wissen-Seite ist genauso geteilt: je Abschnitt (1–8) ein Reiter mit Zurück/Weiter.
 Die Reiterleiste bleibt beim Scrollen oben stehen; die Seite merkt sich den zuletzt offenen Reiter. Beim Drucken erscheinen alle Teile.
 
 ## Zwei Pfade
