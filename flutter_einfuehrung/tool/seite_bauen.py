@@ -707,6 +707,17 @@ td,th{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-alig
 th{background:var(--card2)}
 summary{cursor:pointer;font-weight:700}
 details.loesung{margin-top:14px;border-color:var(--ok)}
+/* Code-Kästen im Auftrag: zum Aufklappen */
+details.code-klapp{border:0;padding:0;margin:.5rem 0;background:none}
+details.code-klapp>summary{display:inline-flex;align-items:center;gap:8px;list-style:none;padding:6px 12px;border-radius:10px;
+  background:#1a2130;color:#e8ebf0;font-weight:600;font-size:.9rem;user-select:none}
+details.code-klapp>summary::-webkit-details-marker{display:none}
+details.code-klapp>summary small{color:#9aa4b8;font-weight:500}
+details.code-klapp>summary:hover{background:#2a3350}
+details.code-klapp>summary:focus-visible{outline:2px solid #f59e0b;outline-offset:2px}
+details.code-klapp[open]>summary{border-radius:10px 10px 0 0}
+details.code-klapp[open]>pre{margin-top:0;border-top-left-radius:0}
+details.code-klapp:not([open]) .ck-auf,details.code-klapp[open] .ck-zu{display:none}
 .start-raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
 .start-raster h3{margin-top:0}
 .uebersicht{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -906,6 +917,17 @@ document.documentElement.classList.add("js");
     });
   });
   dlg.addEventListener("click", function(ev){ if (ev.target === dlg) dlg.close(); });
+  // Code-Kästen in den Aufträgen ausklappbar machen (zu Beginn zu – erst lesen, dann aufklappen und tippen)
+  document.querySelectorAll(".auftrags-kasten pre").forEach(function(pre){
+    if (pre.closest("details")) return;
+    var rahmen = pre.classList.contains("rahmen-code"), art = rahmen ? "Code" : "Befehle";
+    var n = rahmen ? pre.querySelectorAll(".z").length : pre.textContent.replace(/\n+$/, "").split("\n").length;
+    var d = document.createElement("details"); d.className = "code-klapp";
+    var su = document.createElement("summary");
+    su.innerHTML = '<span class="ck-zu">▶ ' + art + ' anzeigen</span><span class="ck-auf">▼ ' + art + ' ausblenden</span>'
+      + '<small>' + n + (n === 1 ? " Zeile" : " Zeilen") + '</small>';
+    pre.parentNode.insertBefore(d, pre); d.appendChild(su); d.appendChild(pre);
+  });
   window.addEventListener("hashchange", route);
   route(); zeigen();
 })();
