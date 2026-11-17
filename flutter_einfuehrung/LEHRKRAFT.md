@@ -28,6 +28,8 @@ Die Reiterleiste bleibt beim Scrollen oben stehen; die Seite merkt sich den zule
   richtig/falsch steht nur in `kontrolle.py`). Haken und Antworten zählen in beiden Sprachstufen gleich.
 - Noch nur in Standardsprache: Wissen-Seite, Grafiken, Bildunterschriften, Bonus.
 
+Wie in LF3 sind Fachwörter in „Sprache einfach“ gepunktet unterstrichen. Die Erklärung erscheint beim Darüberfahren mit der Maus, beim Antippen und mit der Tab-Taste. Die Erklärungen stehen in `tool/woerter.py`.
+
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
   Projekt an und bauen diese eine App bis Level 9 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,

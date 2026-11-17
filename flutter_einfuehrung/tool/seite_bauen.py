@@ -487,6 +487,12 @@ CSS = """
 .kopf{padding-right:140px}
 .kopf-handy{position:absolute;right:28px;top:50%;margin:0;width:84px;aspect-ratio:9/17.5;transform:translateY(-50%) rotate(6deg);
   background:#11131c;border-radius:13px;padding:4px;box-shadow:0 10px 24px rgba(0,0,0,.35),0 0 0 2px rgba(255,255,255,.25)}
+.begriff{border-bottom:2px dotted currentColor;cursor:help;border-radius:2px}
+code.begriff{border-bottom-color:#6750a4}
+.begriff:focus{outline:2px solid #f59e0b;outline-offset:1px}
+#begriff-tipp{position:absolute;z-index:9999;max-width:min(300px,90vw);background:#1b2333;color:#fff;padding:8px 10px;border-radius:8px;font-size:.9rem;line-height:1.4;box-shadow:0 4px 14px #0004;pointer-events:none}
+#begriff-tipp b{display:block;margin-bottom:2px}
+@media print{.begriff{border:0}#begriff-tipp{display:none}}
 .kh-app{position:relative;display:flex;flex-direction:column;gap:5px;width:100%;height:100%;border-radius:10px;background:#fdf8ff;overflow:hidden}
 .kh-leiste{background:#6750a4;color:#fff;font:700 8px/1 system-ui,sans-serif;padding:13px 6px 6px}
 .kh-zeile{display:flex;align-items:center;gap:4px;padding:0 6px}
@@ -1075,6 +1081,7 @@ def main() -> None:
 <script>var LP_KEY = "flutter-lernpfad-lf11";{JS}</script>
 <script>{bausteine.JS}</script>
 <script>{(ROOT / "tool" / "baukasten.js").read_text(encoding="utf-8")}</script>
+<script>var BEGRIFFE = {json.dumps({w: v[1] for w, v in WOERTER.items()}, ensure_ascii=False)};{(ROOT / "tool" / "begriffe.js").read_text(encoding="utf-8")}</script>
 <script>var GEHEIM = {geheim}; var MARKER = {json.dumps(MARKER)};{JS_LOESUNG}</script>
 </body>
 </html>
