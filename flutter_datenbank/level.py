@@ -1,5 +1,5 @@
 # Level 1–6 der Datenbankanbindung – je Level: Zielbild, begleiteter Auftrag mit Code-Rahmen, Profi-Auftrag,
-# Tipps, Hintergrund und Selbstkontrolle, jeweils in Standardsprache (S) und einfacher Sprache (E).
+# Tipps, Hintergrund und Selbstkontrolle, jeweils in Standardsprache (S) und „Sprache einfach“ (E).
 # Code-Rahmen: P = neu (grün), M = löschen (rot), R = steht schon da (grau), LUECKE = unveränderter Code dazwischen.
 L = []
 

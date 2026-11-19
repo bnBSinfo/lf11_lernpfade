@@ -1,4 +1,4 @@
-"""Wörterbuch für die einfache Sprache: Fachbegriff -> (Artikel und Mehrzahl, Erklärung in einfacher Sprache).
+"""Wörterbuch für „Sprache einfach“: Fachbegriff -> (Artikel und Mehrzahl, Erklärung in „Sprache einfach“).
 Die Fachbegriffe selbst bleiben in beiden Sprachstufen gleich."""
 
 WOERTER = {

@@ -1,4 +1,4 @@
-"""Selbstkontrolle in einfacher Sprache. Gleiche Reihenfolge wie kontrolle.py:
+"""Selbstkontrolle in „Sprache einfach“. Gleiche Reihenfolge wie kontrolle.py:
 gleiche Haken, gleiche Fragen, gleiche Antworten. Richtig oder falsch steht nur in kontrolle.py."""
 
 KONTROLLE_EINFACH = {

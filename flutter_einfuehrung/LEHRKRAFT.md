@@ -17,14 +17,14 @@ Die Reiterleiste bleibt beim Scrollen oben stehen; die Seite merkt sich den zule
   eingeklappt, keine Baukästen. Gleiche App, gleiche Level, gleiche Selbstkontrolle.
 - Umschalten im Seitenkopf oder auf der Startseite; die Wahl merkt sich der Browser.
 
-## Einfache Sprache (wie in LF3)
+## Sprache einfach (wie in LF3)
 - Schalter **Standard | Sprache einfach** im Seitenkopf, unabhängig vom Pfad; die Wahl merkt sich der Browser.
 - Zweite Fassung aller Level-Texte in `docs/einfach/level_0X.md` (Ziel, Auftrag, Profi-Auftrag, Erklärt, Tipps,
   Merke, Ausblick): kurze Sätze, eine Information pro Satz, Anrede „du“, Zahlen als Ziffern, Fachbegriffe bleiben gleich.
 - Code wird nicht doppelt gepflegt: `{{code N}}` setzt beim Bauen den N-ten Code-Block der Standardfassung ein.
   Wer in `docs/level_0X.md` Code-Blöcke hinzufügt oder umstellt, muss die Nummern in der einfachen Fassung anpassen.
-- In einfacher Sprache steht je Level ein Kasten **📖 Wichtige Wörter** (Artikel, Mehrzahl, Erklärung) aus `tool/woerter.py`.
-- Selbstkontrolle in einfacher Sprache: `tool/kontrolle_einfach.py` (gleiche Reihenfolge wie `kontrolle.py`;
+- In „Sprache einfach“ steht je Level ein Kasten **📖 Wichtige Wörter** (Artikel, Mehrzahl, Erklärung) aus `tool/woerter.py`.
+- Selbstkontrolle in „Sprache einfach“: `tool/kontrolle_einfach.py` (gleiche Reihenfolge wie `kontrolle.py`;
   richtig/falsch steht nur in `kontrolle.py`). Haken und Antworten zählen in beiden Sprachstufen gleich.
 - Noch nur in Standardsprache: Wissen-Seite, Grafiken, Bildunterschriften, Bonus.
 

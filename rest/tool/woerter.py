@@ -1,4 +1,4 @@
-"""Wörterbuch für die einfache Sprache: Fachbegriff -> (Artikel und Mehrzahl, Erklärung in einfacher Sprache).
+"""Wörterbuch für „Sprache einfach“: Fachbegriff -> (Artikel und Mehrzahl, Erklärung in „Sprache einfach“).
 Die Fachbegriffe selbst bleiben in beiden Sprachstufen gleich. In „Sprache einfach“ sind sie gepunktet
 unterstrichen – die Erklärung erscheint beim Darüberfahren (begriffe.js aus der Flutter-Einführung)."""
 

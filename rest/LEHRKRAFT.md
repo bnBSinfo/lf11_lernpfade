@@ -39,11 +39,11 @@ Datei in den mebis-Kurs legen.
 | Ordner / Datei | Inhalt |
 |---|---|
 | `docs/level_0X.md`, `docs/bonus.md` | Auftrag, Profi-Auftrag, Erklärung, Tipps, Merke, Denkfrage |
-| `docs/einfach/level_0X.md` | dieselben Level in einfacher Sprache; `{{code N}}` holt den N-ten Codeblock (ab 0) aus der Standardfassung |
+| `docs/einfach/level_0X.md` | dieselben Level in „Sprache einfach“; `{{code N}}` holt den N-ten Codeblock (ab 0) aus der Standardfassung |
 | `docs/downloads/api.php` | php-crud-api v2.16.7 (MIT, Lizenz daneben) |
 | `tool/seite_bauen.py` | baut die Seite (braucht pandoc und openssl); Stil, Reiter, Code-Rahmen, Schalter und Mouseover kommen aus `../flutter_einfuehrung/tool/seite_bauen.py` |
-| `tool/kontrolle.py`, `tool/kontrolle_einfach.py` | Checklisten und Kontrollfragen je Level (Standard / einfache Sprache) |
-| `tool/woerter.py` | Fachwörter mit Erklärung in einfacher Sprache (Kasten „Wichtige Wörter“ und Mouseover) |
+| `tool/kontrolle.py`, `tool/kontrolle_einfach.py` | Checklisten und Kontrollfragen je Level (Standard / Sprache einfach) |
+| `tool/woerter.py` | Fachwörter mit Erklärung in „Sprache einfach“ (Kasten „Wichtige Wörter“ und Mouseover) |
 | `tool/lernpfad_bausteine.py` | Selbstkontrolle, Kopiersperre, Einbetten – identisch in der Flutter-Einführung |
 | `tool/datenfluss.py`, `tool/wissen.html`, `tool/rest_baukasten.js` | Grafik, Wissen-Seite, REST-Baukasten |
 | `loesungen/` | Musterlösungen: `server/sql/flutterdb.sql`, `server/php/benutzer.php`, `lib/todo_api.dart`, `bin/todo_client.dart` |

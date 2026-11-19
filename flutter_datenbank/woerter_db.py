@@ -1,4 +1,4 @@
-"""Wörter für die einfache Sprache im Lernpfad Datenbankanbindung: Fachwort -> Erklärung in einfacher Sprache.
+"""Wörter für „Sprache einfach“ im Lernpfad Datenbankanbindung: Fachwort -> Erklärung in „Sprache einfach“.
 Gleiche Regeln wie in LF3 und in der Flutter-Einführung: kurze Sätze, eine Aussage pro Satz, du-Form.
 Die Fachwörter selbst bleiben gleich. In „Sprache einfach“ sind sie gepunktet unterstrichen (Erklärung beim Darüberfahren)."""
 
