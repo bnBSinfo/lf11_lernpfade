@@ -25,7 +25,7 @@ from woerter import WOERTER, LEVEL_WOERTER  # noqa: E402
 from kontrolle_einfach import KONTROLLE_EINFACH  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-LOGO = ('<img class="kopf-logo" alt="BS Info München" width="214" height="34" src="data:image/png;base64,'
+LOGO = ('<img class="kopf-logo" alt="BS Info München" width="239" height="160" src="data:image/png;base64,'
         + base64.b64encode((ROOT.parent / "logo-bsinfo.png").read_bytes()).decode() + '">')
 DOCS = ROOT / "docs"
 REPO = "bnBSinfo/lf11_lernpfade"
@@ -487,7 +487,11 @@ CSS = """
 .app{max-width:1280px}
 .kopf{padding:20px 22px;position:relative}
 .kopf{padding-right:140px}
-.kopf-logo{display:block;height:34px;width:auto;background:#fff;padding:5px 9px;border-radius:9px;margin:0 0 10px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.kopf{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;align-items:center}
+.kopf>:not(.kopf-logo):not(.kopf-handy){grid-column:2}
+.kopf-logo{grid-column:1;grid-row:1/span 4;align-self:center;height:77px;width:auto;background:#fff;padding:6px 8px;border-radius:10px}
+@media (max-width:640px){.kopf{display:block}.kopf-logo{display:block;height:59px;margin:0 0 10px}}
+@media print{.kopf-logo{padding:0}}
 .kopf-handy{position:absolute;right:28px;top:50%;margin:0;width:84px;aspect-ratio:9/17.5;transform:translateY(-50%) rotate(6deg);
   background:#11131c;border-radius:13px;padding:4px;box-shadow:0 10px 24px rgba(0,0,0,.35),0 0 0 2px rgba(255,255,255,.25)}
 .begriff{border-bottom:2px dotted currentColor;cursor:help;border-radius:2px}
@@ -1007,8 +1011,8 @@ def main() -> None:
 <div class="app">
   <header class="card kopf">
     <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span><span class="kh-zeile an"><i></i><b style="width:62%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:48%"></b><u></u></span><span class="kh-zeile an"><i></i><b style="width:70%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:40%"></b><u></u></span><span class="kh-plus">+</span></span></figure>
+    {LOGO}
     <div class="titel">
-      {LOGO}
       <h1>Flutter-Einführung <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 9 Leveln zur eigenen App: Login-Maske, danach ToDo-Liste – jede Zeile selbst getippt.</div>
     </div>
