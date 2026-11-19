@@ -489,7 +489,8 @@ CSS = """
 .kopf{padding-right:140px}
 .kopf{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;align-items:center}
 .kopf>:not(.kopf-logo):not(.kopf-handy){grid-column:2}
-.kopf-logo{grid-column:1;grid-row:1/span 4;align-self:center;height:77px;width:auto;background:#fff;padding:6px 8px;border-radius:10px}
+.kopf>.schalter-zeile{grid-column:1/-1;margin-top:4px}
+.kopf-logo{grid-column:1;grid-row:1/span 2;align-self:start;height:77px;width:auto;background:#fff;padding:6px 8px;border-radius:10px}
 @media (max-width:640px){.kopf{display:block}.kopf-logo{display:block;height:59px;margin:0 0 10px}}
 @media print{.kopf-logo{padding:0}}
 .kopf-handy{position:absolute;right:28px;top:50%;margin:0;width:84px;aspect-ratio:9/17.5;transform:translateY(-50%) rotate(6deg);

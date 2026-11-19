@@ -15,7 +15,7 @@ from ablauf_grafik import ablauf_html
 HIER = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(HIER, 'bilder') + '/'
 VORLAGE = open(os.path.join(HIER, 'vorlage_einfuehrung.html'), encoding='utf-8').read()
-VERSION = '2.0.3'
+VERSION = '2.0.4'
 DATUM = '17.11.2026'
 N = 6
 
