@@ -333,9 +333,14 @@ MARKEN = json.loads((DOCS / "bilder" / "marken.json").read_text(encoding="utf-8"
 NUM = "①②③④⑤⑥⑦⑧⑨"
 
 
+_HANDY_NR = [0]
+
+
 def handy(bild, text):
     """Zielbild mit nummerierten Markierungen (Positionen aus marken.json, logische Pixel 360 x 640)."""
     kaesten, legende, belegt = [], [], []
+    _HANDY_NR[0] += 1
+    leg_id = f"leg-{_HANDY_NR[0]}"
     for i, m in enumerate(MARKEN.get(bild, [])):
         x, y, w, h = (m[k] for k in ("x", "y", "w", "h"))
         # Nummer rechts neben den Kasten (verdeckt nichts); passt das nicht, oben links hinein
@@ -351,9 +356,9 @@ def handy(bild, text):
         pc = lambda v, ges: f"{v / ges * 100:.2f}%"
         kaesten.append(
             f'<span class="marke" data-marke="{i}" style="left:{pc(x,360)};top:{pc(y,640)};width:{pc(w,360)};height:{pc(h,640)}"></span>'
-            f'<span class="marke-nr" data-marke="{i}" style="left:{pc(bx,360)};top:{pc(by,640)}">{NUM[i]}</span>')
+            f'<span class="marke-nr" data-marke="{i}" aria-hidden="true" style="left:{pc(bx,360)};top:{pc(by,640)}">{NUM[i]}</span>')
         legende.append(f'<li data-marke="{i}"><span>{NUM[i]}</span> {e(m["text"].strip())}</li>')
-    leg = f'<ol class="marken-legende">{"".join(legende)}</ol>' if legende else ""
+    leg = f'<ol class="marken-legende" id="{leg_id}" aria-label="Markierungen im Bild">{"".join(legende)}</ol>' if legende else ""
     # Vergrößerter Ausschnitt, wenn der Inhalt nur einen kleinen Teil des Bildschirms füllt
     klein = [m for m in MARKEN.get(bild, []) if m["w"] * m["h"] < 0.5 * 360 * 640]
     lupe = ""
@@ -369,7 +374,7 @@ def handy(bild, text):
                     f'style="background-image:url(bilder/{bild}.png);aspect-ratio:{w:.0f}/{h:.0f};'
                     f'background-size:{360 / w * 100:.2f}% auto;background-position:{pos_x:.2f}% {pos_y:.2f}%"></span></div>')
     return f"""<figure class="handy"><button class="rahmen" type="button" aria-label="Bild groß anzeigen: {e(text)}">
-      <span class="bild"><img src="bilder/{bild}.png" width="360" height="640" alt="{e(text)}" loading="lazy">{"".join(kaesten)}</span>
+      <span class="bild"><img src="bilder/{bild}.png" width="360" height="640" alt="{e(text)}"{f' aria-describedby="{leg_id}"' if legende else ""} loading="lazy">{"".join(kaesten)}</span>
       <span class="lupe" aria-hidden="true">🔍</span></button>
       <figcaption>{e(text)}</figcaption>{lupe}{leg}</figure>"""
 
@@ -405,10 +410,10 @@ def level_ansicht(nr: int, d: dict) -> str:
     <div><h2>Level {nr} – {e(d['titel'])}</h2><p class="stich">{e(d['stich'])}</p></div>
   </div>
   <nav class="schritt-reiter" role="tablist" aria-label="Teile von Level {nr}">
-    <button type="button" role="tab" data-schritt="ziel">🎯 Ziel</button>
-    <button type="button" role="tab" data-schritt="auftrag">🛠️ Auftrag</button>
-    <button type="button" role="tab" data-schritt="hintergrund">💡 Hintergrund</button>
-    <button type="button" role="tab" data-schritt="pruefen">✅ Prüfen</button>
+    <button type="button" role="tab" data-schritt="ziel"><span aria-hidden="true">🎯</span> Ziel</button>
+    <button type="button" role="tab" data-schritt="auftrag"><span aria-hidden="true">🛠️</span> Auftrag</button>
+    <button type="button" role="tab" data-schritt="hintergrund"><span aria-hidden="true">💡</span> Hintergrund</button>
+    <button type="button" role="tab" data-schritt="pruefen"><span aria-hidden="true">✅</span> Prüfen</button>
   </nav>
   <div class="schritt" data-schritt="ziel" role="tabpanel">
     <div class="ziel-raster">
@@ -421,7 +426,7 @@ def level_ansicht(nr: int, d: dict) -> str:
       </div>
     </div>
     {baukasten}
-    <p class="schritt-weiter"><button type="button" class="knopf primaer" data-geh="auftrag">Weiter: 🛠️ Auftrag ▶</button></p>
+    <p class="schritt-weiter"><button type="button" class="knopf primaer" data-geh="auftrag">Weiter: <span aria-hidden="true">🛠️</span> Auftrag ▶</button></p>
   </div>
   <div class="schritt" data-schritt="auftrag" role="tabpanel">
     <div class="card lp-auftrag"><div class="sprache-standard">{std}</div>
@@ -429,12 +434,12 @@ def level_ansicht(nr: int, d: dict) -> str:
         <div class="woerter"><h3>📖 Wichtige Wörter</h3><dl>{woerter_html(nr)}</dl></div></div>
       <details class="loesung" data-loesung="{nr}" hidden><summary>🔓 Musterlösung Level {nr}</summary></details>
     </div>
-    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="ziel">◀ 🎯 Ziel</button><button type="button" class="knopf primaer" data-geh="hintergrund">Weiter: 💡 Hintergrund ▶</button></p>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="ziel">◀ <span aria-hidden="true">🎯</span> Ziel</button><button type="button" class="knopf primaer" data-geh="hintergrund">Weiter: <span aria-hidden="true">💡</span> Hintergrund ▶</button></p>
   </div>
   <div class="schritt" data-schritt="hintergrund" role="tabpanel">
     <div class="card lp-hintergrund"><div class="sprache-standard">{std_hg}</div><div class="sprache-einfach">{ein_hg}</div></div>
     <div class="card grafik"><h3>{e(g_titel)}</h3>{g_html}{wissen}</div>
-    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="auftrag">◀ 🛠️ Auftrag</button><button type="button" class="knopf primaer" data-geh="pruefen">Weiter: ✅ Prüfen ▶</button></p>
+    <p class="schritt-weiter"><button type="button" class="knopf" data-geh="auftrag">◀ <span aria-hidden="true">🛠️</span> Auftrag</button><button type="button" class="knopf primaer" data-geh="pruefen">Weiter: <span aria-hidden="true">✅</span> Prüfen ▶</button></p>
   </div>
   <div class="schritt" data-schritt="pruefen" role="tabpanel">
   {bausteine.selbstkontrolle_html(nr, KONTROLLE[nr], KONTROLLE_EINFACH.get(nr))}
@@ -817,6 +822,29 @@ details.code-klapp:not([open]) .ck-auf,details.code-klapp[open] .ck-zu{display:n
 @media (max-width:540px){.schritt-reiter button{flex-basis:calc(50% - 3px)}.schritt-reiter.viele button{white-space:normal}}
 @media (max-width:700px){.uebersicht{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:600px){table{display:block;overflow-x:auto;max-width:100%}p code,li code,td code{overflow-wrap:anywhere}.app{padding:10px}.kopf{padding:16px}}
+/* ---------- Barrierefreiheit (Standard) ---------- */
+html{scroll-padding-top:7rem}
+main{display:flex;flex-direction:column;gap:12px}
+main>*+*{margin-top:0}
+.sprunglink{position:absolute;left:12px;top:-60px;z-index:60;background:#1a2130;color:#fff;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none}
+.sprunglink:focus{top:12px}
+/* Fokus im dunklen Seitenkopf: weiß statt Akzentfarbe (Kontrast ≥ 3:1) */
+.kopf :focus-visible{outline:3px solid #fff!important;outline-offset:2px;box-shadow:0 0 0 6px #1a2130}
+.barriere-knopf{display:inline-flex}
+.barriere-knopf.gewaehlt{background:#fde047;color:#1a2130;border-color:#fde047}
+h2[tabindex="-1"]:focus,h3[tabindex="-1"]:focus{outline:none}
+/* ---------- Modus „Barrierearm“: nichts fällt weg, nur ruhiger, größer, klarer ---------- */
+html.barrierearm{font-size:112.5%}
+html.barrierearm *,html.barrierearm *::before,html.barrierearm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.barrierearm .schritt-reiter{position:static}
+html.barrierearm{scroll-padding-top:1rem}
+html.barrierearm :focus-visible,html.barrierearm .kopf :focus-visible{outline:4px solid #1a2130!important;outline-offset:2px;box-shadow:0 0 0 8px #fde047!important}
+html.barrierearm h2[tabindex="-1"]:focus{outline:4px solid #1a2130!important;box-shadow:0 0 0 8px #fde047!important}
+/* Code markierbar (Vorlesen, Lupe); Kopieren bleibt abgefangen. Kein waagerechtes Scrollen. */
+html.barrierearm pre,html.barrierearm code{-webkit-user-select:text;user-select:text}
+html.barrierearm pre{white-space:pre-wrap;overflow-wrap:anywhere}
+html.barrierearm .begriff{border-bottom-style:solid}
+html.barrierearm p,html.barrierearm li{line-height:1.7}
 """
 
 JS = r"""
@@ -843,8 +871,22 @@ document.documentElement.classList.add("js");
   }
   var sp = "standard"; try { sp = localStorage.getItem(SKEY) || sp; } catch (e) {}
   sprache(sp);
+  var AKEY = "flutter-lernpfad-lf11-barrierearm";
+  function barrierearm(an){
+    wurzel.classList.toggle("barrierearm", an);
+    document.querySelectorAll("[data-barrierearm]").forEach(function(b){ b.setAttribute("aria-pressed", an ? "true" : "false"); b.classList.toggle("gewaehlt", an); });
+    document.dispatchEvent(new CustomEvent("barrierearm", { detail: an }));
+  }
+  var ba = false; try { ba = localStorage.getItem(AKEY) === "1"; } catch (e) {}
+  barrierearm(ba);
+  // Code ist englisch: Screenreader sollen ihn englisch aussprechen
+  document.querySelectorAll("pre").forEach(function(p){ p.setAttribute("lang", "en"); });
   document.addEventListener("click", function(ev){
     if (ev.target.closest("[data-drucken]")) { wurzel.classList.add("druck-wissen"); window.print(); return; }
+    if (ev.target.closest("[data-barrierearm]")) {
+      var neuA = !wurzel.classList.contains("barrierearm"); barrierearm(neuA);
+      try { localStorage.setItem(AKEY, neuA ? "1" : "0"); } catch (e) {} return;
+    }
     var sb = ev.target.closest("[data-sprache]");
     if (sb) { var ns = sb.getAttribute("data-sprache"); sprache(ns); try { localStorage.setItem(SKEY, ns); } catch (e) {} return; }
     var b = ev.target.closest("[data-modus]");
@@ -857,23 +899,44 @@ document.documentElement.classList.add("js");
   var KEY = "flutter-lernpfad-lf11", stand = {};
   try { stand = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
   var ansichten = document.querySelectorAll(".ansicht");
-  function route(){
+  function route(ev){
     var ziel = document.getElementById((location.hash || "#start").slice(1));
     var ansicht = ziel && ziel.closest(".ansicht");
     if (!ansicht) { ansicht = document.getElementById("start"); ziel = null; }
     var id = ansicht.id;
     ansichten.forEach(function(a){ a.hidden = a.id !== id; });
     document.querySelectorAll("[data-ziel]").forEach(function(c){ c.classList.toggle("aktiv", c.dataset.ziel === id); });
+    document.querySelectorAll(".fortschritt [data-ziel]").forEach(function(c){
+      if (c.dataset.ziel === id) c.setAttribute("aria-current", "page"); else c.removeAttribute("aria-current");
+    });
     if (ansicht.querySelector(".schritt")) {
       var s = ziel && ziel !== ansicht && ziel.closest(".schritt");
       var gemerkt; try { gemerkt = sessionStorage.getItem(KEY + "-schritt-" + id); } catch (e) {}
       schritt(ansicht, s ? s.dataset.schritt : (gemerkt || ansicht.querySelector(".schritt").dataset.schritt));
     }
     if (ziel && ziel !== ansicht) ziel.scrollIntoView(); else window.scrollTo(0, 0);
+    // Nach einem Wechsel den Fokus auf die neue Überschrift setzen (Tastatur, Screenreader)
+    if (ev) {
+      var h = (ziel && ziel !== ansicht && /^H[1-4]$/.test(ziel.tagName)) ? ziel : ansicht.querySelector("h2");
+      if (h) { if (!h.hasAttribute("tabindex")) h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+    }
   }
+  // Reiter: Rollen verknüpfen (aria-controls / aria-labelledby)
+  var rnr = 0;
+  ansichten.forEach(function(a){
+    a.querySelectorAll(".schritt-reiter button").forEach(function(b){
+      var p = a.querySelector('.schritt[data-schritt="' + b.dataset.schritt + '"]');
+      if (!p) return;
+      rnr++; b.id = "reiter-" + rnr; p.id = "teil-" + rnr;
+      b.setAttribute("aria-controls", p.id); p.setAttribute("aria-labelledby", b.id);
+    });
+  });
   function schritt(ansicht, name){
     ansicht.querySelectorAll(".schritt").forEach(function(p){ p.hidden = p.dataset.schritt !== name; });
-    ansicht.querySelectorAll(".schritt-reiter button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.schritt === name); });
+    ansicht.querySelectorAll(".schritt-reiter button").forEach(function(b){
+      var an = b.dataset.schritt === name;
+      b.setAttribute("aria-selected", an); b.tabIndex = an ? 0 : -1;
+    });
     try { sessionStorage.setItem(KEY + "-schritt-" + ansicht.id, name); } catch (e) {}
   }
   document.addEventListener("click", function(ev){
@@ -883,6 +946,26 @@ document.documentElement.classList.add("js");
     schritt(ansicht, b.dataset.schritt || b.dataset.geh);
     var r = ansicht.querySelector(".schritt-reiter");
     if (r.getBoundingClientRect().top < 0 || b.dataset.geh) ansicht.querySelector(".level-kopf").scrollIntoView();
+    // Weiter/Zurück: der Knopf verschwindet – Fokus auf den neuen Reiter
+    if (b.dataset.geh) { var t = r.querySelector('[data-schritt="' + b.dataset.geh + '"]'); if (t) t.focus({ preventScroll: true }); }
+  });
+  // Reiter mit Pfeiltasten wechseln
+  document.addEventListener("keydown", function(ev){
+    var b = ev.target.closest && ev.target.closest(".schritt-reiter button");
+    if (!b) return;
+    var alle = Array.prototype.slice.call(b.parentNode.querySelectorAll("button")), i = alle.indexOf(b), n = -1;
+    if (ev.key === "ArrowRight" || ev.key === "ArrowDown") n = (i + 1) % alle.length;
+    else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") n = (i - 1 + alle.length) % alle.length;
+    else if (ev.key === "Home") n = 0; else if (ev.key === "End") n = alle.length - 1;
+    if (n < 0) return;
+    ev.preventDefault(); alle[n].click(); alle[n].focus();
+  });
+  // Sprunglink: ohne Hash-Wechsel zum Inhalt der aktuellen Ansicht
+  document.addEventListener("click", function(ev){
+    if (!ev.target.closest("[data-sprung]")) return;
+    ev.preventDefault();
+    var a = document.querySelector(".ansicht:not([hidden])"), h = a && a.querySelector("h2");
+    if (h) { if (!h.hasAttribute("tabindex")) h.setAttribute("tabindex", "-1"); h.focus(); h.scrollIntoView(); }
   });
   function zeigen(){
     var n = 0;
@@ -936,7 +1019,7 @@ document.documentElement.classList.add("js");
       + '<small>' + n + (n === 1 ? " Zeile" : " Zeilen") + '</small>';
     pre.parentNode.insertBefore(d, pre); d.appendChild(su); d.appendChild(pre);
   });
-  window.addEventListener("hashchange", route);
+  window.addEventListener("hashchange", function(){ route(true); });
   route(); zeigen();
 })();
 """
@@ -964,7 +1047,7 @@ JS_LOESUNG = r"""
       daten[nr].forEach(function(f){
         var div = document.createElement("div");
         var h = document.createElement("h3"); h.textContent = f.datei;
-        var pre = document.createElement("pre"), code = document.createElement("code");
+        var pre = document.createElement("pre"), code = document.createElement("code"); pre.setAttribute("lang", "en");
         code.textContent = f.code; pre.appendChild(code);
         div.appendChild(h); div.appendChild(pre); box.appendChild(div);
       });
@@ -987,11 +1070,11 @@ def main() -> None:
     ohne = "--ohne-loesungen" in sys.argv
     geheim = "null" if ohne else loesungen_verschluesseln(passwort_holen())
     navi = ('<a class="chip" href="#start" data-ziel="start">Start</a>'
-            + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}">{n}</a>' for n in LEVEL)
-            + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful">📘 Wissen</a>'
-            + '<a class="chip" href="#bonus" data-ziel="bonus">★</a>'
-            + '<a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen">🔒</a>'
-            + '<span class="chip zaehler" id="zaehler">0 / 9</span>')
+            + "".join(f'<a class="chip" href="#level-{n}" data-ziel="level-{n}" aria-label="Level {n}: {e(LEVEL[n]["titel"])}">{n}</a>' for n in LEVEL)
+            + '<a class="chip" href="#wissen" data-ziel="wissen" title="Wissen: Stateless &amp; Stateful"><span aria-hidden="true">📘</span> Wissen</a>'
+            + '<a class="chip" href="#bonus" data-ziel="bonus" title="Bonus" aria-label="Bonus">★</a>'
+            + '<a class="chip" href="#loesungen" data-ziel="loesungen" title="Musterlösungen" aria-label="Musterlösungen">🔒</a>'
+            + '<span class="chip zaehler"><span class="sr">Geschafft: </span><span id="zaehler">0 / 9</span></span>')
     uebersicht = "".join(
         f'<a href="#level-{n}" data-ziel="level-{n}"><img src="bilder/{d["bilder"][-1][0]}.png" alt="" loading="lazy">'
         f'<b>{n} · {e(d["titel"])}</b><span class="klein">{e(d["stich"])}</span>'
@@ -1009,6 +1092,7 @@ def main() -> None:
 <style>{CSS}{bausteine.CSS}</style>
 </head>
 <body data-thema="technik">
+<a class="sprunglink" href="#inhalt" data-sprung>Zum Inhalt springen</a>
 <div class="app">
   <header class="card kopf">
     <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span><span class="kh-zeile an"><i></i><b style="width:62%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:48%"></b><u></u></span><span class="kh-zeile an"><i></i><b style="width:70%"></b><u></u></span><span class="kh-zeile"><i></i><b style="width:40%"></b><u></u></span><span class="kh-plus">+</span></span></figure>
@@ -1027,10 +1111,11 @@ def main() -> None:
       <button type="button" data-sprache="standard" aria-pressed="true">Standard</button>
       <button type="button" data-sprache="einfach" aria-pressed="false">Sprache einfach</button>
     </div>
-    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Drucken</button>
+    <button type="button" class="druck-kopf barriere-knopf" data-barrierearm aria-pressed="false" title="Ruhigere, größere Darstellung für Screenreader, Lupe und Tastatur"><span aria-hidden="true">♿</span> Barrierearm</button>
+    <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern"><span aria-hidden="true">🖨️</span> Drucken</button>
     </div>
   </header>
-
+<main id="inhalt" tabindex="-1">
   <section class="ansicht" id="start">
     <div class="card echt"><span aria-hidden="true">💻</span><div>
       <b>Programmiert wird nicht im Browser, sondern in Ihrer echten Entwicklungsumgebung</b>
@@ -1071,6 +1156,9 @@ def main() -> None:
           <p>Unter jedem Level: Haken setzen, was in Ihrer App wirklich funktioniert, Kontrollfragen beantworten –
           dann ist das Level geschafft.</p></div>
       </div>
+      <p class="klein">♿ Sie arbeiten mit Screenreader, Bildschirmlupe oder nur mit der Tastatur? Oben im Seitenkopf schaltet
+      <b>Barrierearm</b> eine ruhigere, größere Darstellung ein: keine Bewegung, kräftiger Fokusrahmen, Code markierbar
+      (zum Vorlesen) und Fachwort-Erklärungen ohne zusätzliche Tab-Stopps. Inhalte und Aufgaben bleiben gleich.</p>
     </div>
     <div class="card"><h2>Grundlagen zum Nachschlagen</h2>
       <p><a href="#wissen">📘 Wissen: Stateless &amp; Stateful</a> – Aufbau beider Widget-Arten Zeile für Zeile, Vergleich,
@@ -1105,6 +1193,7 @@ def main() -> None:
       </form></div>
   </section>
 
+</main>
   <footer class="druckfuss"><small>Flutter-Einführung LF11 · Version {VERSION} vom {STAND} · BS Info · Ihr Fortschritt auf dieser Seite wird nur in Ihrem Browser gespeichert.</small></footer>
 </div>
 <dialog id="gross" aria-label="Großansicht"><div class="gross-inhalt"></div>

@@ -30,6 +30,15 @@ Die Reiterleiste bleibt beim Scrollen oben stehen; die Seite merkt sich den zule
 
 Wie in LF3 sind Fachwörter in „Sprache einfach“ gepunktet unterstrichen. Die Erklärung erscheint beim Darüberfahren mit der Maus, beim Antippen und mit der Tab-Taste. Die Erklärungen stehen in `tool/woerter.py`.
 
+## Barrierearm (Schalter im Seitenkopf)
+- Schalter **♿ Barrierearm** im Seitenkopf, unabhängig von Pfad und Sprache; die Wahl merkt sich der Browser.
+- Es fällt nichts weg (Baukästen, Zielbilder, Reiter bleiben). Barrierearm schaltet nur zu: Schrift 112,5 %, keine
+  Animationen, Reiterleiste nicht mitlaufend, kräftiger gelb-schwarzer Fokusrahmen, Code markierbar und umbrechend
+  (Vorlesen, Lupe; Kopieren bleibt gesperrt), Fachwörter ohne eigene Tab-Stopps (Erklärung im Kasten „Wichtige Wörter“).
+- Immer an (Standard): Sprunglink „Zum Inhalt“, Hauptbereich `<main>`, Fokus springt nach Levelwechsel auf die Überschrift,
+  Reiter mit Pfeiltasten, Level-Chips mit Namen, Kontrollfragen als Gruppe mit Frage, Code als Englisch markiert,
+  Zielbilder mit der Markierungs-Legende als Beschreibung, weißer Fokusrahmen im dunklen Kopf.
+
 ## Grundsatz: alles wird getippt
 - **Kein Projekt zum Importieren.** In Level 1 legen die Schüler mit `flutter create meine_app` ein eigenes
   Projekt an und bauen diese eine App bis Level 9 aus. Ihre Dateien: `lib/main.dart`, `lib/my_first_app.dart`,

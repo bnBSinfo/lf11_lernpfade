@@ -9,10 +9,20 @@
     var q = w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return { wort: w, erkl: BEGRIFFE[w], re: new RegExp("(^|[^" + BUCHST + "-])(" + q + "(?:e|en|n|s|es)?)(?![" + BUCHST + "-])") };
   });
+  /* Erklärungen einmal versteckt ablegen und per aria-describedby verknüpfen (aria-label auf span wird oft ignoriert) */
+  var ablage = document.createElement("div"); ablage.hidden = true; document.body.appendChild(ablage);
+  var ids = {}, nr = 0;
+  function beschreibung(wort) {
+    if (!ids[wort]) { nr++; ids[wort] = "begriff-" + nr; var d = document.createElement("span"); d.id = ids[wort]; d.textContent = BEGRIFFE[wort]; ablage.appendChild(d); }
+    return ids[wort];
+  }
   function setze(el, wort) {
     el.classList.add("begriff"); el.tabIndex = 0;
-    el.setAttribute("data-wort", wort); el.setAttribute("aria-label", el.textContent + ": " + BEGRIFFE[wort]);
+    el.setAttribute("data-wort", wort); el.setAttribute("aria-describedby", beschreibung(wort));
   }
+  /* Barrierearm: keine Tab-Stopps je Fachwort – die Erklärungen stehen im Kasten „Wichtige Wörter“ */
+  function tabStopps(an) { document.querySelectorAll(".begriff").forEach(function (b) { b.tabIndex = an ? -1 : 0; }); }
+  document.addEventListener("barrierearm", function (ev) { tabStopps(ev.detail); });
   function markiere(wurzel) {
     /* Inline-Code, der genau ein Fachwort ist (z. B. setState oder setState()) */
     wurzel.querySelectorAll("code").forEach(function (c) {
@@ -41,6 +51,7 @@
     });
   }
   document.querySelectorAll(".sprache-einfach").forEach(markiere);
+  tabStopps(document.documentElement.classList.contains("barrierearm"));
 
   var tipp = document.createElement("div"); tipp.id = "begriff-tipp"; tipp.setAttribute("role", "tooltip"); tipp.hidden = true;
   document.body.appendChild(tipp);

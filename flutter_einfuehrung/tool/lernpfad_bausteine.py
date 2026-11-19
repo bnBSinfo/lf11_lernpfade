@@ -37,7 +37,7 @@ def selbstkontrolle_html(nr: int, daten: dict, einfach: dict | None = None) -> s
             f'data-feedback="{e(fb)}"' + (f' data-feedback-einfach="{e(fbe)}"' if fbe else "") +
             f'> {zwei(inline_code(a), ic(ae))}</label></li>'
             for j, ((a, ok, fb), (ae, fbe)) in enumerate(zip(antworten, antworten_e)))
-        fragen.append(f'<div class="sk-frage" data-sk-frage="{nr}-{i}"><p><b>{i + 1}.</b> {zwei(inline_code(frage), ic(frage_e))}</p>'
+        fragen.append(f'<div class="sk-frage" data-sk-frage="{nr}-{i}" role="radiogroup" aria-labelledby="skf-{nr}-{i}"><p id="skf-{nr}-{i}"><b>{i + 1}.</b> {zwei(inline_code(frage), ic(frage_e))}</p>'
                       f'<ul class="sk-optionen">{opts}</ul><p class="sk-feedback" role="status"></p></div>')
     einl = zwei("Haken Sie nur ab, was bei Ihnen <b>wirklich</b> funktioniert. Beantworten Sie dann die Kontrollfragen –\n"
                 "  sind alle Haken gesetzt und alle Fragen richtig, ist das Level geschafft.",
@@ -156,6 +156,8 @@ JS = r"""
     var imCode = (knoten && knoten.closest && knoten.closest("pre,code,.kette,.term,.browser")) ||
       (sel && sel.anchorNode && sel.anchorNode.parentElement && sel.anchorNode.parentElement.closest("pre,code"));
     if (!imCode) return;
+    // Barrierearm: Kontextmenü (z. B. „Vorlesen“) und Markieren erlaubt, Kopieren bleibt gesperrt
+    if (document.documentElement.classList.contains("barrierearm") && (ev.type === "contextmenu" || ev.type === "dragstart")) return;
     ev.preventDefault();
     if (!hinweis) { hinweis = document.createElement("div"); hinweis.className = "kopier-hinweis"; hinweis.setAttribute("role", "status"); document.body.appendChild(hinweis); }
     hinweis.textContent = "✍️ Bitte abtippen – so lernen Sie den Code wirklich kennen.";
