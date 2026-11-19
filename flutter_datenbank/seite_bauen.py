@@ -15,7 +15,7 @@ from ablauf_grafik import ablauf_html
 HIER = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(HIER, 'bilder') + '/'
 VORLAGE = open(os.path.join(HIER, 'vorlage_einfuehrung.html'), encoding='utf-8').read()
-VERSION = '2.0.1'
+VERSION = '2.0.2'
 DATUM = '17.11.2026'
 N = 6
 
@@ -160,9 +160,12 @@ SCHALTER = '''    <div class="schalter-zeile">
     <button type="button" class="druck-kopf" data-drucken title="Druckt nur die Wissen-Seite – auch als PDF speichern">🖨️ Drucken</button>
     </div>
 '''
+LOGO = ('<img class="kopf-logo" alt="BS Info München" width="214" height="34" src="data:image/png;base64,'
+        + base64.b64encode(open(os.path.join(HIER, '..', 'logo-bsinfo.png'), 'rb').read()).decode() + '">')
 KOPF = f'''<header class="card kopf">
     <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span>{ZEILEN}<span class="kh-plus">+</span></span><span class="kh-db">🗄️</span></figure>
     <div class="titel">
+      {LOGO}
       <h1>Flutter-Datenbankanbindung <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 6 Leveln von der lokalen App zur Datenbank: erst die Login-Maske, dann die ToDo-Liste.</div>
     </div>

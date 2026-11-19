@@ -334,6 +334,7 @@ def main() -> None:
   <header class="card kopf">
     <figure class="kopf-handy" aria-hidden="true"><span class="kh-kerbe"></span><span class="kh-app"><span class="kh-leiste">ToDo Liste</span>{zeilen}<span class="kh-plus">+</span></span><span class="kh-db">🍓</span></figure>
     <div class="titel">
+      {EB.LOGO}
       <h1>{e(NAME)} <span class="version">LF11 · Version {VERSION}</span></h1>
       <div class="unter">In 9 Leveln vom Raspberry Pi zum Datenbankserver, den Ihre App über REST anspricht.</div>
     </div>
