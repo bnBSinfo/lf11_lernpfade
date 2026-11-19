@@ -1,7 +1,7 @@
 name: rest_lernpfad
 description: "Lernpfad LF11: Raspberry Pi als Datenbankserver mit REST-API."
 publish_to: 'none'
-version: 2.2.4+11
+version: 2.2.5+12
 
 environment:
   sdk: ^3.5.0
